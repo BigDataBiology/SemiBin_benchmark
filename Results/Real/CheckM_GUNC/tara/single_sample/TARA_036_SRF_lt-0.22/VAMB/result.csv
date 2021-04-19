@@ -1,0 +1,7 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+10449, root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,2345,992,258,kingdom,1.0,0.42,0.05,0.04,0.09,0.44,0.18,True
+11654, root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,535,261,20,kingdom,1.0,0.49,0.06,0.03,0.06,0.41,0.2,True
+2706, k__Bacteria (UID2982), 88, 230, 148,3,227, 0, 0, 0, 0, 98.42,0.00, 0.00,3331,2878,121,phylum,0.92,0.79,0.09,0.34,1.1,0.51,0.41,True
+530,k__Bacteria (UID2569),434, 278, 186,9,269, 0, 0, 0, 0, 97.31,0.00, 0.00,2804,2599,74,family,0.83,0.77,0.03,0.74,4.81,0.57,0.44,True
+6605,root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,316,136,7,kingdom,1.0,0.43,0.02,0.02,0.05,0.42,0.18,True
+7149,k__Bacteria (UID203),5449,104,58,56,48, 0, 0, 0, 0, 70.69,0.00, 0.00,1848,1797,238,order,0.93,0.9,0.42,0.05,0.1,0.76,0.68,True

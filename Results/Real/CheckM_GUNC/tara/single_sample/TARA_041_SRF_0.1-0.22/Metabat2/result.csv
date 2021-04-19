@@ -1,0 +1,14 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+bin.1,c__Alphaproteobacteria (UID3422), 26, 529, 308,259, 266, 4,0, 0, 0, 48.96,0.97,75.00,1674,1577,358,genus,0.9,0.85,0.3,0.04,0.08,0.75,0.63,True
+bin.10, k__Bacteria (UID203),5449,104,58, 56,40, 8,0, 0, 0, 73.43, 12.93,75.00,3404,3356,135,kingdom,1.0,0.99,0.0,0.0,0.0,0.93,0.92,True
+bin.11, root (UID1), 5656, 56,24, 56,0,0,0, 0, 0,0.00,0.00, 0.00,256,254,14,kingdom,1.0,0.99,0.0,0.0,0.0,0.96,0.96,True
+bin.12, c__Gammaproteobacteria (UID4761), 52, 693, 297,199, 457, 36, 1, 0, 0, 76.00,5.99,69.23,3216,3166,188,kingdom,1.0,0.98,0.0,0.0,0.0,0.95,0.94,True
+bin.13, k__Bacteria (UID203),5449,104,58, 54,50, 0,0, 0, 0, 72.41,0.00, 0.00,2868,2812,504,order,0.95,0.93,0.57,0.03,0.05,0.96,0.9,False
+bin.2,c__Gammaproteobacteria (UID4444),263, 507, 232, 80, 422, 5,0, 0, 0, 92.72,0.97,60.00,3165,3116,265,kingdom,1.0,0.98,0.0,0.0,0.0,0.95,0.93,True
+bin.3,c__Alphaproteobacteria (UID3422), 26, 529, 308, 23, 494, 11, 1, 0, 0, 97.48,2.67, 7.14,3632,3342,44,genus,0.8,0.74,0.11,0.15,0.36,0.7,0.51,True
+bin.4,k__Bacteria (UID203),5449,103,58, 80,23, 0,0, 0, 0, 36.21,0.00, 0.00,2702,2623,526,kingdom,1.0,0.97,0.0,0.0,0.0,0.95,0.92,True
+bin.5,root (UID1), 5656, 56,24, 56,0,0,0, 0, 0,0.00,0.00, 0.00,1245,480,149,kingdom,1.0,0.39,0.0,0.02,0.05,0.43,0.16,True
+bin.6,root (UID1), 5656, 56,24, 56,0,0,0, 0, 0,0.00,0.00, 0.00,451,160,54,kingdom,1.0,0.35,0.0,0.03,0.06,0.43,0.15,True
+bin.7,root (UID1), 5656, 56,24, 56,0,0,0, 0, 0,0.00,0.00, 0.00,511,435,82,family,0.64,0.55,0.41,0.15,0.38,0.78,0.43,True
+bin.8,root (UID1), 5656, 56,24, 56,0,0,0, 0, 0,0.00,0.00, 0.00,885,821,192,genus,0.8,0.74,0.59,0.1,0.23,0.86,0.64,False
+bin.9,k__Bacteria (UID203),5449,104,58, 72,32, 0,0, 0, 0, 39.62,0.00, 0.00,2954,2788,550,class,0.96,0.91,0.36,0.03,0.06,0.67,0.61,True

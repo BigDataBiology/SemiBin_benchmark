@@ -1,0 +1,18 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+maxbin2.001, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,7351,2894,1337,kingdom,1.0,0.39,0.0,0.04,0.08,0.46,0.18,True
+maxbin2.002, c__Gammaproteobacteria (UID4444),263, 507, 232, 0,506, 1,0,0, 0, 100.00, 0.05, 0.00,3703,3554,81,kingdom,1.0,0.96,0.0,0.0,0.0,0.95,0.91,True
+maxbin2.003, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,21544,8223,3687,kingdom,1.0,0.38,0.0,0.04,0.09,0.45,0.17,True
+maxbin2.004, c__Betaproteobacteria (UID3888), 323, 387, 234, 3,378, 5,0,0, 1, 99.00,4.83, 0.00,5798,4096,456,genus,0.73,0.52,0.94,0.07,0.16,0.92,0.47,False
+maxbin2.005, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,43951,17032,7328,kingdom,1.0,0.39,0.0,0.04,0.08,0.44,0.17,True
+maxbin2.006, k__Bacteria (UID203),5449,104,58, 76,22, 3,2,0, 1, 26.85,1.72, 0.00,53068,17532,8054,kingdom,1.0,0.33,0.0,0.04,0.08,0.42,0.14,True
+maxbin2.007, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,39236,16218,9613,kingdom,0.98,0.41,0.0,0.0,0.0,0.41,0.17,True
+maxbin2.008, k__Bacteria (UID203),5449,100,54, 1, 70, 23, 5,1, 0, 98.15, 22.56, 0.00,17691,8591,2498,kingdom,1.0,0.49,0.66,0.03,0.07,0.51,0.25,False
+maxbin2.009, k__Bacteria (UID203),5449,104,58, 44,33, 18, 6,2, 1, 45.24, 22.18, 6.90,40660,14076,6402,kingdom,1.0,0.35,0.0,0.03,0.07,0.44,0.15,True
+maxbin2.010, k__Bacteria (UID203),5449,104,58, 0, 87, 11, 0,1, 5, 100.00,20.99, 0.00,34410,14867,5349,kingdom,1.0,0.43,0.67,0.06,0.12,0.48,0.21,False
+maxbin2.011, o__Burkholderiales (UID4000),193, 427, 214,222, 170, 34, 0,1, 0, 44.54,7.31, 5.00,3648,2817,1014,order,0.82,0.63,0.93,0.46,1.52,0.82,0.52,False
+maxbin2.012, c__Gammaproteobacteria (UID4266),1097,270, 172,160,72, 24, 6,4, 4, 36.91, 26.15, 0.46,43581,15242,8099,kingdom,1.0,0.35,0.0,0.03,0.07,0.43,0.15,True
+maxbin2.013, k__Bacteria (UID203),5449,104,58, 7, 53, 33, 11, 0, 0, 95.32, 53.51,16.67,18871,10333,4354,class,0.86,0.47,0.7,0.23,0.61,0.75,0.35,False
+maxbin2.014, o__Burkholderiales (UID4000),193, 427, 214,165, 212, 48, 2,0, 0, 60.00, 13.38, 1.85,4875,4740,1798,order,0.97,0.94,0.99,0.41,0.94,0.89,0.83,False
+maxbin2.015, c__Gammaproteobacteria (UID4443),356, 451, 270,156, 254, 40, 1,0, 0, 66.19, 10.79,11.63,4216,3628,1411,genus,0.74,0.63,0.84,0.39,1.26,0.74,0.47,False
+maxbin2.016, k__Bacteria (UID203),5449,104,58, 24,50, 22, 7,1, 0, 69.51, 21.32, 2.04,5790,4359,2033,phylum,0.93,0.7,0.83,0.16,0.37,0.68,0.47,False
+maxbin2.017,k__Archaea (UID2),207, 149, 107,143,6,0,0,0, 0,1.29,0.00, 0.00,848,231,188,kingdom,1.0,0.27,0.0,0.12,0.26,0.47,0.13,True

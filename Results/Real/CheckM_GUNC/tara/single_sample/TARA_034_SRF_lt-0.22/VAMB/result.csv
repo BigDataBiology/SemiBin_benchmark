@@ -1,0 +1,14 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+10772,c__Alphaproteobacteria (UID3422), 26, 529, 308,32, 490, 7, 0, 0, 0, 97.22,1.54,14.29,3493,3404,108,family,0.97,0.95,0.79,0.04,0.07,0.95,0.9,False
+1968,s__algicola (UID2847), 33, 496, 263,2,493, 1, 0, 0, 0, 99.24,0.19, 0.00,3024,2940,52,kingdom,1.0,0.97,0.0,0.0,0.0,0.9,0.87,True
+2553, c__Alphaproteobacteria (UID3305),564, 349, 230,22, 326, 1, 0, 0, 0, 96.96,0.43, 0.00,3273,3157,35,genus,0.52,0.5,0.13,0.07,0.15,0.67,0.34,True
+25986,root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,5016,2273,588,kingdom,1.0,0.45,0.2,0.07,0.16,0.47,0.21,True
+26709,root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,281,50,35,kingdom,1.0,0.18,0.0,0.0,0.0,0.43,0.08,True
+28213,root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,255,145,21,class,0.88,0.5,0.18,0.65,2.84,0.52,0.26,True
+28220,root (UID1), 5656, 56,24,55,1,0, 0, 0, 0,4.17,0.00, 0.00,339,334,38,family,0.79,0.78,0.36,0.09,0.2,0.91,0.71,True
+3473,k__Bacteria (UID2570),433, 267, 178,35, 229, 3, 0, 0, 0, 97.36,1.69, 0.00,3364,3166,182,genus,0.83,0.78,0.22,0.18,0.45,0.75,0.58,True
+5702, c__Gammaproteobacteria (UID4267),119, 543, 284,52, 489, 2, 0, 0, 0, 98.94,0.21, 0.00,2961,2887,30,family,0.93,0.91,0.22,0.03,0.05,0.88,0.8,True
+583, o__Cytophagales (UID2936), 47, 454, 336,7,444, 3, 0, 0, 0, 98.30,0.89, 0.00,3889,3791,59,family,0.95,0.93,0.13,0.05,0.1,0.89,0.82,True
+7679, root (UID1), 5656, 56,24,56,0,0, 0, 0, 0,0.00,0.00, 0.00,273,120,1,kingdom,1.0,0.44,0.0,0.05,0.1,0.39,0.17,True
+8143, k__Bacteria (UID203),5449,104,58,56,48, 0, 0, 0, 0, 70.69,0.00, 0.00,2970,2945,351,kingdom,1.0,0.99,0.0,0.0,0.0,0.98,0.97,True
+9096, c__Gammaproteobacteria (UID4444),263, 503, 230,34, 464, 5, 0, 0, 0, 97.62,1.96, 0.00,3339,3293,52,genus,0.86,0.85,0.15,0.02,0.05,0.87,0.74,True

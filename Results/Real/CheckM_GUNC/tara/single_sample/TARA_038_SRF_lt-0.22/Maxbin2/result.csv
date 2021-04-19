@@ -1,0 +1,10 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+maxbin2.001, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,251,124,31,phylum,0.88,0.43,0.19,0.37,1.33,0.41,0.18,True
+maxbin2.002, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,6122,2351,942,kingdom,1.0,0.38,0.0,0.05,0.1,0.46,0.18,True
+maxbin2.003, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,3412,1272,598,kingdom,1.0,0.37,0.0,0.04,0.08,0.47,0.17,True
+maxbin2.004, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,9840,3709,1786,kingdom,1.0,0.38,0.0,0.04,0.07,0.45,0.17,True
+maxbin2.005, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,3416,1131,438,kingdom,1.0,0.33,0.0,0.02,0.04,0.45,0.15,True
+maxbin2.006, root (UID1), 5656, 56,24, 56,0,0,0,0, 0,0.00,0.00, 0.00,4400,1855,703,kingdom,1.0,0.42,0.31,0.07,0.14,0.46,0.19,True
+maxbin2.007, c__Gammaproteobacteria (UID4444),263, 507, 232,185, 288, 16, 6,2, 10,56.22, 39.50, 2.58,78755,29848,14091,kingdom,1.0,0.38,0.0,0.03,0.05,0.48,0.18,True
+maxbin2.008, c__Gammaproteobacteria (UID4444),263, 507, 232,269, 159, 55, 5,4, 15,44.40, 107.66,0.73,123997,44274,19913,kingdom,1.0,0.36,0.0,0.04,0.09,0.45,0.16,True
+maxbin2.009, k__Bacteria (UID203),5449,104,58, 26,43, 22, 10, 2, 1, 81.05, 62.29, 4.05,79305,31527,16783,kingdom,1.0,0.4,0.0,0.03,0.05,0.51,0.2,True

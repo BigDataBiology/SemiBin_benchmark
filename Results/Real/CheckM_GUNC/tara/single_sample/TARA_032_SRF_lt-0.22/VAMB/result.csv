@@ -1,0 +1,6 @@
+,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
+12132, root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,344,172,6,kingdom,1.0,0.5,0.0,0.05,0.11,0.39,0.2,True
+25467, root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,5651,2707,592,kingdom,1.0,0.48,0.33,0.05,0.1,0.47,0.23,True
+26584, root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,178,58,18,kingdom,1.0,0.33,0.0,0.0,0.0,0.35,0.12,True
+26623, root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,249,171,10,phylum,0.75,0.51,0.01,0.65,3.99,0.38,0.2,True
+26653, root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,354,180,14,kingdom,1.0,0.51,0.08,0.07,0.14,0.39,0.2,True
