@@ -774,31 +774,31 @@ def plot_overlap_comparison(dataset = 'dog'):
     # plt.close()
 
 if __name__ == '__main__':
-    # ### bar plot high quality genomes comparison
-    # plot_high_quality_comparison()
+    ### bar plot high quality genomes comparison
+    plot_high_quality_comparison()
 
-    # ### venn plot multi annotation comparison
-    # plot_multi_venn_comparison()
+    ### venn plot multi annotation comparison
+    plot_multi_venn_comparison()
 
-    # ### per sample comparison
-    # plot_per_sample_comparison()
-    # plot_per_sample_comparison('human')
-    # plot_per_sample_comparison('tara')
+    ### per sample comparison
+    plot_per_sample_comparison()
+    plot_per_sample_comparison('human')
+    plot_per_sample_comparison('tara')
 
-    # ### recall, precision, F1-score box plot
-    # plot_overlap_F1()
-    # plot_overlap_F1('human')
-    # plot_overlap_F1('tara')
+    ### recall, precision, F1-score box plot
+    plot_overlap_F1()
+    plot_overlap_F1('human')
+    plot_overlap_F1('tara')
 
-    # ### bar plot the overlap of annotation in all taxi
-    # plot_all_taxi_overlap()
-    # plot_all_taxi_overlap(dataset='human')
-    # plot_all_taxi_overlap(dataset='tara')
+    ### bar plot the overlap of annotation in all taxi
+    plot_all_taxi_overlap()
+    plot_all_taxi_overlap(dataset='human')
+    plot_all_taxi_overlap(dataset='tara')
 
-    ### comparison of known and unknown species
-    # plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500])
-    # plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500])
-    # plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400])
+    ## comparison of known and unknown species
+    plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500])
+    plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500])
+    plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400])
 
     ### compare the overlap of the high quality bins of S3N2Bin and Metabat2
     plot_overlap_comparison()
