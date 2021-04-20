@@ -414,9 +414,9 @@ def get_overlap(dataset = 'dog'):
         hq = S3N2Bin_binning_result[(S3N2Bin_binning_result['Completeness'].astype(float) > float(90)) & (
                 S3N2Bin_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
                            S3N2Bin_binning_result['pass.GUNC'] == True)]
-        hq_values = hq.values
-        hq_bin = hq.index.tolist()
-        for bin_index, checkm_index in zip(hq_bin, hq_values):
+        all_values = S3N2Bin_binning_result.values
+        all_bin = S3N2Bin_binning_result.index.tolist()
+        for bin_index, checkm_index in zip(all_bin, all_values):
             S3N2Bin_bin_dict[sample + '_' + bin_index] = (checkm_index[10], checkm_index[11])
 
         mq = S3N2Bin_binning_result[(S3N2Bin_binning_result['Completeness'].astype(float) > float(50)) & (S3N2Bin_binning_result['Completeness'].astype(float) <= float(90)) & (
@@ -433,9 +433,9 @@ def get_overlap(dataset = 'dog'):
         hq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) > float(90)) & (
                 Metabat2_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
                                             Metabat2_binning_result['pass.GUNC'] == True)]
-        hq_values = hq.values
-        hq_bin = hq.index.tolist()
-        for bin_index, checkm_index in zip(hq_bin, hq_values):
+        all_values = Metabat2_binning_result.values
+        all_bin = Metabat2_binning_result.index.tolist()
+        for bin_index, checkm_index in zip(all_bin, all_values):
             Metabat2_bin_dict[sample + '_' + bin_index] = (checkm_index[10], checkm_index[11])
 
         mq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) > float(50)) & (
@@ -473,6 +473,7 @@ def get_overlap(dataset = 'dog'):
             if S3N2Bin_bin in S3N2Bin_lq and Metabat2_bin in Metabat2_hq:
                 Metabat2_others_list.append(sample + '_' + Metabat2_bin)
     return S3N2Bin_hq_list, S3N2Bin_mq_list, S3N2Bin_others_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_others_list, S3N2Bin_bin_dict, Metabat2_bin_dict
+
 
 
 def plot_overlap_F1(dataset = 'dog'):
@@ -773,6 +774,66 @@ def plot_overlap_comparison(dataset = 'dog'):
     # plt.savefig('/home1/pansj/plot/dog_overlap_metabat2.jpg',dpi=300,bbox_inches = 'tight')
     # plt.close()
 
+def plot_sample_comparison_F1(sample):
+    S3N2Bin_hq, S3N2Bin_mq, S3N2Bin_others, Metabat2_hq, Metabat2_mq, Metabat2_others,S3N2Bin_bin_dict , Metabat2_bin_dict = get_overlap('human')
+
+    S3N2Bin_result = get_result('human','S3N2Bin')[sample]['high quality']
+    Metabat2_result = get_result('human','Metabat2')[sample]['high quality']
+    sample_list = [sample]
+    for sample in sample_list:
+        data = pd.read_csv(
+            'Results/Real/FastANI/human/{}/fastANI_compare_whole'.format(sample),
+            sep='\t', header=None)
+
+        data.columns = ['genome_id_1', 'genome_id_2', 'ANI', 'A', 'B']
+        data = data[data['ANI'] > 95]
+        genome_group = data.groupby('genome_id_1')
+
+        Metabat2_F1_list = []
+        S3N2Bin_F1_list = []
+
+        for genome, group in genome_group:
+            group = group.values
+            S3N2Bin_bin = group[0][0].split('/')[-1][:-3]
+            if S3N2Bin_bin not in S3N2Bin_result:
+                continue
+
+            if len(group) != 0:
+                recall = float(S3N2Bin_bin_dict[sample + '_' + S3N2Bin_bin][0]) / 100
+                precision = 1 - float(S3N2Bin_bin_dict[sample + '_' + S3N2Bin_bin][1]) / 100
+                S3N2Bin_F1 = 2 * recall * precision / (recall + precision)
+                for temp in group:
+                    Metabat2_bin = temp[1].split('/')[-1][:-3]
+                    #
+                    # if Metabat2_bin in Metabat2_result:
+                    #     continue
+                    recall = float(Metabat2_bin_dict[sample + '_' + Metabat2_bin][0]) / 100
+                    precision = 1 - float(Metabat2_bin_dict[sample + '_' + Metabat2_bin][1]) / 100
+                    if precision < 0:
+                        precision = 0
+                    Metabat2_F1 = 2 * recall * precision / (recall + precision)
+
+                    Metabat2_F1_list.append(Metabat2_F1)
+                    S3N2Bin_F1_list.append(S3N2Bin_F1)
+
+        zipped = zip(Metabat2_F1_list, S3N2Bin_F1_list)
+        sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+        result = zip(*sort_zipped)
+        Metabat2_F1_list, S3N2Bin_F1_list = [list(x) for x in result]
+        x = list((range(1, len(S3N2Bin_F1_list) + 1)))
+
+        plt.plot(x, Metabat2_F1_list, label='Metabat2')
+        plt.plot(x, S3N2Bin_F1_list, label='$S^3N^2$Bin')
+
+        plt.xticks(color='black')
+        plt.yticks(color='black')
+        plt.legend()
+        plt.title('Human gut({})'.format(sample), fontsize=15)
+
+        plt.ylabel('F1-score', fontsize=15, color='black')
+        plt.show()
+        #plt.savefig('/home1/pansj/plot/human_gut_CCMD56948710ST.jpg', dpi=300, bbox_inches='tight')
+
 if __name__ == '__main__':
     ### bar plot high quality genomes comparison
     plot_high_quality_comparison()
@@ -804,6 +865,9 @@ if __name__ == '__main__':
     plot_overlap_comparison()
     plot_overlap_comparison(dataset='human')
     plot_overlap_comparison(dataset='tara')
+
+    ### plot per sample comparasion of the improvements from Metabat2 to S3N2Bin(high quality) with fastANI > 95%
+    plot_sample_comparison_F1('CCMD56948710ST')
 
 
 
