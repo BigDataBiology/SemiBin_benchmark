@@ -12,7 +12,7 @@ def get_hq_taxi(dataset = 'skin'):
         data_index = [1,13,14,15,16,17,18,19,20,28]
     else:
         data_index = [6,7,8,13,14,15,16,17,18,19]
-    genome_path = os.path.join('Results\Simulated\CAMI_II\{0}\\amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
+    genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
     method_list = {}
     species_list = {}
     genus_list = {}
@@ -24,12 +24,12 @@ def get_hq_taxi(dataset = 'skin'):
             genus_list[name] = []
 
     for temp in data_index:
-        taxi = pd.read_csv('Results\Simulated\CAMI_II\{0}\\taxonomic_profile_{1}.txt'.format(dataset,temp),
+        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile_{1}.txt'.format(dataset,temp),
                            sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
         taxi_genus = taxi[taxi['RANK'] == 'genus']['@@TAXID'].values.tolist()
         taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
         method_path_list = []
-        genome_path = os.path.join('Results\Simulated\CAMI_II\{0}\\amber_{0}_{1}'.format(dataset,temp), 'genome')
+        genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset,temp), 'genome')
 
         for root, dirs, files in os.walk(genome_path, topdown=False):
             for name in dirs:
@@ -40,18 +40,18 @@ def get_hq_taxi(dataset = 'skin'):
             com_90_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.9)) & (
                     metric['Purity (bp)'].astype(float) >= float(0.95))]
             strain_list = com_90_pur_95['Most abundant genome'].values.tolist()
-            method_list[method_path.split('\\')[-1]].extend(strain_list)
+            method_list[method_path.split('/')[-1]].extend(strain_list)
 
             for temp_strain in strain_list:
                 if temp_strain in taxi['_CAMI_GENOMEID'].values.tolist():
                     taxi_split = taxi[taxi['_CAMI_GENOMEID'] == temp_strain]['TAXPATH'].values[0].split('|')
                     if taxi_split[-2] in taxi_species:
-                        species_list[method_path.split('\\')[-1]].append(taxi_split[-2])
+                        species_list[method_path.split('/')[-1]].append(taxi_split[-2])
                     else:
                         if taxi_split[-2] in taxi_genus:
-                            genus_list[method_path.split('\\')[-1]].append(taxi_split[-2])
+                            genus_list[method_path.split('/')[-1]].append(taxi_split[-2])
                     if taxi_split[-3] in taxi_genus:
-                        genus_list[method_path.split('\\')[-1]].append(taxi_split[-3])
+                        genus_list[method_path.split('/')[-1]].append(taxi_split[-3])
 
     result = {'Metabat2':{'strain':list(set(method_list['Metabat2'])),'species':list(set(species_list['Metabat2'])),'genus':list(set(genus_list['Metabat2']))}, 'VAMB': {'strain':list(set(method_list['VAMB'])),'species':list(set(species_list['VAMB'])),'genus':list(set(genus_list['VAMB']))}, 'S3N2Bin': {'strain':list(set(method_list['S3N2Bin'])),'species':list(set(species_list['S3N2Bin'])),'genus':list(set(genus_list['S3N2Bin']))}}
 
@@ -192,7 +192,7 @@ def get_similarity_distribution(dataset = 'skin'):
     else:
         data_index = [6,7,8,13,14,15,16,17,18,19]
 
-    genome_to_id =  pd.read_csv('Results\Simulated\CAMI_II\{0}\genome_to_id.tsv'.format(dataset),sep='\t',header=None).values.tolist()
+    genome_to_id =  pd.read_csv('Results/Simulated/CAMI_II/{0}/genome_to_id.tsv'.format(dataset),sep='\t',header=None).values.tolist()
     genome_id = {}
     for temp in genome_to_id:
         genome_id[temp[1].split('/')[-1]] = temp[0]
@@ -201,7 +201,7 @@ def get_similarity_distribution(dataset = 'skin'):
 
     for sample in data_index:
         distribution[sample] = {90:[],95:[],97:[],98:[],99:[],99.5:[],99.9:[],100:[]}
-        genome_ANI = pd.read_csv('Results\Simulated\CAMI_II\{0}\genome_{1}_ANI'.format(dataset,sample), header=None,
+        genome_ANI = pd.read_csv('Results/Simulated/CAMI_II/{0}/genome_{1}_ANI'.format(dataset,sample), header=None,
                                  sep='\t')
         genome_ANI.columns = ['genome_id_1', 'genome_id_2', 'ANI', 'A', 'B']
         genome_group = genome_ANI.groupby('genome_id_1')
@@ -314,17 +314,17 @@ def get_hq_strain_similarity(dataset = 'skin'):
         data_index = [6,7,8,13,14,15,16,17,18,19]
 
     distribution = get_similarity_distribution(dataset)
-    genome_path = os.path.join('Results\Simulated\CAMI_II\{0}\\amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
+    genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
     method_list = {}
 
     for root, dirs, files in os.walk(genome_path, topdown=False):
         for name in dirs:
-            method_list[os.path.join(root, name).split('\\')[-1]] = {90: [], 95: [], 97: [], 98: [], 99: [],
+            method_list[os.path.join(root, name).split('/')[-1]] = {90: [], 95: [], 97: [], 98: [], 99: [],
                                                                           99.5: [], 99.9: [], 100: []}
 
     for temp in data_index:
         method_path_list = []
-        genome_path = os.path.join('Results\Simulated\CAMI_II\{0}\\amber_{0}_{1}'.format(dataset, temp), 'genome')
+        genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset, temp), 'genome')
         for root, dirs, files in os.walk(genome_path, topdown=False):
             for name in dirs:
                 method_path_list.append(os.path.join(root, name))
@@ -336,7 +336,7 @@ def get_hq_strain_similarity(dataset = 'skin'):
             for strain in strain_list:
                 for value in [90, 95, 97, 98, 99, 99.5, 99.9, 100]:
                     if strain in distribution[temp][value]:
-                        method_list[method_path.split('\\')[-1]][value].append(strain)
+                        method_list[method_path.split('/')[-1]][value].append(strain)
 
     value_list = [90, 95, 97, 98, 99, 99.5, 99.9, 100]
     value_array = np.zeros(shape=(8, 3))
@@ -386,14 +386,14 @@ def plot_abundance(dataset = 'skin',level = 'strain'):
     environment_dict = {}
 
     for index in data_index:
-        taxi = pd.read_csv('Results\Simulated\CAMI_II\{0}\\taxonomic_profile_{1}.txt'.format(dataset,index),
+        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile_{1}.txt'.format(dataset,index),
                            sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
         taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
         abundance_dict = {}
-        abundance = pd.read_csv('Results\Simulated\CAMI_II\{0}\\abundance{1}.tsv'.format(dataset, index),sep='\t',header=None).values
+        abundance = pd.read_csv('Results/Simulated/CAMI_II/{0}/abundance{1}.tsv'.format(dataset, index),sep='\t',header=None).values
         for temp in abundance:
             abundance_dict[temp[0]] = float(temp[1])
-        metric = pd.read_csv(os.path.join('Results\Simulated\CAMI_II\{0}\\amber_{0}_{1}\genome\Gold standard'.format(dataset, index), 'metrics_per_bin.tsv'), sep='\t')
+        metric = pd.read_csv(os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}/genome/Gold standard'.format(dataset, index), 'metrics_per_bin.tsv'), sep='\t')
         strain_list = metric['Most abundant genome'].values.tolist()
         if level == 'strain':
             for temp_strain in strain_list:

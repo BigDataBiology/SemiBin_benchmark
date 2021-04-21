@@ -15,7 +15,7 @@ def get_method_list(amber_path):
     for root, dirs, files in os.walk(genome_path, topdown=False):
         for name in dirs:
             methold_path_list.append(os.path.join(root, name))
-            method_list[os.path.join(root, name).split('\\')[-1]] = {0.95: []}
+            method_list[os.path.join(root, name).split('/')[-1]] = {0.95: []}
 
     for method_path in methold_path_list:
         metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
@@ -31,7 +31,7 @@ def get_method_list(amber_path):
         com_50_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.5)) & (
                 metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (
                                 com_90_pur_95 + com_80_pur_95 + com_70_pur_95 + com_60_pur_95)
-        method_list[method_path.split('\\')[-1]][0.95].extend(
+        method_list[method_path.split('/')[-1]][0.95].extend(
             [com_90_pur_95, com_80_pur_95, com_70_pur_95, com_60_pur_95, com_50_pur_95])
     return method_list
 
@@ -50,7 +50,7 @@ def plot_bar(amber_path,if_legend=True,y_label = None,title = None):
 
     if if_legend:
         ax.legend(['>90', '>80','>70','>60'],
-                  loc='low right', fontsize=10,title = 'completeness')
+                  loc='lower right', fontsize=10,title = 'completeness')
     ax.set_xticks(ticks=y_label)
     ax.set_xticklabels(labels=y_label,fontsize=15,color = 'black')
     ax.set_yticklabels(labels=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2','Vamb','$S^3N^2Bin$'], fontsize=15,color = 'black')
@@ -71,7 +71,7 @@ def plot_f1_score(amber_path,if_legend=True,y_label = None,title = None,size = 5
 
 
     for method_path in methold_path_list:
-        if method_path.split('\\')[-1] == 'Gold standard':
+        if method_path.split('/')[-1] == 'Gold standard':
             continue
         metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
         metric = metric[(metric['Completeness (bp)'] >= 0.5) & (metric['Purity (bp)'] >= 0.5)]
@@ -82,7 +82,7 @@ def plot_f1_score(amber_path,if_legend=True,y_label = None,title = None,size = 5
         f1 = 2 * (com * pur) / (com + pur)
         f1 = pd.DataFrame(f1)
         f1.columns = ['F1']
-        method_list[method_path.split('\\')[-1]] = f1
+        method_list[method_path.split('/')[-1]] = f1
 
     method = ['COCACOLA', 'SolidBin-naive', 'SolidBin-CL', 'SolidBin-SFS-CL', 'SolidBin-coalign', 'Maxbin2',
               'Metabat2_200', 'Vamb', 'S3N2Bin_200']
@@ -178,7 +178,7 @@ def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,title=None):
 
     if if_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
-                  loc='down left', fontsize=10, title='completeness')
+                  loc='lower left', fontsize=10, title='completeness')
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
     ax.set_xticklabels(labels=['CAT', 'mmseqs'], rotation=50,
@@ -264,10 +264,10 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5):
     for root, dirs, files in os.walk(genome_path, topdown=False):
         for name in dirs:
             methold_path_list.append(os.path.join(root, name))
-            # method_list[os.path.join(root, name).split('\\')[-1]] = []
+            # method_list[os.path.join(root, name).split('/')[-1]] = []
 
     for method_path in methold_path_list:
-        if method_path.split('\\')[-1] == 'Gold standard':
+        if method_path.split('/')[-1] == 'Gold standard':
             continue
         metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
         metric = metric[(metric['Completeness (bp)'] >= 0.5) & (metric['Purity (bp)'] >= 0.5)]
@@ -278,7 +278,7 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5):
         f1 = 2 * (com * pur) / (com + pur)
         f1 = pd.DataFrame(f1)
         f1.columns = ['F1']
-        method_list[method_path.split('\\')[-1]] = f1
+        method_list[method_path.split('/')[-1]] = f1
 
     fig, axes = plt.subplots(nrows=1, ncols=3)
     #
@@ -335,7 +335,7 @@ def plot_bar_generalization(amber_path,title,if_legend=True,y_label = None):
 
     if if_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
-                  loc='low right', fontsize=10, title='completeness')
+                  loc='lower right', fontsize=10, title='completeness')
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
     ax.set_xticklabels(labels=['$S^3N^2Bin$_m', '$S^3N^2Bin$_c', '$S^3N^2Bin$_mc', '$S^3N^2Bin$'], rotation=50,
@@ -350,7 +350,7 @@ def plot_bar_generalization(amber_path,title,if_legend=True,y_label = None):
 if __name__ == '__main__':
     base_path = 'Results/Simulated/CAMI_I/whole_comparasion/'
 
-    ### whole comparasions bar plot
+    ### whole comparison bar plot
     amber_path_low = base_path + 'low_whole'
     amber_path_medium = base_path + 'medium_whole'
     amber_path_high = base_path + 'high_whole'
@@ -358,12 +358,12 @@ if __name__ == '__main__':
     plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', if_legend=False)
     plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400, 500], title='High-complexity(all)', if_legend=False)
 
-    ### whole comparasions F1 box plot
+    ### whole comparison F1 box plot
     plot_f1_score(amber_path_low,y_label=[0.6,0.7,0.8,0.9,1.0],title='Low-complexity(all)')
     plot_f1_score(amber_path_medium,title='Medium-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size = 3)
     plot_f1_score(amber_path_high,title='High-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size=2)
 
-    ### common comparasions bar plot
+    ### common comparison bar plot
     amber_path_low_common = base_path + 'low_common'
     amber_path_medium_common = base_path + 'medium_common'
     amber_path_high_common = base_path + 'high_common'
@@ -373,7 +373,7 @@ if __name__ == '__main__':
     plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
              if_legend=False)
 
-    ### unique comparasions bar plot
+    ### unique comparison bar plot
     amber_path_low_unique = base_path + 'low_unique'
     amber_path_medium_unique = base_path + 'medium_unique'
     amber_path_high_unique = base_path + 'high_unique'
@@ -415,7 +415,7 @@ if __name__ == '__main__':
     plot_f1_boxplot_semi_to_nosemi(amber_path_medium, y_label=[0.6, 0.7, 0.8, 0.9, 1.0], size=3)
     plot_f1_boxplot_semi_to_nosemi(amber_path_high, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=2)
 
-    ### Comparasion of generalization(S3N2Bin_c, S3N2Bin_m, S3N2Bin_mc)
+    ### comparison of generalization(S3N2Bin_c, S3N2Bin_m, S3N2Bin_mc)
     base_path = 'Results/Simulated/CAMI_I/generalization_comparision/'
     amber_low_path = base_path + 'amber_low_generalization'
     amber_medium_path = base_path + 'amber_medium_generalization'
