@@ -630,9 +630,6 @@ def get_overlap(dataset = 'dog'):
     return SemiBin_hq_list, SemiBin_mq_list, SemiBin_others_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_others_list, SemiBin_bin_dict, Metabat2_bin_dict
 
 def plot_sankey_overlap(dataset = 'dog', output = None):
-    from pyecharts.charts import Sankey
-    from pyecharts import options as opts
-
     SemiBin_hq_list, SemiBin_mq_list, SemiBin_lq_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_lq_list,_ , _ = get_overlap(dataset)
 
     SemiBin_high_quality = get_num_high_quality(dataset, 'SemiBin_pretrain')
