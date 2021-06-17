@@ -1,2 +1,0 @@
-,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
-9107,root (UID1),5656, 56,24,56, 0, 0, 0, 0, 0,0.00,0.00, 0.00,2476,1127,205,phylum,0.88,0.4,0.25,0.4,1.42,0.43,0.17,True

@@ -1,6 +1,0 @@
-,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
-10130, root (UID1), 5656, 56,24, 56, 0,0, 0, 0, 0,0.00,0.00, 0.00,195,10,8,kingdom,,,,,,,,
-20430,k__Archaea (UID2),207, 149, 107,128, 12, 9, 0, 0, 0,6.78,1.28, 0.00,592,183,45,kingdom,1.0,0.31,0.0,0.14,0.32,0.37,0.12,True
-20765, root (UID1), 5656, 56,24, 56, 0,0, 0, 0, 0,0.00,0.00, 0.00,213,50,9,kingdom,1.0,0.23,0.0,0.24,0.57,0.39,0.09,True
-21206, root (UID1), 5656, 56,24, 56, 0,0, 0, 0, 0,0.00,0.00, 0.00,5077,1978,533,kingdom,1.0,0.39,0.0,0.04,0.08,0.4,0.16,True
-21396, root (UID1), 5656, 56,24, 56, 0,0, 0, 0, 0,0.00,0.00, 0.00,422,104,25,kingdom,1.0,0.25,0.0,0.14,0.33,0.38,0.09,True

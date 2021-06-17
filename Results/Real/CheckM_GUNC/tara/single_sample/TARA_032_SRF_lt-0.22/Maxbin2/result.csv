@@ -1,3 +1,0 @@
-,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
-maxbin2.001,root (UID1), 5656, 56,24, 56, 0,0, 0, 0, 0,0.00,0.00, 0.00,47815,18407,7824,kingdom,1.0,0.38,0.0,0.05,0.11,0.46,0.18,True
-maxbin2.002, k__Bacteria (UID1453),901, 171, 117,113, 41, 6, 1, 1, 9, 31.92, 316.43,0.97,255747,90444,44863,kingdom,1.0,0.35,0.0,0.04,0.08,0.43,0.15,True

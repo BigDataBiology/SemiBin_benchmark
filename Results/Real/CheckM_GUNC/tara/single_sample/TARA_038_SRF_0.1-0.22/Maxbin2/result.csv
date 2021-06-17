@@ -1,3 +1,0 @@
-,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
-maxbin2.001, c__Gammaproteobacteria (UID4761), 52, 693, 297,34, 562, 58, 18, 5, 16,95.69, 90.51, 1.51,69135,28012,14468,kingdom,1.0,0.41,0.29,0.03,0.05,0.52,0.21,True
-maxbin2.002,k__Archaea (UID2),207, 149, 107,43,83, 21, 2,0, 0, 63.48, 14.09,44.44,97663,34657,19536,kingdom,1.0,0.35,0.0,0.04,0.09,0.43,0.15,True

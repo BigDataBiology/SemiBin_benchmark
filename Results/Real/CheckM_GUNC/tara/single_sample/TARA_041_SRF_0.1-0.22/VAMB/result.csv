@@ -1,4 +1,0 @@
-,Marker lineage,# genomes,# markers,# marker sets,0,1,2,3,4,5+,Completeness,Contamination,Strain heterogeneity,n_genes_called,n_genes_mapped,n_contigs,taxonomic_level,proportion_genes_retained_in_major_clades,genes_retained_index,clade_separation_score,contamination_portion,n_effective_surplus_clades,mean_hit_identity,reference_representation_score,pass.GUNC
-2364, k__Bacteria (UID203),5449,104,58,58,45, 1,0,0, 0, 67.24,0.86,100.00,2665,2629,211,kingdom,1.0,0.99,0.0,0.0,0.0,0.95,0.93,True
-4210, k__Bacteria (UID203),5449,103,58,15,41, 37, 10, 0, 0, 93.26, 81.37,74.63,8456,8244,612,kingdom,1.0,0.97,0.0,0.0,0.0,0.94,0.91,True
-73, c__Alphaproteobacteria (UID3422), 26, 529, 308,23, 493, 12, 1,0, 0, 97.48,2.84, 6.67,3673,3379,46,genus,0.8,0.74,0.16,0.16,0.39,0.7,0.52,True
