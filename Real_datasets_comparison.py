@@ -1029,7 +1029,7 @@ def plot_extra_bar():
     ax.set_ylabel('High quality bins', fontsize=15,color = 'black')
     #ax.legend(loc='lower left', fontsize=6)
     plt.show()
-    plt.savefig('/home1/pansj/S3N2Bin_benchmark/holdout_Non_western_bar.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('holdout_Non_western_bar.pdf', dpi=300, bbox_inches='tight')
 
     subset = pd.DataFrame(np.array([[np.sum(hq_Metabat2_western),np.sum(hq_SemiBin_western), np.sum(hq_SemiBin_pretrain_same_western), np.sum(hq_SemiBin_pretrain_out_western)]]),columns = ['Metabat2','SemiBin','SemiBin(pre-train; internal)','SemiBin(pre-train; external)'], index=['Western human gut'])
     ax = subset.plot(kind='bar',width = 0.3,color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3'])
@@ -1039,7 +1039,7 @@ def plot_extra_bar():
     ax.set_ylabel('High quality bins', fontsize=15,color = 'black')
     #ax.legend(loc='lower left', fontsize=6)
     plt.show()
-    plt.savefig('/home1/pansj/S3N2Bin_benchmark/holdout_western_bar.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('holdout_western_bar.pdf', dpi=300, bbox_inches='tight')
 
 def plot_extra_per_sample():
     result_Metabat2_non_western = get_result('PRJNA504891', 'Metabat2')
@@ -1150,18 +1150,18 @@ def CAT_mmseqs():
 
 
 if __name__ == '__main__':
-    # tranfer_multi()
-    #
-    # ## bar plot high quality genomes comparison
-    # plot_high_quality_comparison()
-    # plot_checkm_high_quality_comparison()
-    # ### venn plot multi annotation comparison
-    # plot_multi_venn_comparison()
-    #
-    # ### per sample comparison
-    # plot_per_sample_comparison(output='dog_compare_persample.pdf')
-    # plot_per_sample_comparison('human',output='human_compare_persample.pdf')
-    # plot_per_sample_comparison('tara',output='tara_compare_persample.pdf')
+    tranfer_multi()
+
+    ## bar plot high quality genomes comparison
+    plot_high_quality_comparison()
+    plot_checkm_high_quality_comparison()
+    ### venn plot multi annotation comparison
+    plot_multi_venn_comparison()
+
+    ### per sample comparison
+    plot_per_sample_comparison(output='dog_compare_persample.pdf')
+    plot_per_sample_comparison('human',output='human_compare_persample.pdf')
+    plot_per_sample_comparison('tara',output='tara_compare_persample.pdf')
 
 
     plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
