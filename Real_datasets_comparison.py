@@ -45,25 +45,23 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
 
     result = {}
     if method == 'VAMB' and binning_mode == 'multi_sample':
-        result = {'high quality': [], 'medium quality': [], 'low quality': []}
+        result = {'high quality': []}
         binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/multi_sample/VAMB_multi.csv'.format(dataset),index_col=0)
-        high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
-                binning_result['Contamination'].astype(float) < float(contamination * 100)) & (binning_result['pass.GUNC'] == True)]
-        result['high quality'].extend(high_quality.index.tolist())
+        if not checkm:
+            high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(contamination * 100)) & (binning_result['pass.GUNC'] == True)]
+        else:
+            high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(contamination * 100))]
+        high_quality = high_quality.index.tolist()
+        result['high quality'].extend(high_quality)
 
-        medium_quality = binning_result[(binning_result['Completeness'].astype(float) <= float(90)) & (binning_result['Completeness'].astype(float) > float(50)) &(binning_result['Contamination'].astype(float) < float(contamination * 100))]
-        result['medium quality'].extend(medium_quality.index.tolist())
-
-        low_quality = [temp for temp in binning_result.index.tolist() if temp not in result['high quality'] and temp not in result['medium quality']]
-        result['low quality'].extend(low_quality)
 
         return result
-
     else:
         for sample in sample_list:
-            result[sample] = {'high quality':[], 'medium quality':[], 'low quality':[]}
-            binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/{1}/{2}/{3}/result.csv'.format(dataset,binning_mode, sample, method),
-                                         index_col=0)
+            result[sample] = {'high quality':[]}
+            binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/{1}/{2}/{3}/result.csv'.format(dataset,binning_mode, sample, method), index_col=0)
             if not checkm:
                 high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                         binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
@@ -71,17 +69,9 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
             else:
                 high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                         binning_result['Contamination'].astype(float) < float(contamination * 100))]
-            result[sample]['high quality'].extend(high_quality.index.tolist())
+            high_quality = high_quality.index.tolist()
+            result[sample]['high quality'].extend(high_quality)
 
-            medium_quality = binning_result[(binning_result['Completeness'].astype(float) <= float(90)) & (
-                        binning_result['Completeness'].astype(float) > float(50)) & (
-                                                        binning_result['Contamination'].astype(float) < float(
-                                                    0.1 * 100))]
-            result[sample]['medium quality'].extend(medium_quality.index.tolist())
-
-            low_quality = [temp for temp in binning_result.index.tolist() if
-                           temp not in result[sample]['high quality'] and temp not in result[sample]['medium quality']]
-            result[sample]['low quality'].extend(low_quality)
         return result
 
 
@@ -178,6 +168,17 @@ def plot_high_quality_comparison():
     num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample')
     num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample')
 
+    print(num_dog_maxbin2_single, num_dog_vamb_single, num_dog_metabat2_single, num_dog_semibin_single,
+          num_dog_semibin_pretrain_single)
+    print(num_human_maxbin2_single, num_human_vamb_single, num_human_metabat2_single, num_human_semibin_single,
+          num_human_semibin_pretrain_single)
+    print(num_tara_maxbin2_single, num_tara_vamb_single, num_tara_metabat2_single, num_tara_semibin_single,
+          num_tara_semibin_pretrain_single)
+
+    print(num_dog_vamb_mulit,num_dog_semibin_multi)
+    print(num_human_vamb_multi, num_human_semibin_multi)
+    print(num_tara_vamb_multi,num_tara_semibin_multi)
+
     subset = pd.DataFrame(np.array([[num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single, num_dog_semibin_pretrain_single,num_dog_vamb_mulit,num_dog_semibin_multi]]),columns = ['Maxbin2','VAMB(single)','Metabat2','SemiBin(single)','SemiBin(pre-train)','VAMB(multi)', 'SemiBin(multi)'], index=['Dog gut'])
     ax = subset.plot(kind='bar',figsize=(2,4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3','#1d91c0','#33a02c','#1f78b4'])
     ax.set_yticks(ticks=[0,500,1000,1500,2000,2500,3000,3500])
@@ -263,19 +264,19 @@ def plot_checkm_high_quality_comparison():
 
 
     num_dog_vamb_mulit = get_num_high_quality(method='VAMB',binning_mode='multi_sample',checkm=True)
-    num_dog_s3n2bin_multi = get_num_high_quality(method='S3N2Bin',binning_mode='multi_sample',checkm=True)
+    num_dog_semibin_multi = get_num_high_quality(method='S3N2Bin',binning_mode='multi_sample',checkm=True)
 
     num_human_vamb_multi = get_num_high_quality(dataset='human', method='VAMB',binning_mode='multi_sample',checkm=True)
-    num_human_s3n2bin_multi = get_num_high_quality(dataset='human', method='S3N2Bin',binning_mode='multi_sample',checkm=True)
+    num_human_semibin_multi = get_num_high_quality(dataset='human', method='S3N2Bin',binning_mode='multi_sample',checkm=True)
 
     num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample',checkm=True)
-    num_tara_s3n2bin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample',checkm=True)
+    num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample',checkm=True)
 
-    print(num_dog_vamb_mulit,num_dog_s3n2bin_multi)
-    print(num_human_vamb_multi, num_human_s3n2bin_multi)
-    print(num_tara_vamb_multi,num_tara_s3n2bin_multi)
+    print(num_dog_vamb_mulit,num_dog_semibin_multi)
+    print(num_human_vamb_multi, num_human_semibin_multi)
+    print(num_tara_vamb_multi,num_tara_semibin_multi)
 
-    subset = pd.DataFrame(np.array([[num_dog_vamb_mulit,num_dog_s3n2bin_multi]]),columns = ['VAMB','SemiBin'], index=['Dog gut'])
+    subset = pd.DataFrame(np.array([[num_dog_vamb_mulit,num_dog_semibin_multi]]),columns = ['VAMB','SemiBin'], index=['Dog gut'])
     ax = subset.plot(kind='bar',figsize = (2,4), color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3'])
     ax.set_yticks(ticks=[0,800,1600,2400,3200,4000])
     ax.set_yticklabels(labels=[0,800,1600,2400,3200,4000],fontsize=12,color = 'black')
@@ -285,7 +286,7 @@ def plot_checkm_high_quality_comparison():
     plt.close()
     plt.show()
 
-    subset = pd.DataFrame(np.array([[num_human_vamb_multi, num_human_s3n2bin_multi]]), columns=['VAMB', 'SemiBin'],
+    subset = pd.DataFrame(np.array([[num_human_vamb_multi, num_human_semibin_multi]]), columns=['VAMB', 'SemiBin'],
                           index=['Human gut'])
     ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3'])
     ax.set_yticks(ticks=[0, 400, 800, 1200, 1600, 2000])
@@ -296,12 +297,12 @@ def plot_checkm_high_quality_comparison():
     plt.close()
     plt.show()
 
-    subset = pd.DataFrame(np.array([[num_tara_vamb_multi,num_tara_s3n2bin_multi]]), columns=['VAMB', 'SemiBin'],
+    subset = pd.DataFrame(np.array([[num_tara_vamb_multi,num_tara_semibin_multi]]), columns=['VAMB', 'SemiBin'],
                           index=['Tara'])
     ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3'])
     ax.set_yticks(ticks=[0, 150, 300, 450, 600, 750])
     ax.set_yticklabels(labels=[0, 150, 300, 450, 600, 750], fontsize=12, color='black')
-    ax.set_xticklabels(labels=['Tara'], fontsize=15, color='black', rotation=360)
+    ax.set_xticklabels(labels=['Ocean'], fontsize=15, color='black', rotation=360)
     plt.savefig('Real_tara_hq_multi_checkm.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
@@ -349,21 +350,21 @@ def plot_multi_venn_comparison():
     base_path = 'Results/Real/gtdbtk_annotations/'
     ###Dog
     dog_VAMB_family, dog_VAMB_genus, dog_VAMB_species = get_taxi_list(base_path + 'multi_sample/dog/VAMB/gtdbtk.bac120.summary.tsv')
-    dog_S3N2Bin_family, dog_S3N2Bin_genus, dog_S3N2Bin_species = get_taxi_list(base_path + 'multi_sample/dog/S3N2Bin/gtdbtk.bac120.summary.tsv')
-    dog_S3N2Bin_family_single, dog_S3N2Bin_genus_single, dog_S3N2Bin_species_single = get_taxi_list(base_path + 'single_sample/dog/S3N2Bin/gtdbtk.bac120.summary.tsv')
+    dog_SemiBin_family, dog_SemiBin_genus, dog_SemiBin_species = get_taxi_list(base_path + 'multi_sample/dog/S3N2Bin/gtdbtk.bac120.summary.tsv')
+    dog_SemiBin_family_single, dog_SemiBin_genus_single, dog_SemiBin_species_single = get_taxi_list(base_path + 'single_sample/dog/S3N2Bin/gtdbtk.bac120.summary.tsv')
 
     ### human
     human_VAMB_family, human_VAMB_genus, human_VAMB_species = get_taxi_list(base_path + 'multi_sample/human/VAMB/gtdbtk.bac120.summary.tsv',base_path + 'multi_sample/human/VAMB/gtdbtk.ar122.summary.tsv')
-    human_S3N2Bin_family, human_S3N2Bin_genus, human_S3N2Bin_species = get_taxi_list(base_path + 'multi_sample/human/S3N2Bin/gtdbtk.bac120.summary.tsv',base_path + 'multi_sample/human/S3N2Bin/gtdbtk.ar122.summary.tsv')
-    human_S3N2Bin_family_single, human_S3N2Bin_genus_single, human_S3N2Bin_species_single = get_taxi_list(base_path + 'single_sample/human/S3N2Bin/gtdbtk.bac120.summary.tsv',base_path + 'single_sample/human/S3N2Bin/gtdbtk.ar122.summary.tsv')
+    human_SemiBin_family, human_SemiBin_genus, human_SemiBin_species = get_taxi_list(base_path + 'multi_sample/human/S3N2Bin/gtdbtk.bac120.summary.tsv',base_path + 'multi_sample/human/S3N2Bin/gtdbtk.ar122.summary.tsv')
+    human_SemiBin_family_single, human_SemiBin_genus_single, human_SemiBin_species_single = get_taxi_list(base_path + 'single_sample/human/S3N2Bin/gtdbtk.bac120.summary.tsv',base_path + 'single_sample/human/S3N2Bin/gtdbtk.ar122.summary.tsv')
 
     ### tara
     tara_VAMB_family, tara_VAMB_genus, tara_VAMB_species = get_taxi_list(base_path + 'multi_sample/tara/VAMB/gtdbtk.bac120.summary.tsv')
-    tara_S3N2Bin_family, tara_S3N2Bin_genus, tara_S3N2Bin_species = get_taxi_list(base_path + 'multi_sample/tara/S3N2Bin/gtdbtk.bac120.summary.tsv')
-    tara_S3N2Bin_family_single, tara_S3N2Bin_genus_single, tara_S3N2Bin_species_single = get_taxi_list(base_path + 'single_sample/tara/S3N2Bin/gtdbtk.bac120.summary.tsv')
+    tara_SemiBin_family, tara_SemiBin_genus, tara_SemiBin_species = get_taxi_list(base_path + 'multi_sample/tara/S3N2Bin/gtdbtk.bac120.summary.tsv')
+    tara_SemiBin_family_single, tara_SemiBin_genus_single, tara_SemiBin_species_single = get_taxi_list(base_path + 'single_sample/tara/S3N2Bin/gtdbtk.bac120.summary.tsv')
 
-    out = venn3_unweighted([set(dog_VAMB_family), set(dog_S3N2Bin_family), set(dog_S3N2Bin_family_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(dog_VAMB_family), set(dog_SemiBin_family), set(dog_SemiBin_family_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -373,8 +374,8 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(dog_VAMB_genus), set(dog_S3N2Bin_genus), set(dog_S3N2Bin_genus_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(dog_VAMB_genus), set(dog_SemiBin_genus), set(dog_SemiBin_genus_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -385,8 +386,8 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(dog_VAMB_species), set(dog_S3N2Bin_species), set(dog_S3N2Bin_species_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(dog_VAMB_species), set(dog_SemiBin_species), set(dog_SemiBin_species_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -397,8 +398,8 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(human_VAMB_family), set(human_S3N2Bin_family), set(human_S3N2Bin_family_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(human_VAMB_family), set(human_SemiBin_family), set(human_SemiBin_family_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -409,8 +410,8 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(human_VAMB_genus), set(human_S3N2Bin_genus), set(human_S3N2Bin_genus_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(human_VAMB_genus), set(human_SemiBin_genus), set(human_SemiBin_genus_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -421,8 +422,8 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(human_VAMB_species), set(human_S3N2Bin_species), set(human_S3N2Bin_species_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(human_VAMB_species), set(human_SemiBin_species), set(human_SemiBin_species_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
@@ -433,37 +434,37 @@ def plot_multi_venn_comparison():
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(tara_VAMB_family), set(tara_S3N2Bin_family), set(tara_S3N2Bin_family_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(tara_VAMB_family), set(tara_SemiBin_family), set(tara_SemiBin_family_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
         text.set_fontsize(16)
-    plt.title("family(Tara)", fontsize=20, alpha=1.0, color='black')
+    plt.title("family(Ocean)", fontsize=20, alpha=1.0, color='black')
 
     plt.savefig('multi_sample_tara_family.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(tara_VAMB_genus), set(tara_S3N2Bin_genus), set(tara_S3N2Bin_genus_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(tara_VAMB_genus), set(tara_SemiBin_genus), set(tara_SemiBin_genus_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
         text.set_fontsize(16)
-    plt.title("genus(Tara)", fontsize=20, alpha=1.0, color='black')
+    plt.title("genus(Ocean)", fontsize=20, alpha=1.0, color='black')
 
     plt.savefig('multi_sample_tara_genus.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
 
-    out = venn3_unweighted([set(tara_VAMB_species), set(tara_S3N2Bin_species), set(tara_S3N2Bin_species_single)],
-                           set_labels=('VAMB', '$S^3N^2Bin$_multi', '$S^3N^2Bin$_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
+    out = venn3_unweighted([set(tara_VAMB_species), set(tara_SemiBin_species), set(tara_SemiBin_species_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#1f78b4','#33a02c','#ff7f00'))
     for text in out.subset_labels:
         text.set_fontsize(16)
     for text in out.set_labels:
         text.set_fontsize(16)
-    plt.title("species(Tara)", fontsize=20, alpha=1.0, color='black')
+    plt.title("species(Ocean)", fontsize=20, alpha=1.0, color='black')
 
     plt.savefig('multi_sample_tara_species.pdf', dpi=300, bbox_inches='tight')
     plt.close()
@@ -567,42 +568,45 @@ def get_overlap(dataset = 'dog'):
 
     for sample in sample_list:
         SemiBin_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/SemiBin_pretrain/result.csv'.format(dataset,sample),index_col=0)
-        hq = SemiBin_binning_result[(SemiBin_binning_result['Completeness'].astype(float) > float(90)) & (
-                SemiBin_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
-                           SemiBin_binning_result['pass.GUNC'] == True)]
+
         all_values = SemiBin_binning_result.values
         all_bin = SemiBin_binning_result.index.tolist()
         for bin_index, checkm_index in zip(all_bin, all_values):
             SemiBin_bin_dict[sample + '_' + bin_index] = (checkm_index[10], checkm_index[11])
-
-        mq = SemiBin_binning_result[(SemiBin_binning_result['Completeness'].astype(float) > float(50)) & ( SemiBin_binning_result['Contamination'].astype(float) < float(0.1 * 100))]
-
         SemiBin_all_bin = SemiBin_binning_result.index.tolist()
+        hq = SemiBin_binning_result[(SemiBin_binning_result['Completeness'].astype(float) > float(90)) & (SemiBin_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (SemiBin_binning_result['pass.GUNC'] == True)]
         SemiBin_hq = hq.index.tolist()
-        SemiBin_mq = mq.index.tolist()
-        SemiBin_mq = [temp for temp in SemiBin_mq if temp not in SemiBin_hq]
-        SemiBin_lq = [temp for temp in SemiBin_all_bin if temp not in SemiBin_hq and temp not in SemiBin_mq]
 
-        assert len(SemiBin_hq) + len(SemiBin_mq) + len(SemiBin_lq) == len(SemiBin_all_bin)
+        mq = SemiBin_binning_result[(SemiBin_binning_result['Completeness'].astype(float) >= float(50)) & ( SemiBin_binning_result['Contamination'].astype(float) < float(0.1 * 100))]
+        SemiBin_mq = [temp for temp in mq.index.tolist() if temp not in SemiBin_hq]
+
+        SemiBin_others = [temp for temp in SemiBin_all_bin if temp not in SemiBin_hq and temp not in SemiBin_mq]
+
+        assert len(SemiBin_hq) + len(SemiBin_mq) + len(SemiBin_others) == len(SemiBin_all_bin)
 
         Metabat2_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/Metabat2/result.csv'.format(dataset,sample),index_col=0)
-        hq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) > float(90)) & (
-                Metabat2_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
-                                            Metabat2_binning_result['pass.GUNC'] == True)]
+
         all_values = Metabat2_binning_result.values
         all_bin = Metabat2_binning_result.index.tolist()
+        Metabat2_all_bin = Metabat2_binning_result.index.tolist()
+
         for bin_index, checkm_index in zip(all_bin, all_values):
             Metabat2_bin_dict[sample + '_' + bin_index] = (checkm_index[10], checkm_index[11])
 
-        mq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) > float(50)) & (
-                                            Metabat2_binning_result['Contamination'].astype(float) < float(0.01 * 100))]
-        Metabat2_all_bin = Metabat2_binning_result.index.tolist()
+        hq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) > float(90)) & (
+                Metabat2_binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
+                                            Metabat2_binning_result['pass.GUNC'] == True)]
         Metabat2_hq = hq.index.tolist()
-        Metabat2_mq = mq.index.tolist()
-        Metabat2_mq = [temp for temp in Metabat2_mq if temp not in Metabat2_hq]
-        Metabat2_lq = [temp for temp in Metabat2_all_bin if
-                           temp not in Metabat2_hq and temp not in Metabat2_mq]
-        assert len(Metabat2_hq) + len(Metabat2_mq) + len(Metabat2_lq) == len(Metabat2_all_bin)
+
+        mq = Metabat2_binning_result[(Metabat2_binning_result['Completeness'].astype(float) >= float(50)) & (
+                                            Metabat2_binning_result['Contamination'].astype(float) < float(0.1 * 100))]
+        Metabat2_mq = [temp for temp in mq.index.tolist() if temp not in Metabat2_hq]
+
+        Metabat2_others = [temp for temp in Metabat2_all_bin if
+                       temp not in Metabat2_hq and temp not in Metabat2_mq]
+
+
+        assert len(Metabat2_hq) + len(Metabat2_mq) + len(Metabat2_others) == len(Metabat2_all_bin)
 
         data = pd.read_csv('Results/Real/Mash_dist/{0}/{1}/Mash_SemiBin_pretrain_Metabat2.txt'.format(dataset, sample),header=None,sep='\t')
         data.columns = ['genome_id_1', 'genome_id_2', 'dis', 'p_value', 'Matching-hashes']
@@ -616,7 +620,7 @@ def get_overlap(dataset = 'dog'):
             if SemiBin_bin in SemiBin_hq and Metabat2_bin in Metabat2_mq:
                 SemiBin_mq_list.append(sample + '_' + SemiBin_bin)
 
-            if SemiBin_bin in SemiBin_hq and Metabat2_bin in Metabat2_lq:
+            if SemiBin_bin in SemiBin_hq and Metabat2_bin in Metabat2_others:
                 SemiBin_others_list.append(sample + '_' + SemiBin_bin)
 
             if SemiBin_bin in SemiBin_hq and Metabat2_bin in Metabat2_hq:
@@ -625,25 +629,25 @@ def get_overlap(dataset = 'dog'):
             if SemiBin_bin in SemiBin_mq and Metabat2_bin in Metabat2_hq:
                 Metabat2_mq_list.append(sample + '_' + Metabat2_bin)
 
-            if SemiBin_bin in SemiBin_lq and Metabat2_bin in Metabat2_hq:
+            if SemiBin_bin in SemiBin_others and Metabat2_bin in Metabat2_hq:
                 Metabat2_others_list.append(sample + '_' + Metabat2_bin)
     return SemiBin_hq_list, SemiBin_mq_list, SemiBin_others_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_others_list, SemiBin_bin_dict, Metabat2_bin_dict
 
 def plot_sankey_overlap(dataset = 'dog', output = None):
-    SemiBin_hq_list, SemiBin_mq_list, SemiBin_lq_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_lq_list,_ , _ = get_overlap(dataset)
+    SemiBin_hq_list, SemiBin_mq_list, SemiBin_others_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_others_list,_ , _ = get_overlap(dataset)
 
     SemiBin_high_quality = get_num_high_quality(dataset, 'SemiBin_pretrain')
     Metabat2_high_quality = get_num_high_quality(dataset, 'Metabat2')
-    SemiBin_other = SemiBin_high_quality - len(SemiBin_hq_list) - len(SemiBin_mq_list) - len(SemiBin_lq_list)
-    Metabat2_other = Metabat2_high_quality - len(Metabat2_hq_list) - len(Metabat2_mq_list) - len(Metabat2_lq_list)
+    SemiBin_other = SemiBin_high_quality - len(SemiBin_hq_list) - len(SemiBin_mq_list) - len(SemiBin_others_list)
+    Metabat2_other = Metabat2_high_quality - len(Metabat2_hq_list) - len(Metabat2_mq_list) - len(Metabat2_others_list)
 
     import plotly.graph_objects as go
 
     unique_list = ["HQ", "MQ", "LQ", "Miss", "HQ", "MQ", "LQ", "Miss"]
     sources = [0, 0, 0, 0, 4, 4, 4, 4]
     targets = [4, 5, 6, 7, 0, 1, 2, 3]
-    values = [len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_lq_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_lq_list), SemiBin_other, ]
-    print(len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_lq_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_lq_list), SemiBin_other,)
+    values = [len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_others_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_others_list), SemiBin_other, ]
+    print(len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_others_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_others_list), SemiBin_other,)
     layout = go.Layout(autosize=True, margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
     # plotly setup
     if dataset != 'dog':
@@ -1150,45 +1154,47 @@ def CAT_mmseqs():
 
 
 if __name__ == '__main__':
-    tranfer_multi()
-
-    ## bar plot high quality genomes comparison
-    plot_high_quality_comparison()
-    plot_checkm_high_quality_comparison()
-    ### venn plot multi annotation comparison
-    plot_multi_venn_comparison()
-
-    ### per sample comparison
-    plot_per_sample_comparison(output='dog_compare_persample.pdf')
-    plot_per_sample_comparison('human',output='human_compare_persample.pdf')
-    plot_per_sample_comparison('tara',output='tara_compare_persample.pdf')
 
 
-    plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
-    plot_sankey_overlap(output='dog_sankey.pdf')
-    plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
-
-
-    ### recall, precision, F1-score box plot
+    # tranfer_multi()
+    #
+    # ## bar plot high quality genomes comparison
+    # plot_high_quality_comparison()
+    #plot_checkm_high_quality_comparison()
+    # ### venn plot multi annotation comparison
+    # plot_multi_venn_comparison()
+    #
+    # ### per sample comparison
+    # plot_per_sample_comparison(output='dog_compare_persample.pdf')
+    # plot_per_sample_comparison('human',output='human_compare_persample.pdf')
+    # plot_per_sample_comparison('tara',output='tara_compare_persample.pdf')
+    #
+    #
+    # plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
+    # plot_sankey_overlap(output='dog_sankey.pdf')
+    # plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
+    #
+    #
+    # ### recall, precision, F1-score box plot
     plot_overlap_F1()
     plot_overlap_F1('human')
     plot_overlap_F1('tara')
-
-    ### bar plot the overlap of annotation in all taxi
-    plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
-    plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
-    plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
-
-    ## comparison of known and unknown species
-    plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
-    plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
-    plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
-
-    plot_transfer()
-
-    plot_extra_bar()
-
-    plot_extra_per_sample()
-
-
-    CAT_mmseqs()
+    #
+    # ### bar plot the overlap of annotation in all taxi
+    # plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
+    # plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
+    # plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
+    #
+    # ## comparison of known and unknown species
+    # plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
+    # plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
+    # plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
+    #
+    # plot_transfer()
+    #
+    # plot_extra_bar()
+    #
+    # plot_extra_per_sample()
+    #
+    #
+    # CAT_mmseqs()
