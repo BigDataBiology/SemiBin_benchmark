@@ -45,9 +45,10 @@ def plot_bar(amber_path,if_legend=True,y_label = None,title = None, output = Non
         data.append(method_list[temp][0.95][0:4])
     data = np.array(data)
 
-
     subset= pd.DataFrame(data,index=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2_200','Vamb','SemiBin_200'],columns=[90,80,70,60])
-
+    high_quality_list = subset[90].values
+    high_quality_list.sort()
+    print((high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2])
     ax = subset.plot(kind="barh", stacked=True, legend = False, color = ['#084594','#4292c6','#9ecae1','#deebf7'])
 
     if if_legend:
@@ -230,7 +231,7 @@ def plot_bar_semi_no_semi(amber_path,if_legend=True,y_label = None, output = Non
     subset= pd.DataFrame(np.array([method_list['NoSemi_200'][0.95][0:4],method_list['S3N2Bin_200'][0.95][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position],legend = False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
-
+    print('Semi improvement:', (method_list['S3N2Bin_200'][0.95][0:4][0] - method_list['NoSemi_200'][0.95][0])/ method_list['NoSemi_200'][0.95][0])
     if if_legend:
         ax.legend(['>90', '>80','>70','>60'],
                   loc='upper left', fontsize=10, title="completeness",)
@@ -357,54 +358,54 @@ if __name__ == '__main__':
     base_path = 'Results/Simulated/CAMI_I/whole_comparasion/'
 
     ### whole comparison bar plot
-    amber_path_low = base_path + 'low_whole'
-    amber_path_medium = base_path + 'medium_whole'
-    amber_path_high = base_path + 'high_whole'
-    plot_bar(amber_path_low, y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity(all)', output='CAMI_I_low_whole.pdf')
-    plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', if_legend=False, output='CAMI_I_medium_whole.pdf')
-    plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', if_legend=False, output='CAMI_I_high_whole.pdf')
+    # amber_path_low = base_path + 'low_whole'
+    # amber_path_medium = base_path + 'medium_whole'
+    # amber_path_high = base_path + 'high_whole'
+    # plot_bar(amber_path_low, y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity(all)', output='CAMI_I_low_whole.pdf')
+    # plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', if_legend=False, output='CAMI_I_medium_whole.pdf')
+    # plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', if_legend=False, output='CAMI_I_high_whole.pdf')
 
     ## whole comparison F1 box plot
-    plot_f1_score(amber_path_low,y_label=[0.6,0.7,0.8,0.9,1.0],title='Low-complexity(all)', output='CAMI_I_low_whole_F1.pdf')
-    plot_f1_score(amber_path_medium,title='Medium-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size = 3, output='CAMI_I_medium_whole_F1.pdf')
-    plot_f1_score(amber_path_high,title='High-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size=2, output='CAMI_I_high_whole_F1.pdf')
-
-    ### common comparison bar plot
-    amber_path_low_common = base_path + 'low_common'
-    amber_path_medium_common = base_path + 'medium_common'
-    amber_path_high_common = base_path + 'high_common'
-    plot_bar(amber_path_low_common, y_label=[0, 2, 4, 6, 8, 10], title='Low-complexity(common strain)', output='CAMI_I_low_common.pdf')
-    plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30, 40, 50], title='Medium-complexity(common strain)',
-             if_legend=False,output='CAMI_I_medium_common.pdf')
-    plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
-             if_legend=False,output='CAMI_I_high_common.pdf')
-
-    ### unique comparison bar plot
-    amber_path_low_unique = base_path + 'low_unique'
-    amber_path_medium_unique = base_path + 'medium_unique'
-    amber_path_high_unique = base_path + 'high_unique'
-
-    plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)', if_legend=False, output='CAMI_I_low_unique.pdf')
-    plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45, 60, 75], title='Medium-complexity(unique strain)',
-             if_legend=False, output='CAMI_I_medium_unique.pdf')
-    plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300, 400], title='High-complexity(unique strain)',
-             if_legend=False, output='CAMI_I_high_unique.pdf')
-
-    ### compare to Metabat2 with different parameters
-    plot_SemiBin_Metabat(amber_path_low,if_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
-    plot_SemiBin_Metabat(amber_path_medium,y_label=[0,20,40,60,80,100], output='CAMI_I_medium_SemiBin_Metabat2.pdf')
-    plot_SemiBin_Metabat(amber_path_high,y_label=[0,100,200,300,400,500], output='CAMI_I_high_SemiBin_Metabat2.pdf')
-
-    base_path = 'Results/Simulated/CAMI_I/mmseqs_CAT/'
-    amber_low_mmseqs_CAT = base_path + 'amber_low'
-    amber_medium_mmseqs_CAT = base_path + 'amber_medium'
-    amber_high_mmseqs_CAT = base_path + 'amber_high'
-
-    ### compare results with CAT or mmseqs
-    plot_CAT_mmseqs(amber_low_mmseqs_CAT, if_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
-    plot_CAT_mmseqs(amber_medium_mmseqs_CAT,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
-    plot_CAT_mmseqs(amber_high_mmseqs_CAT,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
-
+    # plot_f1_score(amber_path_low,y_label=[0.6,0.7,0.8,0.9,1.0],title='Low-complexity(all)', output='CAMI_I_low_whole_F1.pdf')
+    # plot_f1_score(amber_path_medium,title='Medium-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size = 3, output='CAMI_I_medium_whole_F1.pdf')
+    # plot_f1_score(amber_path_high,title='High-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size=2, output='CAMI_I_high_whole_F1.pdf')
+    #
+    # ### common comparison bar plot
+    # amber_path_low_common = base_path + 'low_common'
+    # amber_path_medium_common = base_path + 'medium_common'
+    # amber_path_high_common = base_path + 'high_common'
+    # plot_bar(amber_path_low_common, y_label=[0, 2, 4, 6, 8, 10], title='Low-complexity(common strain)', output='CAMI_I_low_common.pdf')
+    # plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30, 40, 50], title='Medium-complexity(common strain)',
+    #          if_legend=False,output='CAMI_I_medium_common.pdf')
+    # plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
+    #          if_legend=False,output='CAMI_I_high_common.pdf')
+    #
+    # ### unique comparison bar plot
+    # amber_path_low_unique = base_path + 'low_unique'
+    # amber_path_medium_unique = base_path + 'medium_unique'
+    # amber_path_high_unique = base_path + 'high_unique'
+    #
+    # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)', if_legend=False, output='CAMI_I_low_unique.pdf')
+    # plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45, 60, 75], title='Medium-complexity(unique strain)',
+    #          if_legend=False, output='CAMI_I_medium_unique.pdf')
+    # plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300, 400], title='High-complexity(unique strain)',
+    #          if_legend=False, output='CAMI_I_high_unique.pdf')
+    #
+    # ### compare to Metabat2 with different parameters
+    # plot_SemiBin_Metabat(amber_path_low,if_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
+    # plot_SemiBin_Metabat(amber_path_medium,y_label=[0,20,40,60,80,100], output='CAMI_I_medium_SemiBin_Metabat2.pdf')
+    # plot_SemiBin_Metabat(amber_path_high,y_label=[0,100,200,300,400,500], output='CAMI_I_high_SemiBin_Metabat2.pdf')
+    #
+    # base_path = 'Results/Simulated/CAMI_I/mmseqs_CAT/'
+    # amber_low_mmseqs_CAT = base_path + 'amber_low'
+    # amber_medium_mmseqs_CAT = base_path + 'amber_medium'
+    # amber_high_mmseqs_CAT = base_path + 'amber_high'
+    #
+    # ### compare results with CAT or mmseqs
+    # plot_CAT_mmseqs(amber_low_mmseqs_CAT, if_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
+    # plot_CAT_mmseqs(amber_medium_mmseqs_CAT,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
+    # plot_CAT_mmseqs(amber_high_mmseqs_CAT,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
+    #
     # ## bar plot with Semi VS no semi
     amber_base = 'Results/Simulated/CAMI_I/No_semi_mmseqs/'
     amber_path_low_nosemi = amber_base + 'low_no_semi'
@@ -414,19 +415,19 @@ if __name__ == '__main__':
     plot_bar_semi_no_semi(amber_path_low_nosemi, y_label=[0,5,10,15,20,25,30],output='CAMI_I_low_semi_nosemi.pdf')
     plot_bar_semi_no_semi(amber_path_medium_nosemi,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
     plot_bar_semi_no_semi(amber_path_high_nosemi, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
-
-    ### F1 box plot with Semi vs no semi
-    plot_f1_boxplot_semi_to_nosemi(amber_path_low_nosemi, y_label=[0.6, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],
-                                   size=5,output='CAMI_I_low_semi_nosemi_F1.pdf' )
-    plot_f1_boxplot_semi_to_nosemi(amber_path_medium_nosemi, y_label=[0.6, 0.7, 0.8, 0.9, 1.0], size=3,output='CAMI_I_medium_semi_nosemi_F1.pdf')
-    plot_f1_boxplot_semi_to_nosemi(amber_path_high_nosemi, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=2,output='CAMI_I_high_semi_nosemi_F1.pdf')
-
-    ### comparison of generalization(S3N2Bin_c, S3N2Bin_m, S3N2Bin_mc)
-    base_path = 'Results/Simulated/CAMI_I/generalization_comparision/'
-    amber_low_path = base_path + 'amber_low_generalization'
-    amber_medium_path = base_path + 'amber_medium_generalization'
-    amber_high_path = base_path + 'amber_high_generalization'
-
-    plot_bar_generalization(amber_low_path,amber_path_low_nosemi, 'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
-    plot_bar_generalization(amber_medium_path, amber_path_medium_nosemi,'Medium complexity', y_label=[0,20,40,60,80],if_legend=False, output='CAMI_I_generalization_medium.pdf')
-    plot_bar_generalization(amber_high_path, amber_path_high_nosemi, 'High complexity', y_label=[0,100,200,300,400],if_legend=False, output='CAMI_I_generalization_high.pdf')
+    #
+    # ### F1 box plot with Semi vs no semi
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_low_nosemi, y_label=[0.6, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],
+    #                                size=5,output='CAMI_I_low_semi_nosemi_F1.pdf' )
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_medium_nosemi, y_label=[0.6, 0.7, 0.8, 0.9, 1.0], size=3,output='CAMI_I_medium_semi_nosemi_F1.pdf')
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_high_nosemi, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=2,output='CAMI_I_high_semi_nosemi_F1.pdf')
+    #
+    # ### comparison of generalization(S3N2Bin_c, S3N2Bin_m, S3N2Bin_mc)
+    # base_path = 'Results/Simulated/CAMI_I/generalization_comparision/'
+    # amber_low_path = base_path + 'amber_low_generalization'
+    # amber_medium_path = base_path + 'amber_medium_generalization'
+    # amber_high_path = base_path + 'amber_high_generalization'
+    #
+    # plot_bar_generalization(amber_low_path,amber_path_low_nosemi, 'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
+    # plot_bar_generalization(amber_medium_path, amber_path_medium_nosemi,'Medium complexity', y_label=[0,20,40,60,80],if_legend=False, output='CAMI_I_generalization_medium.pdf')
+    # plot_bar_generalization(amber_high_path, amber_path_high_nosemi, 'High complexity', y_label=[0,100,200,300,400],if_legend=False, output='CAMI_I_generalization_high.pdf')

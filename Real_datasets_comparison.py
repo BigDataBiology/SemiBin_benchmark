@@ -168,16 +168,16 @@ def plot_high_quality_comparison():
     num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample')
     num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample')
 
-    print(num_dog_maxbin2_single, num_dog_vamb_single, num_dog_metabat2_single, num_dog_semibin_single,
-          num_dog_semibin_pretrain_single)
-    print(num_human_maxbin2_single, num_human_vamb_single, num_human_metabat2_single, num_human_semibin_single,
-          num_human_semibin_pretrain_single)
-    print(num_tara_maxbin2_single, num_tara_vamb_single, num_tara_metabat2_single, num_tara_semibin_single,
-          num_tara_semibin_pretrain_single)
-
-    print(num_dog_vamb_mulit,num_dog_semibin_multi)
-    print(num_human_vamb_multi, num_human_semibin_multi)
-    print(num_tara_vamb_multi,num_tara_semibin_multi)
+    # print(num_dog_maxbin2_single, num_dog_vamb_single, num_dog_metabat2_single, num_dog_semibin_single,
+    #       num_dog_semibin_pretrain_single)
+    # print(num_human_maxbin2_single, num_human_vamb_single, num_human_metabat2_single, num_human_semibin_single,
+    #       num_human_semibin_pretrain_single)
+    # print(num_tara_maxbin2_single, num_tara_vamb_single, num_tara_metabat2_single, num_tara_semibin_single,
+    #       num_tara_semibin_pretrain_single)
+    #
+    # print(num_dog_vamb_mulit,num_dog_semibin_multi)
+    # print(num_human_vamb_multi, num_human_semibin_multi)
+    # print(num_tara_vamb_multi,num_tara_semibin_multi)
 
     subset = pd.DataFrame(np.array([[num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single, num_dog_semibin_pretrain_single,num_dog_vamb_mulit,num_dog_semibin_multi]]),columns = ['Maxbin2','VAMB(single)','Metabat2','SemiBin(single)','SemiBin(pre-train)','VAMB(multi)', 'SemiBin(multi)'], index=['Dog gut'])
     ax = subset.plot(kind='bar',figsize=(2,4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3','#1d91c0','#33a02c','#1f78b4'])
@@ -187,7 +187,7 @@ def plot_high_quality_comparison():
     plt.savefig('Real_dog_hq.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
-
+    print(subset)
     subset = pd.DataFrame(np.array([[num_human_maxbin2_single,num_human_vamb_single,num_human_metabat2_single,num_human_semibin_single, num_human_semibin_pretrain_single,num_human_vamb_multi,num_human_semibin_multi]]),columns = ['Maxbin2','VAMB(single)','Metabat2','SemiBin(single)','SemiBin(pre-train)','VAMB(multi)', 'SemiBin(multi)'], index=['Human gut'])
     ax = subset.plot(kind='bar',figsize=(2,4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3','#1d91c0','#33a02c','#1f78b4'])
     ax.set_yticks(ticks=[0,300,600,900,1200,1500])
@@ -197,7 +197,7 @@ def plot_high_quality_comparison():
     plt.savefig('Real_human_hq.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
-
+    print(subset)
     subset = pd.DataFrame(np.array([[num_tara_maxbin2_single,num_tara_vamb_single,num_tara_metabat2_single,num_tara_semibin_single,num_tara_semibin_pretrain_single, num_tara_vamb_multi,num_tara_semibin_multi]]),columns = ['Maxbin2','VAMB(single)','Metabat2','SemiBin(single)','SemiBin(pre-train)','VAMB(multi)', 'SemiBin(multi)'], index=['Tara'])
     ax = subset.plot(kind='bar',figsize=(2,4),legend = False, color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3','#1d91c0','#33a02c','#1f78b4'])
     ax.set_yticks(ticks=[0,100,200,300,400,500])
@@ -207,7 +207,7 @@ def plot_high_quality_comparison():
     plt.savefig('Real_tara_hq.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
-
+    print(subset)
 
 def plot_checkm_high_quality_comparison():
     num_dog_maxbin2_single = get_num_high_quality(checkm=True)
@@ -648,6 +648,11 @@ def plot_sankey_overlap(dataset = 'dog', output = None):
     targets = [4, 5, 6, 7, 0, 1, 2, 3]
     values = [len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_others_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_others_list), SemiBin_other, ]
     print(len(Metabat2_hq_list), len(Metabat2_mq_list), len(Metabat2_others_list), Metabat2_other,len(SemiBin_hq_list), len(SemiBin_mq_list), len(SemiBin_others_list), SemiBin_other,)
+
+    print(Metabat2_high_quality - len(Metabat2_hq_list), (Metabat2_high_quality - len(Metabat2_hq_list)) / Metabat2_high_quality)
+
+    print(SemiBin_high_quality - len(SemiBin_hq_list), (SemiBin_high_quality - len(SemiBin_hq_list)) / SemiBin_high_quality)
+
     layout = go.Layout(autosize=True, margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
     # plotly setup
     if dataset != 'dog':
@@ -1020,9 +1025,8 @@ def plot_extra_bar():
         hq_SemiBin_pretrain_out_western.append(len(result_SemiBin_pretrain_out_western[sample]['high quality']))
     print('non-western:', wilcoxon(hq_Metabat2_non_western, hq_SemiBin_pretrain_out_non_western))
     print('western:', wilcoxon(hq_Metabat2_western, hq_SemiBin_pretrain_out_western))
-
-    print(np.sum(hq_Metabat2_non_western), np.sum(hq_SemiBin_non_western), np.sum(hq_SemiBin_pretrain_same_non_western), np.sum(hq_SemiBin_pretrain_out_non_western))
-    print(np.sum(hq_Metabat2_western), np.sum(hq_SemiBin_western), np.sum(hq_SemiBin_pretrain_same_western), np.sum(hq_SemiBin_pretrain_out_western))
+    print((np.sum(hq_SemiBin_pretrain_out_western) - np.sum(hq_Metabat2_western)) / np.sum(hq_Metabat2_western))
+    print((np.sum(hq_SemiBin_pretrain_out_non_western) - np.sum(hq_Metabat2_non_western)) / np.sum(hq_Metabat2_non_western))
 
 
     subset = pd.DataFrame(np.array([[np.sum(hq_Metabat2_non_western),np.sum(hq_SemiBin_non_western), np.sum(hq_SemiBin_pretrain_same_non_western), np.sum(hq_SemiBin_pretrain_out_non_western)]]),columns = ['Metabat2','SemiBin','SemiBin(pre-train; internal)','SemiBin(pre-train; external)'], index=['Non-western human gut'])
@@ -1034,7 +1038,7 @@ def plot_extra_bar():
     #ax.legend(loc='lower left', fontsize=6)
     plt.show()
     plt.savefig('holdout_Non_western_bar.pdf', dpi=300, bbox_inches='tight')
-
+    print(subset)
     subset = pd.DataFrame(np.array([[np.sum(hq_Metabat2_western),np.sum(hq_SemiBin_western), np.sum(hq_SemiBin_pretrain_same_western), np.sum(hq_SemiBin_pretrain_out_western)]]),columns = ['Metabat2','SemiBin','SemiBin(pre-train; internal)','SemiBin(pre-train; external)'], index=['Western human gut'])
     ax = subset.plot(kind='bar',width = 0.3,color=['#fb9a99','#b2df8a','#fdbf6f','#a6cee3'])
     ax.set_yticks(ticks=[0,100,200,300,400,500,600])
@@ -1044,6 +1048,8 @@ def plot_extra_bar():
     #ax.legend(loc='lower left', fontsize=6)
     plt.show()
     plt.savefig('holdout_western_bar.pdf', dpi=300, bbox_inches='tight')
+    print(subset)
+
 
 def plot_extra_per_sample():
     result_Metabat2_non_western = get_result('PRJNA504891', 'Metabat2')
@@ -1112,7 +1118,7 @@ def plot_extra_per_sample():
     plt.plot([0, 35], [0, 35], c='black')
     plt.title('Non-western human gut', fontsize=15)
     plt.show()
-    plt.savefig('/home1/pansj/S3N2Bin_benchmark/holdout_non_western_persample.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('holdout_non_western_persample.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -1126,7 +1132,7 @@ def plot_extra_per_sample():
     plt.plot([0, 15], [0, 15], c='black')
     plt.title('Western human gut', fontsize=15)
     plt.show()
-    plt.savefig('/home1/pansj/S3N2Bin_benchmark/holdout_western_persample.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('holdout_western_persample.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
 def CAT_mmseqs():
@@ -1159,7 +1165,7 @@ if __name__ == '__main__':
     # tranfer_multi()
     #
     # ## bar plot high quality genomes comparison
-    # plot_high_quality_comparison()
+    #plot_high_quality_comparison()
     #plot_checkm_high_quality_comparison()
     # ### venn plot multi annotation comparison
     # plot_multi_venn_comparison()
@@ -1176,9 +1182,9 @@ if __name__ == '__main__':
     #
     #
     # ### recall, precision, F1-score box plot
-    plot_overlap_F1()
-    plot_overlap_F1('human')
-    plot_overlap_F1('tara')
+    # plot_overlap_F1()
+    # plot_overlap_F1('human')
+    # plot_overlap_F1('tara')
     #
     # ### bar plot the overlap of annotation in all taxi
     # plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
@@ -1192,9 +1198,9 @@ if __name__ == '__main__':
     #
     # plot_transfer()
     #
-    # plot_extra_bar()
-    #
-    # plot_extra_per_sample()
+    plot_extra_bar()
+
+    plot_extra_per_sample()
     #
     #
     # CAT_mmseqs()

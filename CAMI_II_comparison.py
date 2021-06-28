@@ -157,6 +157,9 @@ def plot_bar_plot():
     print(skin_strain_metabat2,skin_species_metabat2,skin_genus_metabat2)
     print(skin_strain_vamb,skin_species_vamb,skin_genus_vamb)
     print(skin_strain_SemiBin,skin_species_SemiBin,skin_genus_SemiBin)
+    print('Skin_strain_improvement:', (skin_strain_SemiBin-skin_strain_metabat2)/skin_strain_metabat2, (skin_strain_SemiBin-skin_strain_vamb)/skin_strain_vamb)
+    print('Skin_species_improvement:', (skin_species_SemiBin-skin_species_metabat2)/skin_species_metabat2, (skin_species_SemiBin-skin_species_vamb)/skin_species_vamb)
+    print('Skin_genus_improvement:', (skin_genus_SemiBin-skin_genus_metabat2)/skin_genus_metabat2, (skin_genus_SemiBin-skin_genus_vamb)/skin_genus_vamb)
 
     oral_result = get_hq_taxi(dataset='oral')
     oral_strain_metabat2 = len(oral_result['Metabat2']['strain'])
@@ -173,6 +176,10 @@ def plot_bar_plot():
     print(oral_strain_metabat2,oral_species_metabat2,oral_genus_metabat2)
     print(oral_strain_vamb,oral_species_vamb,oral_genus_vamb)
     print(oral_strain_SemiBin,oral_species_SemiBin,oral_genus_SemiBin)
+    print('oral_strain_improvement:', (oral_strain_SemiBin-oral_strain_metabat2)/oral_strain_metabat2, (oral_strain_SemiBin-oral_strain_vamb)/oral_strain_vamb)
+    print('oral_species_improvement:', (oral_species_SemiBin-oral_species_metabat2)/oral_species_metabat2, (oral_species_SemiBin-oral_species_vamb)/oral_species_vamb)
+    print('oral_genus_improvement:', (oral_genus_SemiBin-oral_genus_metabat2)/oral_genus_metabat2, (oral_genus_SemiBin-oral_genus_vamb)/oral_genus_vamb)
+
 
     subset = pd.DataFrame(np.array([[skin_strain_metabat2,skin_strain_vamb,skin_strain_SemiBin],[oral_strain_metabat2,oral_strain_vamb,oral_strain_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
     ax = subset.plot(kind='bar',width = 0.6,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
@@ -661,22 +668,22 @@ def plot_generalization():
 
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
-    plot_bar_plot()
-    plot_comparsion_Metabat2()
-
-    ### venn plot in strain/species/genus level
-    plot_venn_plot()
-
-    ### plot similarity distribution of oral and skin
-    plot_similarity_distribution()
-
-    ### bar plot with different similarities
-    plot_bar_strain_simiarity()
-
-    # ### violinplot of the abundance
-    plot_abundance(dataset='skin',level = 'species', output='CAMI_II_abundance_skin_species.pdf')
-    plot_abundance(dataset='skin', level='strain', output='CAMI_II_abundance_skin_strain.pdf')
-    plot_abundance(dataset='oral', level='species', output='CAMI_II_abundance_oral_species.pdf')
-    plot_abundance(dataset='oral', level='strain', output='CAMI_II_abundance_oral_strain.pdf')
-
+    #plot_bar_plot()
+    # plot_comparsion_Metabat2()
+    #
+    # ### venn plot in strain/species/genus level
+    # plot_venn_plot()
+    #
+    # ### plot similarity distribution of oral and skin
+    # plot_similarity_distribution()
+    #
+    # ### bar plot with different similarities
+    # plot_bar_strain_simiarity()
+    #
+    # # ### violinplot of the abundance
+    # plot_abundance(dataset='skin',level = 'species', output='CAMI_II_abundance_skin_species.pdf')
+    # plot_abundance(dataset='skin', level='strain', output='CAMI_II_abundance_skin_strain.pdf')
+    # plot_abundance(dataset='oral', level='species', output='CAMI_II_abundance_oral_species.pdf')
+    # plot_abundance(dataset='oral', level='strain', output='CAMI_II_abundance_oral_strain.pdf')
+    #
     plot_generalization()
