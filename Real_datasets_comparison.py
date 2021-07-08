@@ -24,13 +24,13 @@ PRJNA504891_list = ['SRR8784379', 'SRR8180449', 'SRR8784372', 'SRR8784373', 'SRR
 
 PRJNA290729_list = ['SAMN03922475', 'SAMN03922449', 'SAMN03922521', 'SAMN03922488', 'SAMN03922526', 'SAMN03922468', 'SAMN03922500', 'SAMN03922512', 'SAMN03922494', 'SAMN03922450', 'SAMN03922479', 'SAMN03922484', 'SAMN03922492', 'SAMN03922470', 'SAMN03922480', 'SAMN03922505', 'SAMN03922516', 'SAMN03922527', 'SAMN03922513', 'SAMN03922472', 'SAMN03922504', 'SAMN03922523', 'SAMN03922528', 'SAMN03922510', 'SAMN03922497', 'SAMN03922518', 'SAMN03922465', 'SAMN03922517', 'SAMN03922522', 'SAMN03922458', 'SAMN03922511', 'SAMN03922531', 'SAMN03922462', 'SAMN03922457', 'SAMN03922507', 'SAMN03922509', 'SAMN03922474', 'SAMN03922529', 'SAMN03922456', 'SAMN03922506', 'SAMN03922464', 'SAMN03922453', 'SAMN03922463', 'SAMN03922466', 'SAMN03922539', 'SAMN03922503', 'SAMN03922477', 'SAMN03922495', 'SAMN03922451', 'SAMN03922538', 'SAMN03922461', 'SAMN03922532', 'SAMN03922476', 'SAMN03922469', 'SAMN03922540', 'SAMN03922533', 'SAMN03922530', 'SAMN03922536', 'SAMN03922519', 'SAMN03922471', 'SAMN03922489', 'SAMN03922524', 'SAMN03922496', 'SAMN03922467', 'SAMN03922520', 'SAMN03922483', 'SAMN03922452', 'SAMN03922508', 'SAMN03922486', 'SAMN03922473', 'SAMN03922515', 'SAMN03922455', 'SAMN03922534', 'SAMN03922490', 'SAMN03922498', 'SAMN03922525', 'SAMN03922487', 'SAMN03922482', 'SAMN03922501', 'SAMN03922537', 'SAMN03922535', 'SAMN03922485', 'SAMN03922459', 'SAMN03922499', 'SAMN03922514', 'SAMN03922454', 'SAMN03922493', 'SAMN03922478', 'SAMN03922491', 'SAMN03922481', 'SAMN03922502', 'SAMN03922460']
 
-def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', checkm = False):
+def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', checkm_only = False):
     """
     dataset: dog, human, gut
     method: Maxbin2, Metabat2, VAMB, S3N2Bin
     binning_mode: single_sample, multi_sample
 
-    checkm: if just using checkm or using checkm and GUNC
+    checkm_only: if just using checkm or using checkm and GUNC
     """
     if dataset == 'dog':
         sample_list = dog_list
@@ -47,7 +47,7 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
     if method == 'VAMB' and binning_mode == 'multi_sample':
         result = {'high quality': []}
         binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/multi_sample/VAMB_multi.csv'.format(dataset),index_col=0)
-        if not checkm:
+        if not checkm_only:
             high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                     binning_result['Contamination'].astype(float) < float(contamination * 100)) & (binning_result['pass.GUNC'] == True)]
         else:
@@ -62,7 +62,7 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
         for sample in sample_list:
             result[sample] = {'high quality':[]}
             binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/{1}/{2}/{3}/result.csv'.format(dataset,binning_mode, sample, method), index_col=0)
-            if not checkm:
+            if not checkm_only:
                 high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                         binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
                                                           binning_result['pass.GUNC'] == True)]
@@ -76,13 +76,13 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
 
 
 
-def get_num_high_quality(dataset = 'dog', method = 'Maxbin2', binning_mode = 'single_sample',checkm = False):
+def get_num_high_quality(dataset = 'dog', method = 'Maxbin2', binning_mode = 'single_sample', checkm_only = False):
     """
     dataset: dog, human, gut
     method: Maxbin2, Metabat2, VAMB, S3N2Bin
     binning_mode: single_sample, multi_sample
     """
-    result = get_result(dataset, method, binning_mode, checkm)
+    result = get_result(dataset, method, binning_mode, checkm_only)
     if method == 'VAMB' and binning_mode == 'multi_sample':
         num_hq = len(result['high quality'])
         return num_hq
@@ -210,23 +210,23 @@ def plot_high_quality_comparison():
     print(subset)
 
 def plot_checkm_high_quality_comparison():
-    num_dog_maxbin2_single = get_num_high_quality(checkm=True)
-    num_dog_vamb_single = get_num_high_quality(method='VAMB',checkm=True)
-    num_dog_metabat2_single = get_num_high_quality(method='Metabat2',checkm=True)
-    num_dog_semibin_single = get_num_high_quality(method='S3N2Bin',checkm=True)
-    num_dog_semibin_pretrain_single = get_num_high_quality(method='SemiBin_pretrain',checkm=True)
+    num_dog_maxbin2_single = get_num_high_quality(checkm_only=True)
+    num_dog_vamb_single = get_num_high_quality(method='VAMB',checkm_only=True)
+    num_dog_metabat2_single = get_num_high_quality(method='Metabat2',checkm_only=True)
+    num_dog_semibin_single = get_num_high_quality(method='S3N2Bin',checkm_only=True)
+    num_dog_semibin_pretrain_single = get_num_high_quality(method='SemiBin_pretrain',checkm_only=True)
 
-    num_human_maxbin2_single = get_num_high_quality(dataset='human',checkm=True)
-    num_human_vamb_single = get_num_high_quality(dataset='human', method='VAMB',checkm=True)
-    num_human_metabat2_single = get_num_high_quality(dataset='human', method='Metabat2',checkm=True)
-    num_human_semibin_single = get_num_high_quality(dataset='human', method='S3N2Bin',checkm=True)
-    num_human_semibin_pretrain_single = get_num_high_quality(dataset='human', method='SemiBin_pretrain',checkm=True)
+    num_human_maxbin2_single = get_num_high_quality(dataset='human',checkm_only=True)
+    num_human_vamb_single = get_num_high_quality(dataset='human', method='VAMB',checkm_only=True)
+    num_human_metabat2_single = get_num_high_quality(dataset='human', method='Metabat2',checkm_only=True)
+    num_human_semibin_single = get_num_high_quality(dataset='human', method='S3N2Bin',checkm_only=True)
+    num_human_semibin_pretrain_single = get_num_high_quality(dataset='human', method='SemiBin_pretrain',checkm_only=True)
 
-    num_tara_maxbin2_single = get_num_high_quality(dataset='tara',checkm=True)
-    num_tara_vamb_single = get_num_high_quality(dataset='tara', method='VAMB',checkm=True)
-    num_tara_metabat2_single = get_num_high_quality(dataset='tara', method='Metabat2',checkm=True)
-    num_tara_semibin_single = get_num_high_quality(dataset='tara', method='S3N2Bin',checkm=True)
-    num_tara_semibin_pretrain_single = get_num_high_quality(dataset='tara', method='SemiBin_pretrain',checkm=True)
+    num_tara_maxbin2_single = get_num_high_quality(dataset='tara',checkm_only=True)
+    num_tara_vamb_single = get_num_high_quality(dataset='tara', method='VAMB',checkm_only=True)
+    num_tara_metabat2_single = get_num_high_quality(dataset='tara', method='Metabat2',checkm_only=True)
+    num_tara_semibin_single = get_num_high_quality(dataset='tara', method='S3N2Bin',checkm_only=True)
+    num_tara_semibin_pretrain_single = get_num_high_quality(dataset='tara', method='SemiBin_pretrain',checkm_only=True)
 
 
     print(num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single, num_dog_semibin_pretrain_single)
@@ -263,14 +263,14 @@ def plot_checkm_high_quality_comparison():
     plt.show()
 
 
-    num_dog_vamb_mulit = get_num_high_quality(method='VAMB',binning_mode='multi_sample',checkm=True)
+    num_dog_vamb_mulit = get_num_high_quality(method='VAMB',binning_mode='multi_sample',checkm_only=True)
     num_dog_semibin_multi = get_num_high_quality(method='S3N2Bin',binning_mode='multi_sample',checkm=True)
 
-    num_human_vamb_multi = get_num_high_quality(dataset='human', method='VAMB',binning_mode='multi_sample',checkm=True)
-    num_human_semibin_multi = get_num_high_quality(dataset='human', method='S3N2Bin',binning_mode='multi_sample',checkm=True)
+    num_human_vamb_multi = get_num_high_quality(dataset='human', method='VAMB',binning_mode='multi_sample',checkm_only=True)
+    num_human_semibin_multi = get_num_high_quality(dataset='human', method='S3N2Bin',binning_mode='multi_sample',checkm_only=True)
 
-    num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample',checkm=True)
-    num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample',checkm=True)
+    num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample',checkm_only=True)
+    num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='S3N2Bin', binning_mode='multi_sample',checkm_only=True)
 
     print(num_dog_vamb_mulit,num_dog_semibin_multi)
     print(num_human_vamb_multi, num_human_semibin_multi)
