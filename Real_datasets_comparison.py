@@ -34,14 +34,16 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
     """
     if dataset == 'dog':
         sample_list = dog_list
-    if dataset == 'human':
+    elif dataset == 'human':
         sample_list = human_list
-    if dataset == 'tara':
+    elif dataset == 'tara':
         sample_list = tara_list
-    if dataset == 'PRJNA290729':
+    elif dataset == 'PRJNA290729':
         sample_list = PRJNA290729_list
-    if dataset == 'PRJNA504891':
+    elif dataset == 'PRJNA504891':
         sample_list = PRJNA504891_list
+    else:
+        raise KeyError(f"Unknown dataset {dataset}")
 
     result = {}
     if method == 'VAMB' and binning_mode == 'multi_sample':
