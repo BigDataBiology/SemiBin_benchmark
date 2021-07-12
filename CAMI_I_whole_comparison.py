@@ -10,42 +10,43 @@ import seaborn as sns
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-def get_method_list(amber_path):
+
+def get_number_genomes_per_quality(amber_path, return_pandas=False):
     genome_path = os.path.join(amber_path, 'genome')
-    methold_path_list = []
-    method_list = {}
+    table = {}
     for root, dirs, files in os.walk(genome_path, topdown=False):
         for name in dirs:
-            methold_path_list.append(os.path.join(root, name))
-            method_list[os.path.join(root, name).split('/')[-1]] = {0.95: []}
+            method_path = os.path.join(root, name)
 
-    for method_path in methold_path_list:
-        metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
-        com_90_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.9)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0]
-        com_80_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.8)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - com_90_pur_95
-        com_70_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.7)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (com_90_pur_95 + com_80_pur_95)
-        com_60_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.6)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (
-                                com_90_pur_95 + com_80_pur_95 + com_70_pur_95)
-        com_50_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.5)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (
-                                com_90_pur_95 + com_80_pur_95 + com_70_pur_95 + com_60_pur_95)
-        method_list[method_path.split('/')[-1]][0.95].extend(
-            [com_90_pur_95, com_80_pur_95, com_70_pur_95, com_60_pur_95, com_50_pur_95])
-    return method_list
+            metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
+            metric = metric.query('`Purity (bp)` >= 0.95')
+            com_90_pur_95 = metric.eval('`Completeness (bp)` > 0.9').sum()
+            com_80_pur_95 = metric.eval('`Completeness (bp)` > 0.8').sum() - (
+                        com_90_pur_95)
+            com_70_pur_95 = metric.eval('`Completeness (bp)` > 0.7').sum() - (
+                        com_90_pur_95 + com_80_pur_95)
+            com_60_pur_95 = metric.eval('`Completeness (bp)` > 0.6').sum() - (
+                        com_90_pur_95 + com_80_pur_95 + com_70_pur_95)
+            com_50_pur_95 = metric.eval('`Completeness (bp)` > 0.5').sum() - (
+                        com_90_pur_95 + com_80_pur_95 + com_70_pur_95 + com_60_pur_95)
+            table[method_path.split('/')[-1]]= [com_90_pur_95, com_80_pur_95, com_70_pur_95, com_60_pur_95, com_50_pur_95]
+    if return_pandas:
+        return pd.DataFrame(table, index=[90,80,70,60,50]).T
+    return {k:{0.95:v} for k,v in table.items()}
 
 def plot_bar(amber_path,if_legend=True,y_label = None,title = None, output = None):
-    method_list = get_method_list(amber_path)
-    method = ['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2_200','Vamb','S3N2Bin_200']
-    data = []
-    for temp in method:
-        data.append(method_list[temp][0.95][0:4])
-    data = np.array(data)
-
-    subset= pd.DataFrame(data,index=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2_200','Vamb','SemiBin_200'],columns=[90,80,70,60])
+    data = get_number_genomes_per_quality(amber_path, return_pandas=True)
+    subset = data.loc[[
+            'COCACOLA',
+            'SolidBin-naive',
+            'SolidBin-CL',
+            'SolidBin-SFS-CL',
+            'SolidBin-coalign',
+            'Maxbin2',
+            'Metabat2_200',
+            'Vamb',
+            'S3N2Bin_200']]
+    subset.rename(index={'S3N2Bin_200': 'SemiBin_200'}, inplace=True)
     high_quality_list = subset[90].values
     high_quality_list.sort()
     print((high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2])
@@ -121,7 +122,7 @@ def plot_f1_score(amber_path, y_label = None,title = None,size = 5, output = Non
     plt.show()
 
 def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_genomes_per_quality(amber_path)
 
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
@@ -170,7 +171,7 @@ def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
     plt.show()
 
 def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_genomes_per_quality(amber_path)
 
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
@@ -223,7 +224,7 @@ def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
     plt.show()
 
 def plot_bar_semi_no_semi(amber_path,if_legend=True,y_label = None, output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_genomes_per_quality(amber_path)
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
     ax_position = 0
@@ -329,8 +330,8 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=N
     plt.show()
 
 def plot_bar_generalization(amber_path,No_semi_amber_path, title,if_legend=True,y_label = None, output=None):
-    method_list = get_method_list(amber_path)
-    no_semi_method_list = get_method_list(No_semi_amber_path)
+    method_list = get_number_genomes_per_quality(amber_path)
+    no_semi_method_list = get_number_genomes_per_quality(No_semi_amber_path)
     method = ['S3N2Bin_m', 'S3N2Bin_c', 'S3N2Bin_mc', 'S3N2Bin']
     data = []
     data.append(no_semi_method_list['NoSemi_200'][0.95][0])
