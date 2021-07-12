@@ -10,55 +10,60 @@ import seaborn as sns
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-def get_method_list(amber_path):
+
+def get_number_of_genomes_per_completeness(amber_path, return_pandas=False):
     genome_path = os.path.join(amber_path, 'genome')
-    methold_path_list = []
-    method_list = {}
+    table = {}
     for root, dirs, files in os.walk(genome_path, topdown=False):
         for name in dirs:
-            methold_path_list.append(os.path.join(root, name))
-            method_list[os.path.join(root, name).split('/')[-1]] = {0.95: []}
+            method_path = os.path.join(root, name)
 
-    for method_path in methold_path_list:
-        metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
-        com_90_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.9)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0]
-        com_80_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.8)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - com_90_pur_95
-        com_70_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.7)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (com_90_pur_95 + com_80_pur_95)
-        com_60_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.6)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (
-                                com_90_pur_95 + com_80_pur_95 + com_70_pur_95)
-        com_50_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.5)) & (
-                metric['Purity (bp)'].astype(float) >= float(0.95))].shape[0] - (
-                                com_90_pur_95 + com_80_pur_95 + com_70_pur_95 + com_60_pur_95)
-        method_list[method_path.split('/')[-1]][0.95].extend(
-            [com_90_pur_95, com_80_pur_95, com_70_pur_95, com_60_pur_95, com_50_pur_95])
-    return method_list
+            metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
+            metric = metric.query('`Purity (bp)` >= 0.95')
+            com_90_pur_95 = metric.eval('`Completeness (bp)` > 0.9').sum()
+            com_80_pur_95 = metric.eval('`Completeness (bp)` > 0.8').sum() - (
+                        com_90_pur_95)
+            com_70_pur_95 = metric.eval('`Completeness (bp)` > 0.7').sum() - (
+                        com_90_pur_95 + com_80_pur_95)
+            com_60_pur_95 = metric.eval('`Completeness (bp)` > 0.6').sum() - (
+                        com_90_pur_95 + com_80_pur_95 + com_70_pur_95)
+            com_50_pur_95 = metric.eval('`Completeness (bp)` > 0.5').sum() - (
+                        com_90_pur_95 + com_80_pur_95 + com_70_pur_95 + com_60_pur_95)
+            table[method_path.split('/')[-1]]= [com_90_pur_95, com_80_pur_95, com_70_pur_95, com_60_pur_95, com_50_pur_95]
+    if return_pandas:
+        return pd.DataFrame(table, index=[90,80,70,60,50]).T
+    return table
 
-def plot_bar(amber_path,if_legend=True,y_label = None,title = None, output = None):
-    method_list = get_method_list(amber_path)
-    method = ['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2_200','Vamb','S3N2Bin_200']
-    data = []
-    for temp in method:
-        data.append(method_list[temp][0.95][0:4])
-    data = np.array(data)
+def plot_bar(amber_path, add_legend=True,y_label = None,title = None, output = None):
+    data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
+    subset = data.loc[[
+            'COCACOLA',
+            'SolidBin-naive',
+            'SolidBin-CL',
+            'SolidBin-SFS-CL',
+            'SolidBin-coalign',
+            'Maxbin2',
+            'Metabat2_200',
+            'Vamb',
+            'S3N2Bin_200']]
+    subset.rename(index={
+        'S3N2Bin_200': 'SemiBin',
+        'Metabat2_200': 'Metabat2',
+        }, inplace=True)
+    high_quality_list = subset[90].sort_values().values
 
-    subset= pd.DataFrame(data,index=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2_200','Vamb','SemiBin_200'],columns=[90,80,70,60])
-    high_quality_list = subset[90].values
-    high_quality_list.sort()
-    print((high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2])
+    print('Improvement of best binner over second best: {:.2%}'.format(
+            (high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2]))
     ax = subset.plot(kind="barh", stacked=True, legend = False, color = ['#084594','#4292c6','#9ecae1','#deebf7'])
 
-    if if_legend:
+    if add_legend:
         ax.legend(['>90', '>80','>70','>60'],
-                  loc='lower right', fontsize=10,title = 'completeness')
+                  loc='lower right', fontsize=10, title='completeness')
     ax.set_xticks(ticks=y_label)
     ax.set_xticklabels(labels=y_label,fontsize=15,color = 'black')
-    ax.set_yticklabels(labels=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2','Vamb','SemiBin'], fontsize=15,color = 'black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15,color = 'black')
     ax.set_xlabel('Bins(< 5% contamination)', fontsize=15,color = 'black')
-    ax.set_title('{}'.format(title), fontsize=15, alpha=1.0)
+    ax.set_title(title, fontsize=15, alpha=1.0)
 
     plt.tight_layout()
     plt.savefig(output, dpi=300)
@@ -121,13 +126,13 @@ def plot_f1_score(amber_path, y_label = None,title = None,size = 5, output = Non
     plt.show()
 
 def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_of_genomes_per_completeness(amber_path)
 
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
     ax_position = 0
 
-    subset = pd.DataFrame(np.array([method_list['Metabat2_200'][0.95][0:4], method_list['S3N2Bin_200'][0.95][0:4]]),
+    subset = pd.DataFrame(np.array([method_list['Metabat2_200'][0:4], method_list['S3N2Bin_200'][0:4]]),
                           index=['Metabat2', 'SemiBin'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -143,7 +148,7 @@ def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
     ax.set_title('{}'.format('max_edges=200'), fontsize=13, alpha=1.0)
     ax_position += 1
 
-    subset = pd.DataFrame(np.array([method_list['Metabat2_500'][0.95][0:4], method_list['S3N2Bin_500'][0.95][0:4]]),
+    subset = pd.DataFrame(np.array([method_list['Metabat2_500'][0:4], method_list['S3N2Bin_500'][0:4]]),
                           index=['Metabat2', 'SemiBin'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -153,7 +158,7 @@ def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
     ax.set_title('{}'.format('max_edges=500'), fontsize=13)
     ax_position += 1
 
-    subset = pd.DataFrame(np.array([method_list['Metabat2_1000'][0.95][0:4], method_list['S3N2Bin_1000'][0.95][0:4]]),
+    subset = pd.DataFrame(np.array([method_list['Metabat2_1000'][0:4], method_list['S3N2Bin_1000'][0:4]]),
                           index=['Metabat2', 'SemiBin'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -170,14 +175,14 @@ def plot_SemiBin_Metabat(amber_path,if_legend=True,y_label=None, output = None):
     plt.show()
 
 def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_of_genomes_per_completeness(amber_path)
 
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
     ax_position = 0
 
     subset = pd.DataFrame(
-        np.array([method_list['S3N2Bin_CAT_200'][0.95][0:4], method_list['S3N2Bin_mmseqs_200'][0.95][0:4]]),
+        np.array([method_list['S3N2Bin_CAT_200'][0:4], method_list['S3N2Bin_mmseqs_200'][0:4]]),
         index=['SemiBin_CAT', 'SemiBin_mmseqs'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -194,7 +199,7 @@ def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
     ax_position += 1
 
     subset = pd.DataFrame(
-        np.array([method_list['S3N2Bin_CAT_500'][0.95][0:4], method_list['S3N2Bin_mmseqs_500'][0.95][0:4]]),
+        np.array([method_list['S3N2Bin_CAT_500'][0:4], method_list['S3N2Bin_mmseqs_500'][0:4]]),
         index=['SemiBin_CAT', 'SemiBin_mmseqs'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -205,7 +210,7 @@ def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
     ax_position += 1
 
     subset = pd.DataFrame(
-        np.array([method_list['S3N2Bin_CAT_1000'][0.95][0:4], method_list['S3N2Bin_mmseqs_1000'][0.95][0:4]]),
+        np.array([method_list['S3N2Bin_CAT_1000'][0:4], method_list['S3N2Bin_mmseqs_1000'][0:4]]),
         index=['SemiBin_CAT', 'SemiBin_mmseqs'], columns=[90, 80, 70, 60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position], legend=False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
@@ -223,15 +228,15 @@ def plot_CAT_mmseqs(amber_path,if_legend=True,y_label=None,output = None):
     plt.show()
 
 def plot_bar_semi_no_semi(amber_path,if_legend=True,y_label = None, output = None):
-    method_list = get_method_list(amber_path)
+    method_list = get_number_of_genomes_per_completeness(amber_path)
     fig, axes = plt.subplots(nrows=1, ncols=3)
 
     ax_position = 0
 
-    subset= pd.DataFrame(np.array([method_list['NoSemi_200'][0.95][0:4],method_list['S3N2Bin_200'][0.95][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
+    subset= pd.DataFrame(np.array([method_list['NoSemi_200'][0:4],method_list['S3N2Bin_200'][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position],legend = False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
-    print('Semi improvement:', (method_list['S3N2Bin_200'][0.95][0:4][0] - method_list['NoSemi_200'][0.95][0])/ method_list['NoSemi_200'][0.95][0])
+    print('Semi improvement:', (method_list['S3N2Bin_200'][0:4][0] - method_list['NoSemi_200'][0])/ method_list['NoSemi_200'][0])
     if if_legend:
         ax.legend(['>90', '>80','>70','>60'],
                   loc='upper left', fontsize=10, title="completeness",)
@@ -242,7 +247,7 @@ def plot_bar_semi_no_semi(amber_path,if_legend=True,y_label = None, output = Non
     ax.set_title('{}'.format('max_edges=200'), fontsize=15, alpha=1.0,color = 'black')
     ax_position += 1
 
-    subset= pd.DataFrame(np.array([method_list['NoSemi_500'][0.95][0:4],method_list['S3N2Bin_500'][0.95][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
+    subset= pd.DataFrame(np.array([method_list['NoSemi_500'][0:4],method_list['S3N2Bin_500'][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position],legend = False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
     ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
@@ -250,7 +255,7 @@ def plot_bar_semi_no_semi(amber_path,if_legend=True,y_label = None, output = Non
     ax.set_title('{}'.format('max_edges=500'), fontsize=15,color = 'black')
     ax_position += 1
 
-    subset= pd.DataFrame(np.array([method_list['NoSemi_1000'][0.95][0:4],method_list['S3N2Bin_1000'][0.95][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
+    subset= pd.DataFrame(np.array([method_list['NoSemi_1000'][0:4],method_list['S3N2Bin_1000'][0:4]]),index=['NoSemi','SemiBin'],columns=[90,80,70,60])
     ax = subset.plot(kind="bar", stacked=True,
                      ax=axes[ax_position],legend = False, color = ['#084594','#4292c6','#9ecae1','#c6dbef'])
 
@@ -329,13 +334,13 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=N
     plt.show()
 
 def plot_bar_generalization(amber_path,No_semi_amber_path, title,if_legend=True,y_label = None, output=None):
-    method_list = get_method_list(amber_path)
-    no_semi_method_list = get_method_list(No_semi_amber_path)
+    method_list = get_number_of_genomes_per_completeness(amber_path)
+    no_semi_method_list = get_number_of_genomes_per_completeness(No_semi_amber_path)
     method = ['S3N2Bin_m', 'S3N2Bin_c', 'S3N2Bin_mc', 'S3N2Bin']
     data = []
-    data.append(no_semi_method_list['NoSemi_200'][0.95][0])
+    data.append(no_semi_method_list['NoSemi_200'][0])
     for temp in method:
-        data.append(method_list[temp][0.95][0])
+        data.append(method_list[temp][0])
     data = np.array(data)
 
     subset = pd.DataFrame(data.reshape(1,data.shape[0]), columns =['NoSemi','SemiBin_m', 'SemiBin_c', 'SemiBin_mc', 'SemiBin'])
@@ -376,20 +381,20 @@ if __name__ == '__main__':
     # amber_path_high_common = base_path + 'high_common'
     # plot_bar(amber_path_low_common, y_label=[0, 2, 4, 6, 8, 10], title='Low-complexity(common strain)', output='CAMI_I_low_common.pdf')
     # plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30, 40, 50], title='Medium-complexity(common strain)',
-    #          if_legend=False,output='CAMI_I_medium_common.pdf')
+    #        add_legend=False,output='CAMI_I_medium_common.pdf')
     # plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
-    #          if_legend=False,output='CAMI_I_high_common.pdf')
-    #
+    #        add_legend=False,output='CAMI_I_high_common.pdf')
+    
     # ### unique comparison bar plot
     # amber_path_low_unique = base_path + 'low_unique'
     # amber_path_medium_unique = base_path + 'medium_unique'
     # amber_path_high_unique = base_path + 'high_unique'
     #
-    # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)', if_legend=False, output='CAMI_I_low_unique.pdf')
+    # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)',  add_legend=False, output='CAMI_I_low_unique.pdf')
     # plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45, 60, 75], title='Medium-complexity(unique strain)',
-    #          if_legend=False, output='CAMI_I_medium_unique.pdf')
+    #           add_legend=False, output='CAMI_I_medium_unique.pdf')
     # plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300, 400], title='High-complexity(unique strain)',
-    #          if_legend=False, output='CAMI_I_high_unique.pdf')
+    #           add_legend=False, output='CAMI_I_high_unique.pdf')
     #
     # ### compare to Metabat2 with different parameters
     # plot_SemiBin_Metabat(amber_path_low,if_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
