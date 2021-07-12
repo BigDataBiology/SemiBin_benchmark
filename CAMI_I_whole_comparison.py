@@ -34,7 +34,7 @@ def get_number_genomes_per_quality(amber_path, return_pandas=False):
         return pd.DataFrame(table, index=[90,80,70,60,50]).T
     return {k:{0.95:v} for k,v in table.items()}
 
-def plot_bar(amber_path,if_legend=True,y_label = None,title = None, output = None):
+def plot_bar(amber_path, add_legend=True,y_label = None,title = None, output = None):
     data = get_number_genomes_per_quality(amber_path, return_pandas=True)
     subset = data.loc[[
             'COCACOLA',
@@ -46,20 +46,24 @@ def plot_bar(amber_path,if_legend=True,y_label = None,title = None, output = Non
             'Metabat2_200',
             'Vamb',
             'S3N2Bin_200']]
-    subset.rename(index={'S3N2Bin_200': 'SemiBin_200'}, inplace=True)
-    high_quality_list = subset[90].values
-    high_quality_list.sort()
-    print((high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2])
+    subset.rename(index={
+        'S3N2Bin_200': 'SemiBin',
+        'Metabat2_200': 'Metabat2',
+        }, inplace=True)
+    high_quality_list = subset[90].sort_values().values
+
+    print('Improvement of best binner over second best: {:.2%}'.format(
+            (high_quality_list[-1] - high_quality_list[-2])/high_quality_list[-2]))
     ax = subset.plot(kind="barh", stacked=True, legend = False, color = ['#084594','#4292c6','#9ecae1','#deebf7'])
 
-    if if_legend:
+    if add_legend:
         ax.legend(['>90', '>80','>70','>60'],
-                  loc='lower right', fontsize=10,title = 'completeness')
+                  loc='lower right', fontsize=10, title='completeness')
     ax.set_xticks(ticks=y_label)
     ax.set_xticklabels(labels=y_label,fontsize=15,color = 'black')
-    ax.set_yticklabels(labels=['COCACOLA','SolidBin-naive','SolidBin-CL','SolidBin-SFS-CL','SolidBin-coalign','Maxbin2','Metabat2','Vamb','SemiBin'], fontsize=15,color = 'black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15,color = 'black')
     ax.set_xlabel('Bins(< 5% contamination)', fontsize=15,color = 'black')
-    ax.set_title('{}'.format(title), fontsize=15, alpha=1.0)
+    ax.set_title(title, fontsize=15, alpha=1.0)
 
     plt.tight_layout()
     plt.savefig(output, dpi=300)
@@ -377,20 +381,20 @@ if __name__ == '__main__':
     # amber_path_high_common = base_path + 'high_common'
     # plot_bar(amber_path_low_common, y_label=[0, 2, 4, 6, 8, 10], title='Low-complexity(common strain)', output='CAMI_I_low_common.pdf')
     # plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30, 40, 50], title='Medium-complexity(common strain)',
-    #          if_legend=False,output='CAMI_I_medium_common.pdf')
+    #        add_legend=False,output='CAMI_I_medium_common.pdf')
     # plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
-    #          if_legend=False,output='CAMI_I_high_common.pdf')
-    #
+    #        add_legend=False,output='CAMI_I_high_common.pdf')
+    
     # ### unique comparison bar plot
     # amber_path_low_unique = base_path + 'low_unique'
     # amber_path_medium_unique = base_path + 'medium_unique'
     # amber_path_high_unique = base_path + 'high_unique'
     #
-    # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)', if_legend=False, output='CAMI_I_low_unique.pdf')
+    # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)',  add_legend=False, output='CAMI_I_low_unique.pdf')
     # plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45, 60, 75], title='Medium-complexity(unique strain)',
-    #          if_legend=False, output='CAMI_I_medium_unique.pdf')
+    #           add_legend=False, output='CAMI_I_medium_unique.pdf')
     # plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300, 400], title='High-complexity(unique strain)',
-    #          if_legend=False, output='CAMI_I_high_unique.pdf')
+    #           add_legend=False, output='CAMI_I_high_unique.pdf')
     #
     # ### compare to Metabat2 with different parameters
     # plot_SemiBin_Metabat(amber_path_low,if_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
