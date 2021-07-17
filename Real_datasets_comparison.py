@@ -78,21 +78,32 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
 
 
 
+def get_results_table(dataset, method, binning_mode='single_sample', checkm_only=False):
+    r = get_result(dataset,
+            'S3N2Bin' if method == 'SemiBin' else method,
+            binning_mode,
+            checkm_only)
+    if method == 'VAMB' and binning_mode == 'multi_sample':
+        from collections import Counter
+        hq = r['high quality']
+        r = pd.Series(Counter(b.rsplit('C', 1)[0] for b in hq)).reset_index().rename(columns={'index':'sample', 0: 'nr_hq'})
+    else:
+        r = pd.DataFrame([(k,len(v['high quality'])) for k,v in r.items()], columns=['sample', 'nr_hq'])
+    if binning_mode == 'multi_sample':
+        method += '_multi'
+    r['dataset'] = dataset
+    r['method'] = method
+    r['binning_mode'] = binning_mode
+    r['checkm_only'] = checkm_only
+    return r
+
 def get_num_high_quality(dataset = 'dog', method = 'Maxbin2', binning_mode = 'single_sample', checkm_only = False):
     """
     dataset: dog, human, gut
     method: Maxbin2, Metabat2, VAMB, S3N2Bin
     binning_mode: single_sample, multi_sample
     """
-    result = get_result(dataset, method, binning_mode, checkm_only)
-    if method == 'VAMB' and binning_mode == 'multi_sample':
-        num_hq = len(result['high quality'])
-        return num_hq
-    else:
-        num_hq = 0
-        for sample in result:
-            num_hq += len(result[sample]['high quality'])
-        return num_hq
+    return get_results_table(dataset, method, binning_mode, checkm_only)['nr_hq'].sum()
 
 def tranfer_multi():
     x1 = [1,2,3,4,5,6]
@@ -141,6 +152,50 @@ def tranfer_multi():
     plt.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad = 0., fontsize=8)
     plt.savefig('transfer_multiple.pdf', dpi=300, bbox_inches='tight')
     plt.close()
+
+def alternative_real_compare():
+    counts = {}
+    for dataset in ['dog', 'human', 'tara']:
+        num = pd.concat([
+            get_results_table(dataset=dataset, method='Maxbin2'),
+            get_results_table(dataset=dataset, method='VAMB'),
+            get_results_table(dataset=dataset, method='VAMB',binning_mode='multi_sample'),
+            get_results_table(dataset=dataset, method='Metabat2'),
+            get_results_table(dataset=dataset, method='SemiBin'),
+            get_results_table(dataset=dataset, method='SemiBin_pretrain'),
+            get_results_table(dataset=dataset, method='SemiBin', binning_mode='multi_sample'),
+        ])
+        counts[dataset] = pd.pivot(num[['sample', 'nr_hq', 'method']], values=['nr_hq'], index='sample', columns='method')
+        counts[dataset]  = counts[dataset].T.xs('nr_hq').T
+    counts = {k:r for k,r in counts.items()}
+
+    diff = {k:r.T - r.SemiBin for k,r in counts.items()}
+    diff['dog'].T.max()
+    diff['human'].T.max()
+    diff['tara'].T.max()
+
+
+    fig,axes = plt.subplots(6, 2, sharex='col')
+    for x in axes.flat: x.clear()
+
+    for i,k in enumerate(['human', 'dog', 'tara']):
+        val = diff[k].T
+        val_s = val.drop(['SemiBin_multi', 'VAMB_multi'], axis=1)
+        val_m = val[['SemiBin_multi', 'VAMB_multi']]
+        val_m = (val_m.T - val_m['SemiBin_multi']).T
+
+        sns.swarmplot(y='method', x='value', data=pd.melt(val_s.drop('SemiBin', axis=1)), ax=axes[2*i,1])
+        sns.swarmplot(y='method', x='value', data=pd.melt(val_m.drop('SemiBin_multi', axis=1)), ax=axes[2*i+1,1])
+
+        v = pd.DataFrame({'total': counts[k].sum()})
+        v_s = v.drop(['SemiBin_multi', 'VAMB_multi'])
+        v_m = v.loc[['SemiBin_multi', 'VAMB_multi']]
+        sns.barplot(data=v_s.reset_index(), x='total', y='method', ax=axes[2*i,0], orient='h')
+        sns.barplot(data=v_m.reset_index(), x='total', y='method', ax=axes[2*i+1,0], orient='h')
+
+    fig.tight_layout()
+    fig.savefig('alternative.svg')
+
 
 def plot_high_quality_comparison():
     num_dog_maxbin2_single = get_num_high_quality()
