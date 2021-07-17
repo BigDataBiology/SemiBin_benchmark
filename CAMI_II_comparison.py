@@ -15,7 +15,7 @@ def get_hq_taxi(dataset = 'skin'):
         data_index = [1,13,14,15,16,17,18,19,20,28]
     else:
         data_index = [6,7,8,13,14,15,16,17,18,19]
-    genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
+    genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/{0}_{1}'.format(dataset,data_index[0]), 'genome')
     method_list = {}
     species_list = {}
     genus_list = {}
@@ -27,12 +27,12 @@ def get_hq_taxi(dataset = 'skin'):
             genus_list[name] = []
 
     for temp in data_index:
-        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile_{1}.txt'.format(dataset,temp),
+        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile.txt'.format(dataset,temp),
                            sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
         taxi_genus = taxi[taxi['RANK'] == 'genus']['@@TAXID'].values.tolist()
         taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
         method_path_list = []
-        genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}'.format(dataset,temp), 'genome')
+        genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/{0}_{1}'.format(dataset,temp), 'genome')
 
         for root, dirs, files in os.walk(genome_path, topdown=False):
             for name in dirs:
@@ -56,55 +56,7 @@ def get_hq_taxi(dataset = 'skin'):
                     if taxi_split[-3] in taxi_genus:
                         genus_list[method_path.split('/')[-1]].append(taxi_split[-3])
 
-    result = {'Metabat2':{'strain':list(set(method_list['Metabat2'])),'species':list(set(species_list['Metabat2'])),'genus':list(set(genus_list['Metabat2']))}, 'VAMB': {'strain':list(set(method_list['VAMB'])),'species':list(set(species_list['VAMB'])),'genus':list(set(genus_list['VAMB']))}, 'SemiBin': {'strain':list(set(method_list['S3N2Bin'])),'species':list(set(species_list['S3N2Bin'])),'genus':list(set(genus_list['S3N2Bin']))}}
-
-    return result
-
-def get_generalization_hq_taxi(dataset = 'skin'):
-    if dataset == 'skin':
-        data_index = [1,13,14,15,16,17,18,19,20,28]
-    else:
-        data_index = [6,7,8,13,14,15,16,17,18,19]
-    genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/generalization/amber_{0}_{1}'.format(dataset,data_index[0]), 'genome')
-    method_list = {}
-    species_list = {}
-    genus_list = {}
-
-    for root, dirs, files in os.walk(genome_path, topdown=False):
-        for name in dirs:
-            method_list[name] = []
-            species_list[name] = []
-            genus_list[name] = []
-
-    for temp in data_index:
-        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile_{1}.txt'.format(dataset,temp),
-                           sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
-        taxi_genus = taxi[taxi['RANK'] == 'genus']['@@TAXID'].values.tolist()
-        taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
-        method_path_list = []
-        genome_path = os.path.join('Results/Simulated/CAMI_II/{0}/generalization/amber_{0}_{1}'.format(dataset,temp), 'genome')
-        for root, dirs, files in os.walk(genome_path, topdown=False):
-            for name in dirs:
-                method_path_list.append(os.path.join(root, name))
-        for method_path in method_path_list:
-            metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
-            com_90_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.9)) & (
-                    metric['Purity (bp)'].astype(float) >= float(0.95))]
-            strain_list = com_90_pur_95['Most abundant genome'].values.tolist()
-            method_list[method_path.split('/')[-1]].extend(strain_list)
-
-            for temp_strain in strain_list:
-                if temp_strain in taxi['_CAMI_GENOMEID'].values.tolist():
-                    taxi_split = taxi[taxi['_CAMI_GENOMEID'] == temp_strain]['TAXPATH'].values[0].split('|')
-                    if taxi_split[-2] in taxi_species:
-                        species_list[method_path.split('/')[-1]].append(taxi_split[-2])
-                    else:
-                        if taxi_split[-2] in taxi_genus:
-                            genus_list[method_path.split('/')[-1]].append(taxi_split[-2])
-                    if taxi_split[-3] in taxi_genus:
-                        genus_list[method_path.split('/')[-1]].append(taxi_split[-3])
-
-    result = {'NoSemi':{'strain':list(set(method_list['NoSemi'])),'species':list(set(species_list['NoSemi'])),'genus':list(set(genus_list['NoSemi']))}, 'SemiBin_c': {'strain':list(set(method_list['S3N2Bin_c'])),'species':list(set(species_list['S3N2Bin_c'])),'genus':list(set(genus_list['S3N2Bin_c']))}, 'SemiBin_m': {'strain':list(set(method_list['S3N2Bin_m'])),'species':list(set(species_list['S3N2Bin_m'])),'genus':list(set(genus_list['S3N2Bin_m']))}, 'SemiBin_mc': {'strain':list(set(method_list['S3N2Bin_mc'])),'species':list(set(species_list['S3N2Bin_mc'])),'genus':list(set(genus_list['S3N2Bin_mc']))}}
+    result = {'Metabat2':{'strain':list(set(method_list['Metabat2_single'])),'species':list(set(species_list['Metabat2_single'])),'genus':list(set(genus_list['Metabat2_single']))}, 'VAMB': {'strain':list(set(method_list['VAMB'])),'species':list(set(species_list['VAMB'])),'genus':list(set(genus_list['VAMB']))}, 'SemiBin': {'strain':list(set(method_list['SemiBin'])),'species':list(set(species_list['SemiBin'])),'genus':list(set(genus_list['SemiBin']))}}
 
     return result
 
@@ -179,39 +131,61 @@ def plot_bar_plot():
     print('oral_strain_improvement:', (oral_strain_SemiBin-oral_strain_metabat2)/oral_strain_metabat2, (oral_strain_SemiBin-oral_strain_vamb)/oral_strain_vamb)
     print('oral_species_improvement:', (oral_species_SemiBin-oral_species_metabat2)/oral_species_metabat2, (oral_species_SemiBin-oral_species_vamb)/oral_species_vamb)
     print('oral_genus_improvement:', (oral_genus_SemiBin-oral_genus_metabat2)/oral_genus_metabat2, (oral_genus_SemiBin-oral_genus_vamb)/oral_genus_vamb)
+    line_width = 1
 
-
-    subset = pd.DataFrame(np.array([[skin_strain_metabat2,skin_strain_vamb,skin_strain_SemiBin],[oral_strain_metabat2,oral_strain_vamb,oral_strain_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
-    ax = subset.plot(kind='bar',width = 0.6,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
-    ax.set_yticks(ticks=[0,20,40,60,80,100,120,140])
-    ax.set_yticklabels(labels=[0,20,40,60,80,100,120,140],fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    ax.set_ylabel('High quality genomes', fontsize=15,color = 'black')
-    ax.set_title('strain', fontsize=20, alpha=1.0,color = 'black')
-    plt.savefig('CAMI_II_com_strain.pdf', dpi=300, bbox_inches='tight')
+    plt.figure(figsize=(4, 2))
+    plt.plot(['genus', 'species', 'strain'],[skin_genus_metabat2, skin_species_metabat2, skin_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'],[skin_genus_vamb, skin_species_vamb, skin_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'], [skin_genus_SemiBin, skin_species_SemiBin, skin_strain_SemiBin], label='SemiBin',
+             color='#1b9e77',linewidth = line_width)
+    plt.legend()
+    plt.xticks([])
+    #plt.ylabel('Number of distinct',fontsize = 15,color = 'black')
+    plt.savefig('CAMI_II_skin.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
-    subset = pd.DataFrame(np.array([[skin_species_metabat2,skin_species_vamb,skin_species_SemiBin],[oral_species_metabat2,oral_species_vamb,oral_species_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
-    ax = subset.plot(kind='bar',width= 0.6,legend = False,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
-    ax.set_yticks(ticks=[0,15,30,45,60,75,90,105])
-    ax.set_yticklabels(labels=[0,15,30,45,60,75,90,105],fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    #ax.set_ylabel('Num', fontsize=15,color = 'black')
-    ax.set_title('species', fontsize=20, alpha=1.0,color = 'black')
-    plt.savefig('CAMI_II_com_species.pdf', dpi=300, bbox_inches='tight')
+    plt.figure(figsize=(4, 2))
+    plt.plot(['genus', 'species', 'strain'],[oral_genus_metabat2, oral_species_metabat2, oral_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'],[oral_genus_vamb, oral_species_vamb, oral_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'], [oral_genus_SemiBin, oral_species_SemiBin, oral_strain_SemiBin], label='SemiBin',
+             color='#1b9e77',linewidth = line_width)
+    plt.legend()
+    #plt.ylabel('Number of distinct',fontsize = 15,color = 'black')
+    plt.savefig('CAMI_II_oral.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
-    subset = pd.DataFrame(np.array([[skin_genus_metabat2,skin_genus_vamb,skin_genus_SemiBin],[oral_genus_metabat2,oral_genus_vamb,oral_genus_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
-    ax = subset.plot(kind='bar',width = 0.6,legend = False,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
-    ax.set_yticks(ticks=[0,10,20,30,40,50,60])
-    ax.set_yticklabels(labels=[0,10,20,30,40,50,60],fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    #ax.set_ylabel('Num', fontsize=15,color = 'black')
-    ax.set_title('genus', fontsize=20, alpha=1.0,color = 'black')
-    plt.savefig('CAMI_II_com_genus.pdf', dpi=300, bbox_inches='tight')
-    plt.close()
 
-    plt.show()
+    # subset = pd.DataFrame(np.array([[skin_strain_metabat2,skin_strain_vamb,skin_strain_SemiBin],[oral_strain_metabat2,oral_strain_vamb,oral_strain_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
+    # ax = subset.plot(kind='bar',width = 0.6,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
+    # ax.set_yticks(ticks=[0,20,40,60,80,100,120,140])
+    # ax.set_yticklabels(labels=[0,20,40,60,80,100,120,140],fontsize=12,color = 'black')
+    # ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
+    # ax.set_ylabel('High quality genomes', fontsize=15,color = 'black')
+    # ax.set_title('strain', fontsize=20, alpha=1.0,color = 'black')
+    # plt.savefig('CAMI_II_com_strain.pdf', dpi=300, bbox_inches='tight')
+    # plt.close()
+    #
+    # subset = pd.DataFrame(np.array([[skin_species_metabat2,skin_species_vamb,skin_species_SemiBin],[oral_species_metabat2,oral_species_vamb,oral_species_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
+    # ax = subset.plot(kind='bar',width= 0.6,legend = False,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
+    # ax.set_yticks(ticks=[0,15,30,45,60,75,90,105])
+    # ax.set_yticklabels(labels=[0,15,30,45,60,75,90,105],fontsize=12,color = 'black')
+    # ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
+    # #ax.set_ylabel('Num', fontsize=15,color = 'black')
+    # ax.set_title('species', fontsize=20, alpha=1.0,color = 'black')
+    # plt.savefig('CAMI_II_com_species.pdf', dpi=300, bbox_inches='tight')
+    # plt.close()
+    #
+    # subset = pd.DataFrame(np.array([[skin_genus_metabat2,skin_genus_vamb,skin_genus_SemiBin],[oral_genus_metabat2,oral_genus_vamb,oral_genus_SemiBin]]),columns = ['Metabat2','VAMB','SemiBin'], index=['Skin','Oral'])
+    # ax = subset.plot(kind='bar',width = 0.6,legend = False,color = ['#fdbf6f', '#b2df8a', '#a6cee3'],figsize=(3,4))
+    # ax.set_yticks(ticks=[0,10,20,30,40,50,60])
+    # ax.set_yticklabels(labels=[0,10,20,30,40,50,60],fontsize=12,color = 'black')
+    # ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
+    # #ax.set_ylabel('Num', fontsize=15,color = 'black')
+    # ax.set_title('genus', fontsize=20, alpha=1.0,color = 'black')
+    # plt.savefig('CAMI_II_com_genus.pdf', dpi=300, bbox_inches='tight')
+    # plt.close()
+
+    #plt.show()
 
 def plot_venn_plot():
     skin_result = get_hq_taxi()
@@ -499,94 +473,6 @@ def plot_bar_strain_simiarity():
     plt.close()
     plt.show()
 
-
-def plot_abundance(dataset = 'skin',level = 'strain', output = None):
-    """
-    dataset: skin or oral
-    level: strain or species
-    """
-    if dataset == 'skin':
-        data_index = [1,13,14,15,16,17,18,19,20,28]
-    else:
-        data_index = [6,7,8,13,14,15,16,17,18,19]
-
-    environment_dict = {}
-
-    for index in data_index:
-        taxi = pd.read_csv('Results/Simulated/CAMI_II/{0}/taxonomic_profile_{1}.txt'.format(dataset,index),
-                           sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
-        taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
-        abundance_dict = {}
-        abundance = pd.read_csv('Results/Simulated/CAMI_II/{0}/abundance{1}.tsv'.format(dataset, index),sep='\t',header=None).values
-        for temp in abundance:
-            abundance_dict[temp[0]] = float(temp[1])
-        metric = pd.read_csv(os.path.join('Results/Simulated/CAMI_II/{0}/amber_{0}_{1}/genome/Gold standard'.format(dataset, index), 'metrics_per_bin.tsv'), sep='\t')
-        strain_list = metric['Most abundant genome'].values.tolist()
-        if level == 'strain':
-            for temp_strain in strain_list:
-                if temp_strain in taxi['_CAMI_GENOMEID'].values.tolist():
-                    if temp_strain not in environment_dict:
-                        environment_dict[temp_strain] = abundance_dict[temp_strain]
-                    else:
-                        environment_dict[temp_strain] += abundance_dict[temp_strain]
-        else:
-            for temp_strain in strain_list:
-                if temp_strain in taxi['_CAMI_GENOMEID'].values.tolist():
-                    taxi_split = taxi[taxi['_CAMI_GENOMEID'] == temp_strain]['TAXPATH'].values[0].split('|')
-                    if taxi_split[-2] in taxi_species:
-                        if taxi_split[-2] not in environment_dict:
-                            environment_dict[taxi_split[-2]] = abundance_dict[temp_strain]
-                        else:
-                            environment_dict[taxi_split[-2]] += abundance_dict[temp_strain]
-
-    result = get_hq_taxi(dataset)
-    if level == 'strain':
-        strain_metabat2 = result['Metabat2']['strain']
-        strain_vamb = result['VAMB']['strain']
-        strain_SemiBin = result['SemiBin']['strain']
-        abun_metabat2 = [environment_dict[strain] for strain in strain_metabat2]
-        abun_vamb = [environment_dict[strain] for strain in strain_vamb]
-        abun_SemiBin = [environment_dict[strain] for strain in strain_SemiBin]
-
-    if level == 'species':
-        species_metabat2 = result['Metabat2']['species']
-        species_vamb = result['VAMB']['species']
-        species_SemiBin = result['SemiBin']['species']
-        abun_metabat2 = [environment_dict[species] for species in species_metabat2]
-        abun_vamb = [environment_dict[species] for species in species_vamb]
-        abun_SemiBin = [environment_dict[species] for species in species_SemiBin]
-
-    SemiBin_abun = {'S3N2Bin': abun_SemiBin}
-    SemiBin_abun = pd.DataFrame(SemiBin_abun)
-
-    Metabat2_abun = {'Metabat2': abun_metabat2}
-    Metabat2_abun = pd.DataFrame(Metabat2_abun)
-
-    vamb_abun = {'VAMB': abun_vamb}
-    vamb_abun = pd.DataFrame(vamb_abun)
-
-    subset = pd.concat([SemiBin_abun, Metabat2_abun], axis=1)
-    subset = pd.concat([subset, vamb_abun], axis=1)
-    subset = subset.apply(np.log10)
-
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    subset.columns = [['SemiBin', 'Metabat2', 'VAMB']]
-    column_new = ['Metabat2', 'VAMB', 'SemiBin', ]
-    subset = subset[column_new]
-
-    sns.violinplot(data=subset, width=.5, fliersize=0, scale="count", palette= ['#fdbf6f', '#b2df8a', '#a6cee3'])
-    ax.set_yticks(ticks=[0, 1, 2, 3])
-    ax.set_yticklabels(labels=[0, 1, 2, 3], fontsize=15, color='black')
-    ax.set_xticklabels(
-        labels=['Metabat2', 'VAMB', 'SemiBin',], fontsize=15, color='black')
-    ax.set_ylabel('Abundance', fontsize=15, color='black')
-    ax.set_title('{}'.format('{0}({1})'.format(dataset,level)), fontsize=15, alpha=1.0)
-
-    plt.tight_layout()
-    plt.savefig(output , dpi=300, bbox_inches='tight')
-    plt.close()
-    plt.show()
-
 def plot_generalization():
     result = get_hq_taxi('skin')
     skin_SemiBin_strain = len(result['SemiBin']['strain'])
@@ -668,7 +554,7 @@ def plot_generalization():
 
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
-    #plot_bar_plot()
+    plot_bar_plot()
     # plot_comparsion_Metabat2()
     #
     # ### venn plot in strain/species/genus level
@@ -679,11 +565,5 @@ if __name__ == '__main__':
     #
     # ### bar plot with different similarities
     # plot_bar_strain_simiarity()
-    #
-    # # ### violinplot of the abundance
-    # plot_abundance(dataset='skin',level = 'species', output='CAMI_II_abundance_skin_species.pdf')
-    # plot_abundance(dataset='skin', level='strain', output='CAMI_II_abundance_skin_strain.pdf')
-    # plot_abundance(dataset='oral', level='species', output='CAMI_II_abundance_oral_species.pdf')
-    # plot_abundance(dataset='oral', level='strain', output='CAMI_II_abundance_oral_strain.pdf')
-    #
-    plot_generalization()
+
+    #plot_generalization()

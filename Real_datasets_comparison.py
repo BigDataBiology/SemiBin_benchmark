@@ -672,7 +672,7 @@ def plot_sankey_overlap(dataset = 'dog', output = None):
             thickness=20,
             line=dict(color="black", width=0),
             label=unique_list,
-            color=['#addd8e', '#d9f0a3', '#f7fcb9', '#ffffb3', '#addd8e', '#d9f0a3', '#f7fcb9', '#ffffb3'],
+            color=['#fe9929', '#fec44f', '#fee391', '#fff7bc', '#fe9929', '#fec44f', '#fee391', '#fff7bc'],
             # x=nodified[0],
             # y=nodified[1]
             x = x_,
@@ -682,7 +682,7 @@ def plot_sankey_overlap(dataset = 'dog', output = None):
             source=sources,
             target=targets,
             value=values,
-            color=['#addd8e', '#d9f0a3', '#f7fcb9', '#ffffb3','#addd8e', '#d9f0a3', '#f7fcb9', '#ffffb3']
+            color=['#fe9929', '#fec44f', '#fee391', '#fff7bc','#fe9929', '#fec44f', '#fee391', '#fff7bc']
         ))])
 
 
@@ -732,7 +732,7 @@ def plot_overlap_F1(dataset = 'dog'):
     data[['value']] = data[['value']].astype(float)
 
     ax = sns.boxplot(x="metrics", y="value", hue="Method",
-                     data=data, fliersize=0, palette= ['#fdbf6f','#a6cee3'],linewidth=0.1)
+                     data=data, fliersize=0, palette= ['#ec7014','#1b9e77'],linewidth=0.1)
     # sns.stripplot(data=data, x="metrics",dodge=True, y="value", hue="Method", size=2, palette= ['#a6cee3','#1f78b4'],)
 
 
@@ -1026,7 +1026,9 @@ def plot_extra_bar():
         hq_SemiBin_pretrain_same_western.append(len(result_SemiBin_pretrain_same_western[sample]['high quality']))
         hq_SemiBin_pretrain_out_western.append(len(result_SemiBin_pretrain_out_western[sample]['high quality']))
     print('non-western:', wilcoxon(hq_Metabat2_non_western, hq_SemiBin_pretrain_out_non_western))
+    print(len(hq_Metabat2_non_western))
     print('western:', wilcoxon(hq_Metabat2_western, hq_SemiBin_pretrain_out_western))
+    print(len(hq_Metabat2_western))
     print((np.sum(hq_SemiBin_pretrain_out_western) - np.sum(hq_Metabat2_western)) / np.sum(hq_Metabat2_western))
     print((np.sum(hq_SemiBin_pretrain_out_non_western) - np.sum(hq_Metabat2_non_western)) / np.sum(hq_Metabat2_non_western))
 
@@ -1164,7 +1166,7 @@ def CAT_mmseqs():
 if __name__ == '__main__':
 
 
-    # tranfer_multi()
+    #tranfer_multi()
     #
     # ## bar plot high quality genomes comparison
     #plot_high_quality_comparison()
@@ -1178,12 +1180,12 @@ if __name__ == '__main__':
     # plot_per_sample_comparison('tara',output='tara_compare_persample.pdf')
     #
     #
-    # plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
-    # plot_sankey_overlap(output='dog_sankey.pdf')
-    # plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
+    plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
+    plot_sankey_overlap(output='dog_sankey.pdf')
+    plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
     #
     #
-    # ### recall, precision, F1-score box plot
+    ### recall, precision, F1-score box plot
     # plot_overlap_F1()
     # plot_overlap_F1('human')
     # plot_overlap_F1('tara')
@@ -1198,11 +1200,11 @@ if __name__ == '__main__':
     # plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
     # plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
     #
-    # plot_transfer()
+    #plot_transfer()
     #
-    plot_extra_bar()
-
-    plot_extra_per_sample()
+    # plot_extra_bar()
+    #
+    # plot_extra_per_sample()
     #
     #
     # CAT_mmseqs()
