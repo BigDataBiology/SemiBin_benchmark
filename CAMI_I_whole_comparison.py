@@ -11,6 +11,8 @@ import seaborn as sns
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
+color_map = ['#01665e', '#5da8a1', '#80cdc1', '#c7eae5']
+
 def get_number_of_genomes_per_completeness(amber_path, return_pandas=False):
     genome_path = os.path.join(amber_path, 'genome')
     table = {}
@@ -58,7 +60,7 @@ def plot_bar(amber_path, add_legend=True,y_label = None,title = None, output = N
     high_quality_list = subset[90].sort_values().values
     print('Improvement of best binner over second best: {:.2%}'.format(
         (high_quality_list[-1] - high_quality_list[-2]) / high_quality_list[-2]))
-    ax = subset.plot(kind="barh", stacked=True, legend=False, color=['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
 
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
@@ -141,7 +143,7 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
     }, inplace=True)
     subset = subset[[90,80,70,60]]
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
 
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
@@ -204,7 +206,7 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
     subset = subset[[90,80,70,60]]
 
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
 
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
@@ -226,7 +228,7 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
     subset = subset[[90,80,70,60]]
 
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
     ax.set_xticklabels(labels=['CAT', 'MMseqs2'], rotation=50, fontsize=15, color='black')
@@ -242,7 +244,7 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
     subset = subset[[90,80,70,60]]
 
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
 
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
@@ -272,9 +274,8 @@ def plot_bar_semi_no_semi(amber_path,add_legend=True,y_label = None, output = No
     subset = subset[[90,80,70,60]]
     print(subset)
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
-    print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
-        (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
+                     ax=axes[ax_position],legend = False, color = color_map)
+    print('Improvement of SemiBin over NoSemi: {:.2%}'.format((subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
 
     if add_legend:
         ax.legend(['>90', '>80','>70','>60'],
@@ -299,7 +300,7 @@ def plot_bar_semi_no_semi(amber_path,add_legend=True,y_label = None, output = No
     print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
         (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position],legend = False, color = color_map)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50, fontsize=15,color = 'black')
@@ -318,7 +319,7 @@ def plot_bar_semi_no_semi(amber_path,add_legend=True,y_label = None, output = No
     print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
         (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position],legend = False, color = color_map)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50,
@@ -483,10 +484,10 @@ if __name__ == '__main__':
     #
     # ## bar plot with Semi VS no semi
 
-    # plot_bar_semi_no_semi(amber_path_low, y_label=[0,5,10,15,20,25,30],output='CAMI_I_low_semi_nosemi.pdf')
-    # plot_bar_semi_no_semi(amber_path_medium,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
-    # plot_bar_semi_no_semi(amber_path_high, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
-    #
+    plot_bar_semi_no_semi(amber_path_low, y_label=[0,5,10,15,20,25,30],output='CAMI_I_low_semi_nosemi.pdf')
+    plot_bar_semi_no_semi(amber_path_medium,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
+    plot_bar_semi_no_semi(amber_path_high, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
+
     # ### F1 box plot with Semi vs no semi
     # plot_f1_boxplot_semi_to_nosemi(amber_path_low, y_label=[0.6, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],
     #                                size=5,output='CAMI_I_low_semi_nosemi_F1.pdf' )
@@ -495,6 +496,6 @@ if __name__ == '__main__':
     #
     # ### comparison of generalization(SemiBin_c, SemiBin_m, SemiBin_mc)
 
-    plot_bar_generalization(amber_path_low,'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
-    plot_bar_generalization(amber_path_medium,'Medium complexity', y_label=[0,20,40,60,80],add_legend=False, output='CAMI_I_generalization_medium.pdf')
-    plot_bar_generalization(amber_path_high, 'High complexity', y_label=[0,100,200,300,400],add_legend=False, output='CAMI_I_generalization_high.pdf')
+    # plot_bar_generalization(amber_path_low,'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
+    # plot_bar_generalization(amber_path_medium,'Medium complexity', y_label=[0,20,40,60,80],add_legend=False, output='CAMI_I_generalization_medium.pdf')
+    # plot_bar_generalization(amber_path_high, 'High complexity', y_label=[0,100,200,300,400],add_legend=False, output='CAMI_I_generalization_high.pdf')
