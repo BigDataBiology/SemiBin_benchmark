@@ -101,19 +101,22 @@ def plot_f1_score(amber_path, y_label = None,title = None,size = 5, output = Non
 
     method = ['COCACOLA', 'SolidBin_SFS_CL','SolidBin_CL', 'SolidBin_naive', 'VAMB','SolidBin_coalign', 'Maxbin2',
               'Metabat2_200', 'SemiBin_200']
+
     subset = method_list['COCACOLA']
+
     for temp in method:
         if temp == 'COCACOLA':
             continue
         subset = pd.concat([subset, method_list[temp]], axis=1)
-    fig, ax = plt.subplots(nrows=1, ncols=1)
     subset.columns = [method]
     column_new = ['SemiBin_200', 'Metabat2_200', 'Maxbin2', 'SolidBin_coalign', 'VAMB', 'SolidBin_naive',
                   'SolidBin_CL', 'SolidBin_SFS_CL', 'COCACOLA']
     subset = subset[column_new]
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+
+
     sns.stripplot(data=subset, size=size,
-                  order=['SemiBin_200', 'Metabat2_200', 'Maxbin2', 'SolidBin_coalign', 'VAMB', 'SolidBin_naive',
-                  'SolidBin_CL', 'SolidBin_SFS_CL', 'COCACOLA'], orient='h',palette= ['#1b9e77','#ec7014','#e7298a','#8c510a','#7570b3','#bf812d','#dfc27d','#f6e8c3','#dfc27d'])
+                  order=column_new, orient='h',palette= ['#1b9e77','#ec7014','#e7298a','#8c510a','#7570b3','#bf812d','#dfc27d','#f6e8c3','#dfc27d'])
 
     sns.boxplot(data=subset, orient="h", color='white', width=.5, fliersize=0)
     ax.set_xticks(ticks=y_label)
@@ -164,7 +167,7 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
     }, inplace=True)
     subset = subset[[90,80,70,60]]
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
     ax.set_xticklabels(labels=['Metabat2', 'SemiBin'], rotation=50, fontsize=15, color='black')
@@ -179,7 +182,7 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
     }, inplace=True)
     subset = subset[[90,80,70,60]]
     ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = ['#01665e', '#35978f', '#80cdc1', '#c7eae5'])
+                     ax=axes[ax_position], legend=False, color = color_map)
 
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
@@ -248,7 +251,7 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
 
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-    ax.set_xticklabels(labels=['CAT', 'mmseqs'], rotation=50,
+    ax.set_xticklabels(labels=['CAT', 'MMseqs2'], rotation=50,
                        minor=False, fontsize=15, color='black')
     ax.set_title('{}'.format('max_edges=1000'), fontsize=13, alpha=1.0)
 
@@ -360,6 +363,7 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=N
 
     subset = pd.concat([method_list['NoSemi_200'],method_list['SemiBin_200']],axis = 1)
     subset.columns = [['NoSemi_200','SemiBin_200']]
+    print(subset)
     sns.stripplot(data=subset, ax=axes[0], size=size,palette=['#99d8c9', '#1b9e77'])
     sns.boxplot(data=subset,ax=axes[0], color='white', width=.5,fliersize = 0)
     axes[0].set_yticks(ticks=y_label)
@@ -371,6 +375,7 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=N
 
     subset = pd.concat([method_list['NoSemi_500'],method_list['SemiBin_500']],axis = 1)
     subset.columns = [['NoSemi_500','SemiBin_500']]
+    print(subset)
     sns.stripplot(data=subset, ax=axes[1], size=size,palette=['#99d8c9', '#1b9e77'])
     sns.boxplot(data=subset,ax=axes[1], color='white', width=.5,fliersize = 0)
     axes[1].set_yticks(ticks=y_label)
@@ -381,6 +386,7 @@ def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=N
 
     subset = pd.concat([method_list['NoSemi_1000'],method_list['SemiBin_1000']],axis = 1)
     subset.columns = [['NoSemi_1000','SemiBin_1000']]
+    print(subset)
     sns.stripplot(data=subset, ax=axes[2], size=size,palette=['#99d8c9', '#1b9e77'])
     sns.boxplot(data=subset,ax=axes[2], color='white', width=.5,fliersize = 0)
     axes[2].set_yticks(ticks=y_label)
@@ -446,55 +452,62 @@ if __name__ == '__main__':
     amber_path_medium_unique = base_path + 'unique/medium'
     amber_path_high_unique = base_path + 'unique/high'
 
+
+    ### CAMI I whole comparsion bar plot
+
     # plot_bar(amber_path_low, y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity(all)', output='CAMI_I_low_whole.pdf')
     # plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', add_legend=False, output='CAMI_I_medium_whole.pdf')
     # plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', add_legend=False, output='CAMI_I_high_whole.pdf')
 
     ## whole comparison F1 box plot
+
     # plot_f1_score(amber_path_low,y_label=[0.6,0.7,0.8,0.9,1.0],title='Low-complexity(all)', output='CAMI_I_low_whole_F1.pdf')
     # plot_f1_score(amber_path_medium,title='Medium-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size = 3, output='CAMI_I_medium_whole_F1.pdf')
     # plot_f1_score(amber_path_high,title='High-complexity(all)',y_label=[0.5,0.6,0.7,0.8,0.9,1.0],size=2, output='CAMI_I_high_whole_F1.pdf')
 
-    # ### common comparison bar plot
+    ### CAMI I common comparison bar plot
 
     # plot_bar(amber_path_low_common, y_label=[0, 2, 4, 6, 8, 10], title='Low-complexity(common strain)', output='CAMI_I_low_common.pdf')
-    # plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30, 40], title='Medium-complexity(common strain)',
+    # plot_bar(amber_path_medium_common, y_label=[0, 10, 20, 30], title='Medium-complexity(common strain)',
     #        add_legend=False,output='CAMI_I_medium_common.pdf')
     # plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
     #        add_legend=False,output='CAMI_I_high_common.pdf')
     
-    # ### unique comparison bar plot
+    ### CAMI I unique comparison bar plot
 
     # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)',  add_legend=False, output='CAMI_I_low_unique.pdf')
-    # plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45, 60], title='Medium-complexity(unique strain)',
+    # plot_bar(amber_path_medium_unique, y_label=[0, 15, 30, 45], title='Medium-complexity(unique strain)',
     #           add_legend=False, output='CAMI_I_medium_unique.pdf')
-    # plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300], title='High-complexity(unique strain)',
+    # plot_bar(amber_path_high_unique, y_label=[0, 100, 200, 300, 400], title='High-complexity(unique strain)',
     #           add_legend=False, output='CAMI_I_high_unique.pdf')
 
-    # ### compare to Metabat2 with different parameters
+    ### compare to Metabat2 with different parameters
+
     # plot_SemiBin_Metabat(amber_path_low,add_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
     # plot_SemiBin_Metabat(amber_path_medium,y_label=[0,20,40,60,80,100], output='CAMI_I_medium_SemiBin_Metabat2.pdf')
     # plot_SemiBin_Metabat(amber_path_high,y_label=[0,100,200,300,400,500], output='CAMI_I_high_SemiBin_Metabat2.pdf')
 
 
     # ### compare results with CAT or mmseqs
-    # plot_CAT_mmseqs(amber_path_low, add_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
-    # plot_CAT_mmseqs(amber_path_medium,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
-    # plot_CAT_mmseqs(amber_path_high,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
-    #
-    # ## bar plot with Semi VS no semi
 
-    plot_bar_semi_no_semi(amber_path_low, y_label=[0,5,10,15,20,25,30],output='CAMI_I_low_semi_nosemi.pdf')
-    plot_bar_semi_no_semi(amber_path_medium,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
-    plot_bar_semi_no_semi(amber_path_high, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
+    plot_CAT_mmseqs(amber_path_low, add_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
+    plot_CAT_mmseqs(amber_path_medium,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
+    plot_CAT_mmseqs(amber_path_high,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
 
-    # ### F1 box plot with Semi vs no semi
-    # plot_f1_boxplot_semi_to_nosemi(amber_path_low, y_label=[0.6, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00],
+    ### bar plot with Semi VS no semi
+
+    # plot_bar_semi_no_semi(amber_path_low, y_label=[0,5,10,15,20,25,30],output='CAMI_I_low_semi_nosemi.pdf')
+    # plot_bar_semi_no_semi(amber_path_medium,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
+    # plot_bar_semi_no_semi(amber_path_high, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
+
+    ### F1 box plot with Semi vs no semi
+
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_low, y_label=[0.6, 0.7,  0.8, 0.9, 1.0],
     #                                size=5,output='CAMI_I_low_semi_nosemi_F1.pdf' )
-    # plot_f1_boxplot_semi_to_nosemi(amber_path_medium, y_label=[0.6, 0.7, 0.8, 0.9, 1.0], size=3,output='CAMI_I_medium_semi_nosemi_F1.pdf')
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_medium, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=3,output='CAMI_I_medium_semi_nosemi_F1.pdf')
     # plot_f1_boxplot_semi_to_nosemi(amber_path_high, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=2,output='CAMI_I_high_semi_nosemi_F1.pdf')
-    #
-    # ### comparison of generalization(SemiBin_c, SemiBin_m, SemiBin_mc)
+
+    ### comparison of generalization(NoSemi, SemiBin_c, SemiBin_m, SemiBin_mc)
 
     # plot_bar_generalization(amber_path_low,'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
     # plot_bar_generalization(amber_path_medium,'Medium complexity', y_label=[0,20,40,60,80],add_legend=False, output='CAMI_I_generalization_medium.pdf')

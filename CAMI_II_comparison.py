@@ -106,20 +106,22 @@ def plot_hq_num():
     line_width = 1
 
     plt.figure(figsize=(4, 2))
-    plt.plot(['genus', 'species', 'strain'],[skin_genus_metabat2, skin_species_metabat2, skin_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width)
-    plt.plot(['genus', 'species', 'strain'],[skin_genus_vamb, skin_species_vamb, skin_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'],[skin_genus_metabat2, skin_species_metabat2, skin_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width, marker='o',)
+
+
+    plt.plot(['genus', 'species', 'strain'],[skin_genus_vamb, skin_species_vamb, skin_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width, marker='o',)
     plt.plot(['genus', 'species', 'strain'], [skin_genus_SemiBin, skin_species_SemiBin, skin_strain_SemiBin], label='SemiBin',
-             color='#1b9e77',linewidth = line_width)
+             color='#1b9e77',linewidth = line_width, marker='o',)
     plt.legend()
     plt.xticks([])
     plt.savefig('CAMI_II_skin.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(4, 2))
-    plt.plot(['genus', 'species', 'strain'],[oral_genus_metabat2, oral_species_metabat2, oral_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width)
-    plt.plot(['genus', 'species', 'strain'],[oral_genus_vamb, oral_species_vamb, oral_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width)
+    plt.plot(['genus', 'species', 'strain'],[oral_genus_metabat2, oral_species_metabat2, oral_strain_metabat2], label='Metabat2',color='#ec7014',linewidth = line_width, marker='o',)
+    plt.plot(['genus', 'species', 'strain'],[oral_genus_vamb, oral_species_vamb, oral_strain_vamb], label='VAMB',color='#7570b3',linewidth = line_width, marker='o',)
     plt.plot(['genus', 'species', 'strain'], [oral_genus_SemiBin, oral_species_SemiBin, oral_strain_SemiBin], label='SemiBin',
-             color='#1b9e77',linewidth = line_width)
+             color='#1b9e77',linewidth = line_width, marker='o',)
     plt.legend()
     plt.savefig('CAMI_II_oral.pdf', dpi=300, bbox_inches='tight')
     plt.close()
@@ -386,8 +388,8 @@ def get_hq_strain_ANI(dataset = 'skin'):
 def plot_bar_strain_simiarity():
     ### skin
     value_array = get_hq_strain_ANI()
-    print(value_array)
     subset = pd.DataFrame(value_array,columns = ['Metabat2','VAMB','SemiBin'], index=['0~90','90~95','95~97','97~98','98~99','99~99.5','99.5~99.9','99.9~100'])
+    print(subset)
     ax = subset.plot(kind='bar',width = 0.6, color = ['#ec7014', '#7570b3', '#1b9e77'])
     ax.set_yticks(ticks=[0,20,40,60,80])
     ax.set_yticklabels(labels=[0,20,40,60,80],fontsize=12,color = 'black')
@@ -400,8 +402,8 @@ def plot_bar_strain_simiarity():
 
     ### Oral
     value_array = get_hq_strain_ANI(dataset= 'oral')
-    print(value_array)
     subset = pd.DataFrame(value_array,columns = ['Metabat2','VAMB','SemiBin'], index=['0~90','90~95','95~97','97~98','98~99','99~99.5','99.5~99.9','99.9~100'])
+    print(subset)
     ax = subset.plot(kind='bar',width = 0.6, color = ['#ec7014', '#7570b3', '#1b9e77'])
     ax.set_yticks(ticks=[0,30,60,90])
     ax.set_yticklabels(labels=[0,30,60,90],fontsize=12,color = 'black')
@@ -498,7 +500,7 @@ def plot_generalization():
 
     subset = pd.DataFrame(np.array([[skin_NoSemi_genus,skin_SemiBin_m_genus,skin_SemiBin_c_genus,skin_SemiBin_mc_genus,skin_SemiBin_genus ],[oral_NoSemi_genus,oral_SemiBin_m_genus,oral_SemiBin_c_genus,oral_SemiBin_mc_genus,oral_SemiBin_genus]]),columns = ['No_semi','SemiBin_m','SemiBin_c','SemiBin_mc','SemiBin'], index=['Skin','Oral'])
     print(subset)
-    ax = subset.plot(kind='bar',width = 0.6,color = ['#fdbf6f','#fb9a99', '#b2df8a', '#a6cee3', '#1f78b4'])
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#e6ab02','#e7298a', '#7570b3', '#d95f02', '#1b9e77'])
     ax.set_yticks(ticks=[0,10,20,30,40,50,60])
     ax.set_yticklabels(labels=[0,10,20,30,40,50,60],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
@@ -540,45 +542,48 @@ def plot_comparsion_Metabat2():
     ax.set_yticks(ticks=[0,20,40,60,80])
     ax.set_yticklabels(labels=[0,20,40,60,80],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    ax.set_ylabel('High quality genomes', fontsize=15,color = 'black')
+    ax.set_ylabel('High quality strains', fontsize=15,color = 'black')
     ax.set_title('strain', fontsize=20, alpha=1.0,color = 'black')
     plt.savefig('CAMI_II_com_strain_Metabat2.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
     subset = pd.DataFrame(np.array([[Metabat2_single_species_skin,Metabat2_multi_species_skin],[Metabat2_single_species_oral,Metabat2_multi_species_oral]]),columns = ['Metabat2_single','Metabat2_multi'], index=['Skin','Oral'])
+    print(subset)
     ax = subset.plot(kind='bar',width= 0.8,legend = False,color = ['#ec7014', '#fec44f'],figsize=(3,4))
     ax.set_yticks(ticks=[0,15,30,45,60,75])
     ax.set_yticklabels(labels=[0,15,30,45,60,75],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    #ax.set_ylabel('Num', fontsize=15,color = 'black')
     ax.set_title('species', fontsize=20, alpha=1.0,color = 'black')
+    ax.set_ylabel('High quality species', fontsize=15,color = 'black')
     plt.savefig('CAMI_II_com_species_Metabat2.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
     subset = pd.DataFrame(np.array([[Metabat2_single_genus_skin, Metabat2_multi_genus_skin],[Metabat2_single_genus_oral, Metabat2_multi_genus_oral]]),columns = ['Metabat2_single','Metabat2_multi'], index=['Skin','Oral'])
+    print(subset)
     ax = subset.plot(kind='bar',width = 0.8,legend = False,color = ['#ec7014', '#fec44f'],figsize=(3,4))
     ax.set_yticks(ticks=[0,10,20,30,40,50])
     ax.set_yticklabels(labels=[0,10,20,30,40,50],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Skin','Oral'], fontsize=15,color = 'black',rotation = 360)
-    #ax.set_ylabel('Num', fontsize=15,color = 'black')
     ax.set_title('genus', fontsize=20, alpha=1.0,color = 'black')
     ax.legend(['Metabat2_single','Metabat2_multi'],fontsize=10)
+    ax.set_ylabel('High quality genera', fontsize=15,color = 'black')
     plt.savefig('CAMI_II_com_genus_Metabat2.pdf', dpi=300, bbox_inches='tight')
     plt.close()
     plt.show()
 
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
-    plot_hq_num()
-    #plot_comparsion_Metabat2()
-    #
-    # ### venn plot in strain/species/genus level
-    #plot_venn_plot()
-    #
-    # ### plot similarity distribution of oral and skin
-    # plot_similarity_distribution()
-    #
-    # ### bar plot with different similarities
-    #get_hq_strain_ANI()
 
-    #plot_generalization()
+    #plot_hq_num()
+    #plot_comparsion_Metabat2()
+
+    ### venn plot in strain/species/genus level
+    #plot_venn_plot()
+
+    ### plot similarity distribution of oral and skin
+    #plot_similarity_distribution()
+
+    ### bar plot with different similarities
+    #plot_bar_strain_simiarity()
+
+    plot_generalization()
