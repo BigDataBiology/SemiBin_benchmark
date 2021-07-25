@@ -1,4 +1,4 @@
-# SemiBin_benchmark
+# SemiBin visualization
 
 Dependencies
 
