@@ -44,3 +44,20 @@ mkdir GUNC
 gunc run -d SemiBin/output_recluster_bins -o GUNC -r ~/gunc_path/gunc_db_2.0.4.dmnd -t 32
 ```
 
+### Analysis
+
+We used GTDB-TK to annotate the high-quality bins.
+
+```bash
+gtdbtk classify_wf --genome_dir high_quality_bins --out_dir gtdbtk_output -x 
+fa --cpus 32
+```
+
+We used Mash to identify the overlap between SemiBin and Metabat2.
+For two bins from SemiBin and Metabat2, we used
+```bash
+mash sketch SemiBin.fa
+mash sketch Metabat2.fa
+mash dist SemiBin.fa.msh Metabat2.fa.msh
+```
+
