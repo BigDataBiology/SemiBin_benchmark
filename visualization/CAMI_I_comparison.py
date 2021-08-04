@@ -135,60 +135,21 @@ def plot_f1_score(amber_path, y_label = None,title = None,size = 5, output = Non
 def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None):
     data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
 
-    fig, axes = plt.subplots(nrows=1, ncols=3)
 
-    ax_position = 0
-    subset = data.loc[['Metabat2_200','SemiBin_200']]
+    subset = data.loc[['Metabat2_200','Metabat2_500', 'Metabat2_1000', 'SemiBin_200','SemiBin_500', 'SemiBin_1000']]
     print(subset)
-    subset.rename(index={
-        'SemiBin_200': 'SemiBin',
-        'Metabat2_200': 'Metabat2',
-    }, inplace=True)
+
     subset = subset[[90,80,70,60]]
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = color_map)
+    ax = subset.plot(kind="bar", stacked=True, legend=False, color = color_map)
 
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
                   loc='upper left', fontsize=10)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-    ax.set_xticklabels(labels=['Metabat2', 'SemiBin'], rotation=50,
+    ax.set_xticklabels(labels=['Metabat2_200','Metabat2_500', 'Metabat2_500', 'SemiBin_200','SemiBin_500', 'SemiBin_1000'], rotation=50,
                        minor=False, fontsize=15, color='black')
     ax.set_ylabel('Bins', fontsize=15, color='black')
-    ax.set_title('{}'.format('max_edges=200'), fontsize=13, alpha=1.0)
-    ax_position += 1
-
-    subset = data.loc[['Metabat2_500','SemiBin_500']]
-    print(subset)
-    subset.rename(index={
-        'SemiBin_500': 'SemiBin',
-        'Metabat2_500': 'Metabat2',
-    }, inplace=True)
-    subset = subset[[90,80,70,60]]
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = color_map)
-    ax.set_yticks(ticks=y_label)
-    ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-    ax.set_xticklabels(labels=['Metabat2', 'SemiBin'], rotation=50, fontsize=15, color='black')
-    ax.set_title('{}'.format('max_edges=500'), fontsize=13)
-    ax_position += 1
-
-    subset = data.loc[['Metabat2_1000','SemiBin_1000']]
-    print(subset)
-    subset.rename(index={
-        'SemiBin_1000': 'SemiBin',
-        'Metabat2_1000': 'Metabat2',
-    }, inplace=True)
-    subset = subset[[90,80,70,60]]
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position], legend=False, color = color_map)
-
-    ax.set_yticks(ticks=y_label)
-    ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-    ax.set_xticklabels(labels=['Metabat2', 'SemiBin'], rotation=50,
-                       minor=False, fontsize=15, color='black')
-    ax.set_title('{}'.format('max_edges=1000'), fontsize=13, alpha=1.0)
 
     plt.tight_layout()
     plt.savefig(output, dpi=300, bbox_inches='tight')
@@ -263,138 +224,71 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
 
 def plot_bar_semi_no_semi(amber_path,add_legend=True,y_label = None, output = None):
     data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
-    fig, axes = plt.subplots(nrows=1, ncols=3)
-
-    ax_position = 0
 
     subset = data.loc[[
         'NoSemi_200',
-        'SemiBin_200',]]
-    subset.rename(index={
-        'SemiBin_200': 'SemiBin',
-        'NoSemi_200': 'NoSemi',
-    }, inplace=True)
+        'NoSemi_500',
+        'NoSemi_1000',
+        'SemiBin_200',
+        'SemiBin_500',
+        'SemiBin_1000']]
+
     subset = subset[[90,80,70,60]]
     print(subset)
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = color_map)
-    print('Improvement of SemiBin over NoSemi: {:.2%}'.format((subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
+    ax = subset.plot(kind="bar", stacked=True, legend = False, color = color_map)
+
+    print('Improvement of SemiBin over NoSemi: {:.2%}'.format((subset.loc['SemiBin_200'][90] - subset.loc['NoSemi_200'][90]) / subset.loc['NoSemi_200'][90]))
+    print('Improvement of SemiBin over NoSemi: {:.2%}'.format((subset.loc['SemiBin_500'][90] - subset.loc['NoSemi_500'][90]) / subset.loc['NoSemi_500'][90]))
+    print('Improvement of SemiBin over NoSemi: {:.2%}'.format((subset.loc['SemiBin_1000'][90] - subset.loc['NoSemi_1000'][90]) / subset.loc['NoSemi_1000'][90]))
 
     if add_legend:
         ax.legend(['>90', '>80','>70','>60'],
                   loc='upper left', fontsize=10, title="completeness",)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50,
+    ax.set_xticklabels(labels=['NoSemi_200','NoSemi_500','NoSemi_1000','SemiBin_200','SemiBin_500','SemiBin_1000'], rotation=50,
                        minor=False, fontsize=15,color = 'black')
     ax.set_ylabel('Bins', fontsize=15,color = 'black')
-    ax.set_title('{}'.format('max_edges=200'), fontsize=15, alpha=1.0,color = 'black')
-    ax_position += 1
-
-    subset = data.loc[[
-        'NoSemi_500',
-        'SemiBin_500',]]
-    subset.rename(index={
-        'SemiBin_500': 'SemiBin',
-        'NoSemi_500': 'NoSemi',
-    }, inplace=True)
-    subset = subset[[90,80,70,60]]
-    print(subset)
-    print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
-        (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = color_map)
-    ax.set_yticks(ticks=y_label)
-    ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50, fontsize=15,color = 'black')
-    ax.set_title('{}'.format('max_edges=500'), fontsize=15,color = 'black')
-    ax_position += 1
-
-    subset = data.loc[[
-        'NoSemi_1000',
-        'SemiBin_1000',]]
-    subset.rename(index={
-        'SemiBin_1000': 'SemiBin',
-        'NoSemi_1000': 'NoSemi',
-    }, inplace=True)
-    subset = subset[[90,80,70,60]]
-    print(subset)
-    print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
-        (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
-    ax = subset.plot(kind="bar", stacked=True,
-                     ax=axes[ax_position],legend = False, color = color_map)
-    ax.set_yticks(ticks=y_label)
-    ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
-    ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50,
-                       minor=False, fontsize=15,color = 'black')
-    ax.set_title('{}'.format('max_edges=1000'), fontsize=15, alpha=1.0,color = 'black')
-
-    plt.tight_layout()
-    plt.savefig(output, dpi=300)
-    plt.close()
-    plt.show()
-
-def plot_f1_boxplot_semi_to_nosemi(amber_path, y_label = None,size = 5, output=None):
-    genome_path = os.path.join(amber_path, 'genome')
-    methold_path_list = []
-    method_list = {}
-    for root, dirs, files in os.walk(genome_path, topdown=False):
-        for name in dirs:
-            methold_path_list.append(os.path.join(root, name))
-
-    for method_path in methold_path_list:
-        if method_path.split('/')[-1] == 'Gold standard':
-            continue
-        metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
-        metric = metric[(metric['Completeness (bp)'] >= 0.5) & (metric['Purity (bp)'] >= 0.5)]
-        com = metric[['Completeness (bp)']]
-        pur = metric[['Purity (bp)']]
-        com = com.fillna(0).values
-        pur = pur.fillna(0).values
-        f1 = 2 * (com * pur) / (com + pur)
-        f1 = pd.DataFrame(f1)
-        f1.columns = ['F1']
-        method_list[method_path.split('/')[-1]] = f1
-
-    fig, axes = plt.subplots(nrows=1, ncols=3)
+    #ax.set_title('{}'.format('max_edges=200'), fontsize=15, alpha=1.0,color = 'black')
+    # ax_position += 1
     #
-    # ax_position = 0
+    # subset = data.loc[[
+    #     'NoSemi_500',
+    #     'SemiBin_500',]]
+    # subset.rename(index={
+    #     'SemiBin_500': 'SemiBin',
+    #     'NoSemi_500': 'NoSemi',
+    # }, inplace=True)
+    # subset = subset[[90,80,70,60]]
+    # print(subset)
+    # print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
+    #     (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
+    # ax = subset.plot(kind="bar", stacked=True,
+    #                  ax=axes[ax_position],legend = False, color = color_map)
+    # ax.set_yticks(ticks=y_label)
+    # ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
+    # ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50, fontsize=15,color = 'black')
+    # ax.set_title('{}'.format('max_edges=500'), fontsize=15,color = 'black')
+    # ax_position += 1
     #
-
-    subset = pd.concat([method_list['NoSemi_200'],method_list['SemiBin_200']],axis = 1)
-    subset.columns = [['NoSemi_200','SemiBin_200']]
-    print(subset)
-    sns.stripplot(data=subset, ax=axes[0], size=size,palette=['#99d8c9', '#1b9e77'])
-    sns.boxplot(data=subset,ax=axes[0], color='white', width=.5,fliersize = 0)
-    axes[0].set_yticks(ticks=y_label)
-    axes[0].set_yticklabels(labels=y_label, fontsize=12, color='black')
-    axes[0].set_xticklabels(labels=['NoSemi', 'SemiBin'], rotation=50,
-                       minor=False, fontsize=15,color = 'black')
-    axes[0].set_ylabel('F1-score', fontsize=15,color = 'black')
-    axes[0].set_title('{}'.format('max_edges=200'), fontsize=15, alpha=1.0,color = 'black')
-
-    subset = pd.concat([method_list['NoSemi_500'],method_list['SemiBin_500']],axis = 1)
-    subset.columns = [['NoSemi_500','SemiBin_500']]
-    print(subset)
-    sns.stripplot(data=subset, ax=axes[1], size=size,palette=['#99d8c9', '#1b9e77'])
-    sns.boxplot(data=subset,ax=axes[1], color='white', width=.5,fliersize = 0)
-    axes[1].set_yticks(ticks=y_label)
-    axes[1].set_yticklabels(labels=y_label, fontsize=12, color='black')
-    axes[1].set_xticklabels(labels=['NoSemi', 'SemiBin'], rotation=50,
-                       minor=False, fontsize=15,color = 'black')
-    axes[1].set_title('{}'.format('max_edges=500'), fontsize=15, alpha=1.0,color = 'black')
-
-    subset = pd.concat([method_list['NoSemi_1000'],method_list['SemiBin_1000']],axis = 1)
-    subset.columns = [['NoSemi_1000','SemiBin_1000']]
-    print(subset)
-    sns.stripplot(data=subset, ax=axes[2], size=size,palette=['#99d8c9', '#1b9e77'])
-    sns.boxplot(data=subset,ax=axes[2], color='white', width=.5,fliersize = 0)
-    axes[2].set_yticks(ticks=y_label)
-    axes[2].set_yticklabels(labels=y_label, fontsize=12, color='black')
-    axes[2].set_xticklabels(labels=['NoSemi', 'SemiBin'], rotation=50,
-                       minor=False, fontsize=15,color = 'black')
-    axes[2].set_title('{}'.format('max_edges=1000'), fontsize=15, alpha=1.0,color = 'black')
-
+    # subset = data.loc[[
+    #     'NoSemi_1000',
+    #     'SemiBin_1000',]]
+    # subset.rename(index={
+    #     'SemiBin_1000': 'SemiBin',
+    #     'NoSemi_1000': 'NoSemi',
+    # }, inplace=True)
+    # subset = subset[[90,80,70,60]]
+    # print(subset)
+    # print('Improvement of SemiBin over NoSemi: {:.2%}'.format(
+    #     (subset.loc['SemiBin'][90] - subset.loc['NoSemi'][90]) / subset.loc['NoSemi'][90]))
+    # ax = subset.plot(kind="bar", stacked=True,
+    #                  ax=axes[ax_position],legend = False, color = color_map)
+    # ax.set_yticks(ticks=y_label)
+    # ax.set_yticklabels(labels=y_label,fontsize=12,color = 'black')
+    # ax.set_xticklabels(labels=['NoSemi','SemiBin'], rotation=50,
+    #                    minor=False, fontsize=15,color = 'black')
+    # ax.set_title('{}'.format('max_edges=1000'), fontsize=15, alpha=1.0,color = 'black')
 
     plt.tight_layout()
     plt.savefig(output, dpi=300)
@@ -437,7 +331,7 @@ def plot_bar_generalization(amber_path, title,add_legend=True,y_label = None, ou
     plt.show()
 
 if __name__ == '__main__':
-    base_path = 'Results/Simulated/CAMI_I/'
+    base_path = '../Results/Simulated/CAMI_I/'
 
     # whole comparsion
     amber_path_low = base_path + 'whole/low'
@@ -455,9 +349,9 @@ if __name__ == '__main__':
 
     ### CAMI I whole comparsion bar plot
 
-    # plot_bar(amber_path_low, y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity(all)', output='CAMI_I_low_whole.pdf')
-    # plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', add_legend=False, output='CAMI_I_medium_whole.pdf')
-    # plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', add_legend=False, output='CAMI_I_high_whole.pdf')
+    plot_bar(amber_path_low, y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity(all)', output='CAMI_I_low_whole.pdf')
+    plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', add_legend=False, output='CAMI_I_medium_whole.pdf')
+    plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', add_legend=False, output='CAMI_I_high_whole.pdf')
 
     ## whole comparison F1 box plot
 
@@ -490,9 +384,9 @@ if __name__ == '__main__':
 
     # ### compare results with CAT or mmseqs
 
-    plot_CAT_mmseqs(amber_path_low, add_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
-    plot_CAT_mmseqs(amber_path_medium,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
-    plot_CAT_mmseqs(amber_path_high,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
+    # plot_CAT_mmseqs(amber_path_low, add_legend=True,y_label=[0,5,10,15,20,25,30],output='CAMI_I_CAT_mmseqs_low.pdf')
+    # plot_CAT_mmseqs(amber_path_medium,y_label=[0,20,40,60,80,100],output='CAMI_I_CAT_mmseqs_medium.pdf')
+    # plot_CAT_mmseqs(amber_path_high,y_label=[0,100,200,300,400,500],output='CAMI_I_CAT_mmseqs_high.pdf')
 
     ### bar plot with Semi VS no semi
 

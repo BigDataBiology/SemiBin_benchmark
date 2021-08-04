@@ -60,4 +60,3 @@ mash sketch SemiBin.fa
 mash sketch Metabat2.fa
 mash dist SemiBin.fa.msh Metabat2.fa.msh
 ```
-
