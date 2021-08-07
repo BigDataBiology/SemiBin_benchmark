@@ -26,7 +26,7 @@ done
 roary *.gff --mafft -p 64 -i 95 -cd 100 -f $roary/roary_crc_out -e
 query_pan_genome -a union $gff -o $roary/roary_crc_out/union.txt
 # GMGC
-roary *.gff --mafft -p 64 -i 95 -cd 99 -f $roary/roary_GMGC_out -e --
+roary *.gff --mafft -p 64 -i 95 -cd 99 -f $roary/roary_GMGC_out -e -g 150000
 query_pan_genome -a union $gff -o $roary/roary_GMGC_crc/union.txt
 
 ########################################################
