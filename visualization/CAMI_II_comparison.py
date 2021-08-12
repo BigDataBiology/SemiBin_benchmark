@@ -101,7 +101,7 @@ def plot_hq_num():
     print(oral_strain_SemiBin,oral_species_SemiBin,oral_genus_SemiBin)
     print('oral_strain_improvement(Metabat2, VAMB):', (oral_strain_SemiBin-oral_strain_metabat2)/oral_strain_metabat2, (oral_strain_SemiBin-oral_strain_vamb)/oral_strain_vamb)
     print('oral_species_improvement(Metabat2, VAMB):', (oral_species_SemiBin-oral_species_metabat2)/oral_species_metabat2, (oral_species_SemiBin-oral_species_vamb)/oral_species_vamb)
-    print('oral_genus_improvement(Metabat2, VAMB):', (oral_genus_SemiBin-oral_genus_metabat2)/oral_genus_metabat2, (oral_genus_SemiBin-oral_genus_vamb)/oral_genus_vamb)
+    print('oral_genus_improvement(Metabat2, VAMB):', (oral_genus_SemiBin-oral_genus_metabat2)/oral_genus_metabat2,  (oral_genus_SemiBin-oral_genus_vamb)/oral_genus_vamb)
 
     line_width = 1
 
@@ -574,16 +574,16 @@ def plot_comparsion_Metabat2():
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
 
-    #plot_hq_num()
-    #plot_comparsion_Metabat2()
+    plot_hq_num()
+    plot_comparsion_Metabat2()
 
     ### venn plot in strain/species/genus level
-    #plot_venn_plot()
+    plot_venn_plot()
 
     ### plot similarity distribution of oral and skin
-    #plot_similarity_distribution()
+    plot_similarity_distribution()
 
     ### bar plot with different similarities
-    #plot_bar_strain_simiarity()
+    plot_bar_strain_simiarity()
 
     plot_generalization()

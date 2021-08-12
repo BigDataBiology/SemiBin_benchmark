@@ -288,7 +288,7 @@ def plot_bar_per_sample_com(dataset, diff_label = None, num_label = None):
 
     v = pd.DataFrame({'total': counts.sum()})
     v = v.reindex(index = ['Maxbin2',  'VAMB','Metabat2','SemiBin', 'SemiBin_pretrain','VAMB_multi','SemiBin_multi',])
-    ax = sns.barplot(data=v.reset_index(), x='total', y='method', ax=axes[0], palette=['#e7298a','#7570b3','#ec7014','#41AB5D','#005A32','#9e9ac8','#a1d99b'])
+    ax = sns.barplot(data=v.reset_index(), x='total', y='method', ax=axes[0], palette=['#e7298a','#6a51a3','#ec7014','#41AB5D','#005A32','#9e9ac8','#a1d99b'])
 
     if num_label is not None:
         ax.set_xticks(ticks=num_label)
@@ -328,7 +328,7 @@ def plot_checkm_high_quality_comparison():
 
     subset = pd.DataFrame(np.array([[num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single,num_dog_semibin_pretrain_single]]),columns = ['Maxbin2','VAMB','Metabat2','SemiBin','SemiBin(pre-train)'], index=['Dog gut'])
     print(subset)
-    ax = subset.plot(kind='bar',figsize=(3,4),legend = False, color=['#e7298a','#6a51a3','#ec7014','#41AB5D','#005A32'])
+    ax = subset.plot(kind='bar',figsize=(3,4),legend = False, color=['#e7298a','#7570b3','#ec7014','#41AB5D','#005A32'])
     ax.set_yticks(ticks=[0,500,1000,1500,2000,2500,3000])
     ax.set_yticklabels(labels=[0,500,1000,1500,2000,2500,3000],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Dog gut'], fontsize=15,color = 'black',rotation = 360)
@@ -338,7 +338,7 @@ def plot_checkm_high_quality_comparison():
 
     subset = pd.DataFrame(np.array([[num_human_maxbin2_single,num_human_vamb_single,num_human_metabat2_single,num_human_semibin_single, num_human_semibin_pretrain_single]]),columns = ['Maxbin2','VAMB','Metabat2','SemiBin','SemiBin(pre-train)'], index=['Human gut'])
     print(subset)
-    ax = subset.plot(kind='bar',figsize=(3,4), color=['#e7298a','#6a51a3','#ec7014','#41AB5D','#005A32'])
+    ax = subset.plot(kind='bar',figsize=(3,4), color=['#e7298a','#7570b3','#ec7014','#41AB5D','#005A32'])
     ax.set_yticks(ticks=[0,400,800,1200,1600])
     ax.set_yticklabels(labels=[0,400,800,1200,1600],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Human gut'], fontsize=15,color = 'black',rotation = 360)
@@ -349,7 +349,7 @@ def plot_checkm_high_quality_comparison():
     plt.show()
 
     subset = pd.DataFrame(np.array([[num_tara_maxbin2_single,num_tara_vamb_single,num_tara_metabat2_single,num_tara_semibin_single, num_tara_semibin_pretrain_single]]),columns = ['Maxbin2','VAMB','Metabat2','SemiBin','SemiBin(pre-train)'], index=['Tara'])
-    ax = subset.plot(kind='bar',figsize=(3,4),legend = False, color=['#e7298a','#6a51a3','#ec7014','#41AB5D','#005A32'])
+    ax = subset.plot(kind='bar',figsize=(3,4),legend = False, color=['#e7298a','#7570b3','#ec7014','#41AB5D','#005A32'])
     ax.set_yticks(ticks=[0,100,200,300,400,500])
     ax.set_yticklabels(labels=[0,100,200,300,400,500],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Ocean'], fontsize=15,color = 'black',rotation = 360)
@@ -372,7 +372,7 @@ def plot_checkm_high_quality_comparison():
     print(num_tara_vamb_multi,num_tara_semibin_multi)
 
     subset = pd.DataFrame(np.array([[num_dog_vamb_mulit,num_dog_semibin_multi]]),columns = ['VAMB','SemiBin'], index=['Dog gut'])
-    ax = subset.plot(kind='bar',figsize = (2,4), color=['#41AB5D','#6a51a3'])
+    ax = subset.plot(kind='bar',figsize = (2,4), color=['#41AB5D','#7570b3'])
     ax.set_yticks(ticks=[0,800,1600,2400,3200,4000])
     ax.set_yticklabels(labels=[0,800,1600,2400,3200,4000],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Dog gut'], fontsize=15,color = 'black',rotation = 360)
@@ -383,7 +383,7 @@ def plot_checkm_high_quality_comparison():
 
     subset = pd.DataFrame(np.array([[num_human_vamb_multi, num_human_semibin_multi]]), columns=['VAMB', 'SemiBin'],
                           index=['Human gut'])
-    ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#41AB5D','#6a51a3'])
+    ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#41AB5D','#7570b3'])
     ax.set_yticks(ticks=[0, 400, 800, 1200, 1600, 2000])
     ax.set_yticklabels(labels=[0, 400, 800, 1200, 1600, 2000], fontsize=12, color='black')
     ax.set_xticklabels(labels=['Human gut'], fontsize=15, color='black', rotation=360)
@@ -394,7 +394,7 @@ def plot_checkm_high_quality_comparison():
 
     subset = pd.DataFrame(np.array([[num_tara_vamb_multi,num_tara_semibin_multi]]), columns=['VAMB', 'SemiBin'],
                           index=['Tara'])
-    ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#41AB5D','#6a51a3'])
+    ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#41AB5D','#7570b3'])
     ax.set_yticks(ticks=[0, 150, 300, 450, 600, 750])
     ax.set_yticklabels(labels=[0, 150, 300, 450, 600, 750], fontsize=12, color='black')
     ax.set_xticklabels(labels=['Ocean'], fontsize=15, color='black', rotation=360)
@@ -1275,47 +1275,45 @@ def CAT_mmseqs():
 
 if __name__ == '__main__':
     # print('human')
-    # plot_bar_per_sample_com('human',[-20,-10,0,10],[0,300,600,900,1200,1500])
+    plot_bar_per_sample_com('human',[-20,-10,0,10],[0,300,600,900,1200,1500])
     # print('dog')
-    # plot_bar_per_sample_com('dog',[-30,-20,-10,0,10],[0,500,1000,1500,2000,2500,3000,3500])
+    plot_bar_per_sample_com('dog',[-30,-20,-10,0,10],[0,500,1000,1500,2000,2500,3000,3500])
     # print('tara')
-    # plot_bar_per_sample_com('tara',[-20,-15,-10,-5,0,5], [0,100,200,300,400,500])
+    plot_bar_per_sample_com('tara',[-20,-15,-10,-5,0,5], [0,100,200,300,400,500])
 
-    #tranfer_multi()
+    tranfer_multi()
 
     ### bar plot high quality genomes comparison
-    #plot_checkm_high_quality_comparison()
-    ### venn plot multi annotation comparison
-    #plot_multi_venn_comparison()
+    plot_checkm_high_quality_comparison()
 
+    ### venn plot multi annotation comparison
+    plot_multi_venn_comparison()
 
     #alternative_real_compare_test()
-    # plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
-    # plot_sankey_overlap(output='dog_sankey.pdf')
-    # plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
-
+    plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
+    plot_sankey_overlap(output='dog_sankey.pdf')
+    plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
 
     ### recall, precision, F1-score box plot
 
-    # plot_overlap_F1('human')
-    # plot_overlap_F1()
-    # plot_overlap_F1('tara')
+    plot_overlap_F1('human')
+    plot_overlap_F1()
+    plot_overlap_F1('tara')
 
     # ### bar plot the overlap of annotation in all taxi
-    # plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
-    # plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
-    # plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
+    plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
+    plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
+    plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
 
     # ## comparison of known and unknown species
-    # plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
-    # plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
-    # plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
-    #
-    # plot_transfer()
-    #
-    #plot_extra_bar()
-    #
-    #plot_extra_per_sample()
-    #
-    #
+    plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
+    plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
+    plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
+
+    plot_transfer()
+
+    plot_extra_bar()
+
+    plot_extra_per_sample()
+
     CAT_mmseqs()
