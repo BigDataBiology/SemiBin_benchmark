@@ -77,9 +77,11 @@ def plot_hq_num():
     skin_strain_SemiBin = len(skin_result['SemiBin']['strain'])
     skin_species_SemiBin = len(skin_result['SemiBin']['species'])
     skin_genus_SemiBin = len(skin_result['SemiBin']['genus'])
+
     print(skin_strain_metabat2,skin_species_metabat2,skin_genus_metabat2)
     print(skin_strain_vamb,skin_species_vamb,skin_genus_vamb)
     print(skin_strain_SemiBin,skin_species_SemiBin,skin_genus_SemiBin)
+
     print('Skin_strain_improvement(Metabat2, VAMB): ', (skin_strain_SemiBin-skin_strain_metabat2)/skin_strain_metabat2, (skin_strain_SemiBin-skin_strain_vamb)/skin_strain_vamb)
     print('Skin_species_improvement(Metabat2, VAMB):', (skin_species_SemiBin-skin_species_metabat2)/skin_species_metabat2, (skin_species_SemiBin-skin_species_vamb)/skin_species_vamb)
     print('Skin_genus_improvement(Metabat2, VAMB):', (skin_genus_SemiBin-skin_genus_metabat2)/skin_genus_metabat2, (skin_genus_SemiBin-skin_genus_vamb)/skin_genus_vamb)
@@ -574,16 +576,16 @@ def plot_comparsion_Metabat2():
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
 
-    plot_hq_num()
-    plot_comparsion_Metabat2()
+    #plot_hq_num()
+    # plot_comparsion_Metabat2()
 
     ### venn plot in strain/species/genus level
-    plot_venn_plot()
+    #plot_venn_plot()
 
     ### plot similarity distribution of oral and skin
-    plot_similarity_distribution()
+    #plot_similarity_distribution()
 
     ### bar plot with different similarities
-    plot_bar_strain_simiarity()
-
+    #plot_bar_strain_simiarity()
+    #
     plot_generalization()
