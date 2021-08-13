@@ -98,10 +98,22 @@ def process_result(environment, mode):
         print('Generating cannot:', np.mean(generate_cannot['time'])/60, np.mean(generate_cannot['Mem']))
     print('train cpu:', np.mean(train_cpu['time'])/60, np.mean(train_cpu['Mem']))
     print('train gpu:', np.mean(train_gpu['time'])/60, np.mean(train_gpu['Mem']))
-    print('bin:', bin['time'], np.mean(bin['time'])/60, np.mean(bin['Mem']))
+    print('bin:', np.mean(bin['time'])/60, np.mean(bin['Mem']))
 
     return  generate_data, generate_cannot, train_cpu, train_gpu, bin
 
 if __name__ == '__main__':
-    generate_data, generate_cannot, train_cpu, train_gpu, bin = process_result('human', 'multi')
+    process_result('human', 'single')
+
+    process_result('human', 'multi')
+
+    process_result('dog', 'single')
+
+    process_result('dog', 'multi')
+
+    process_result('ocean', 'single')
+
+    process_result('ocean', 'multi')
+
+
 
