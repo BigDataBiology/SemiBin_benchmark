@@ -9,10 +9,13 @@ ocean_list = ['TARA_041_SRF_0.1-0.22', 'TARA_038_SRF_0.22-1.6', 'TARA_076_SRF_0.
 def run_single(dataset = None):
     if dataset == 'human':
         sample_list = human_list
+        env = 'human_gut'
     elif dataset == 'dog':
         sample_list = dog_list
+        env = 'dog_gut'
     elif dataset == 'ocean':
         sample_list = ocean_list
+        env = 'ocean'
 
     for sample in sample_list:
         bam_file = '{}.mapped.sorted.bam'.format(sample)
@@ -24,7 +27,7 @@ def run_single(dataset = None):
         os.system('SemiBin single_easy_bin -i {0} -o {1}/{2}/SemiBin -b {3} --recluster'.format(contig_file, dataset, sample, bam_file))
 
         # SemiBin(pretrain)
-        os.system('SemiBin single_easy_bin -i {0} -o {1}/{2}/SemiBin_pretrain -b {3} --recluster --environment human_gut'.format(contig_file, dataset, sample, bam_file))
+        os.system('SemiBin single_easy_bin -i {0} -o {1}/{2}/SemiBin_pretrain -b {3} --recluster --environment {4}'.format(contig_file, dataset, sample, bam_file, env))
 
         # Metabat2
         os.system('runMetaBat.sh {0} {1}'.format(contig_file, bam_file))
