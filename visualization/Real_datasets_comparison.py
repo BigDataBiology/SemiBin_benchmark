@@ -24,6 +24,33 @@ PRJNA504891_list = ['SRR8784379', 'SRR8180449', 'SRR8784372', 'SRR8784373', 'SRR
 
 PRJNA290729_list = ['SAMN03922475', 'SAMN03922449', 'SAMN03922521', 'SAMN03922488', 'SAMN03922526', 'SAMN03922468', 'SAMN03922500', 'SAMN03922512', 'SAMN03922494', 'SAMN03922450', 'SAMN03922479', 'SAMN03922484', 'SAMN03922492', 'SAMN03922470', 'SAMN03922480', 'SAMN03922505', 'SAMN03922516', 'SAMN03922527', 'SAMN03922513', 'SAMN03922472', 'SAMN03922504', 'SAMN03922523', 'SAMN03922528', 'SAMN03922510', 'SAMN03922497', 'SAMN03922518', 'SAMN03922465', 'SAMN03922517', 'SAMN03922522', 'SAMN03922458', 'SAMN03922511', 'SAMN03922531', 'SAMN03922462', 'SAMN03922457', 'SAMN03922507', 'SAMN03922509', 'SAMN03922474', 'SAMN03922529', 'SAMN03922456', 'SAMN03922506', 'SAMN03922464', 'SAMN03922453', 'SAMN03922463', 'SAMN03922466', 'SAMN03922539', 'SAMN03922503', 'SAMN03922477', 'SAMN03922495', 'SAMN03922451', 'SAMN03922538', 'SAMN03922461', 'SAMN03922532', 'SAMN03922476', 'SAMN03922469', 'SAMN03922540', 'SAMN03922533', 'SAMN03922530', 'SAMN03922536', 'SAMN03922519', 'SAMN03922471', 'SAMN03922489', 'SAMN03922524', 'SAMN03922496', 'SAMN03922467', 'SAMN03922520', 'SAMN03922483', 'SAMN03922452', 'SAMN03922508', 'SAMN03922486', 'SAMN03922473', 'SAMN03922515', 'SAMN03922455', 'SAMN03922534', 'SAMN03922490', 'SAMN03922498', 'SAMN03922525', 'SAMN03922487', 'SAMN03922482', 'SAMN03922501', 'SAMN03922537', 'SAMN03922535', 'SAMN03922485', 'SAMN03922459', 'SAMN03922499', 'SAMN03922514', 'SAMN03922454', 'SAMN03922493', 'SAMN03922478', 'SAMN03922491', 'SAMN03922481', 'SAMN03922502', 'SAMN03922460']
 
+soil_list = ['SAMN06268061', 'SAMN06268063', 'SAMN06264885', 'SAMN06267090',
+                 'SAMN06267080', 'SAMN06266457', 'SAMN05421921', 'SAMN06264649',
+                 'SAMN06264650', 'SAMN07631258', 'SAMN06264630', 'SAMN06267102',
+                 'SAMN06267104', 'SAMN06264384', 'SAMN06266487', 'SAMN06266460',
+                 'SAMN06266447', 'SAMN06264634', 'SAMN06266424', 'SAMN06268167',
+                 'SAMN06266446', 'SAMN06267099', 'SAMN06266484', 'SAMN06266459',
+                 'SAMN06267079', 'SAMN06267094', 'SAMN06264884', 'SAMN06266490',
+                 'SAMN06266453', 'SAMN06264385', 'SAMN06264631', 'SAMN06266388',
+                 'SAMN06266336', 'SAMN06266479', 'SAMN06266485', 'SAMN06267092',
+                 'SAMN07631257', 'SAMN06266454', 'SAMN06266483', 'SAMN06268059',
+                 'SAMN06267098', 'SAMN06268058', 'SAMN06268170', 'SAMN06266423',
+                 'SAMN06264948', 'SAMN06267083', 'SAMN06264648', 'SAMN07631255',
+                 'SAMN06266478', 'SAMN06267085', 'SAMN06266448', 'SAMN06267101',
+                 'SAMN06268168', 'SAMN06267097', 'SAMN06266475', 'SAMN06266450',
+                 'SAMN06264881', 'SAMN06264635', 'SAMN06267088', 'SAMN06266458',
+                 'SAMN06267095', 'SAMN06264383', 'SAMN06266461', 'SAMN06266449',
+                 'SAMN06267096', 'SAMN06267087', 'SAMN06267103', 'SAMN06266486',
+                 'SAMN06267084', 'SAMN06264882', 'SAMN06266387', 'SAMN06266473',
+                 'SAMN05421920', 'SAMN06266491', 'SAMN05421922', 'SAMN06267086',
+                 'SAMN06264947', 'SAMN06268062', 'SAMN07631256', 'SAMN06267100',
+                 'SAMN06267091', 'SAMN06268166', 'SAMN06264632', 'SAMN06264883',
+                 'SAMN06266481', 'SAMN06266482', 'SAMN06267089', 'SAMN06267093',
+                 'SAMN06264633', 'SAMN06266456', 'SAMN06267081', 'SAMN06266474',
+                 'SAMN06267105', 'SAMN05421524', 'SAMN05421649', 'SAMN06268169',
+                 'SAMN06267082', 'SAMN06268060', 'SAMN06266477', 'SAMN06266489',
+                 'SAMN06266455']
+
 transfer_single_human = ['CCMD41521570ST', 'CCMD21593359ST', 'CCMD89107682ST', 'CCMD18579000ST', 'CCMD76222476ST', 'CCMD22852639ST', 'CCMD99440714ST', 'CCMD38158721ST', 'CCMD50300306ST', 'CCMD98198513ST']
 
 transfer_single_dog = ['SAMN06172505', 'SAMN06172402', 'SAMN06172415', 'SAMN06172428', 'SAMN06172503', 'SAMN06172429', 'SAMN06172448', 'SAMN06172456', 'SAMN06172449', 'SAMN06172418']
@@ -36,12 +63,13 @@ transfer_multi_dog = ['SAMN06172506', 'SAMN06172436', 'SAMN06172403', 'SAMN06172
 
 transfer_multi_tara = ['TARA_045_SRF_0.22-1.6', 'TARA_041_SRF_0.22-1.6', 'TARA_033_SRF_0.22-1.6', 'TARA_140_SRF_0.22-3', 'TARA_138_SRF_0.22-3', 'TARA_034_SRF_lt-0.22', 'TARA_066_SRF_lt-0.22', 'TARA_112_SRF_0.22-3', 'TARA_056_SRF_0.22-3', 'TARA_034_SRF_0.22-1.6']
 
+transfer_multi_soil = ['SAMN06267105', 'SAMN06267087', 'SAMN06267090', 'SAMN06268058', 'SAMN06266450', 'SAMN06266387', 'SAMN06267104', 'SAMN06264635', 'SAMN06264650', 'SAMN06268059']
+
 def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', checkm_only = False):
     """
     dataset: dog, human, gut
     method: Maxbin2, Metabat2, VAMB, S3N2Bin
     binning_mode: single_sample, multi_sample
-
     checkm_only: if just using checkm or using checkm and GUNC
     """
     if dataset == 'dog':
@@ -1275,6 +1303,258 @@ def CAT_mmseqs():
     plt.savefig('Real_CAT_mmseqs_multi.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
+def seq_depth_effect():
+    num_human_semibin_pretrain_single = get_results_table(dataset='human', method='SemiBin_pretrain', checkm_only=True)
+    # num_human_semibin_pretrain_single = num_human_semibin_pretrain_single.set_index(['sample'])['nr_hq'].to_dict()
+    sample_list = num_human_semibin_pretrain_single['sample'].values
+
+    human_gut_meta = pd.read_csv('updated_results/human_gut.txt', index_col=0, sep=',')
+    sample_name = human_gut_meta['Alias'].values
+    sample_base = human_gut_meta['Bases'].values
+    base_dict = dict()
+
+    for sample, num_base in zip(sample_name, sample_base):
+        sample_ = sample.split('-')[0]
+        if sample_ not in base_dict:
+            base_dict[sample_] = num_base/1e9
+        else:
+            base_dict[sample_] += num_base / 1e9
+
+    num_base_list = []
+
+    for sample in sample_list:
+        num_base_list.append(base_dict[sample])
+
+    num_human_semibin_pretrain_single['bases'] = num_base_list
+
+    sns.lmplot(x = 'bases', y = 'nr_hq', data = num_human_semibin_pretrain_single)
+    plt.savefig('seq_effect_human.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def max_edge_effect():
+    def get_hq_num(result):
+        binning_result = pd.read_csv(result, index_col=0)
+        high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(
+                contamination * 100)) & (binning_result['pass.GUNC'] == True)]
+        return len(high_quality)
+    human_num_200 = 0
+    human_num_500 = 0
+    human_num_1000 = 0
+    for sample in transfer_single_human:
+        human_num_200 += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/SemiBin/result.csv'.format(sample))
+        human_num_500 += get_hq_num('updated_results/effect_max_edge/human/500/{}/result.csv'.format(sample))
+        human_num_1000 += get_hq_num('updated_results/effect_max_edge/human/1000/{}/result.csv'.format(sample))
+    subset = pd.DataFrame(np.array([[human_num_200,human_num_500,human_num_1000]]),columns = ['200','500','1000'], index=['Human gut'])
+    print(subset)
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#1b9e77', '#7570b3','#ec7014'],figsize=(3,4))
+    ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
+    ax.set_title('Human gut', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('Real_max_edge_human_gut.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    dog_num_200 = 0
+    dog_num_500 = 0
+    dog_num_1000 = 0
+    for sample in transfer_single_dog:
+        dog_num_200 += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/SemiBin/result.csv'.format(sample))
+        dog_num_500 += get_hq_num('updated_results/effect_max_edge/dog/500/{}/result.csv'.format(sample))
+        dog_num_1000 += get_hq_num('updated_results/effect_max_edge/dog/1000/{}/result.csv'.format(sample))
+    subset = pd.DataFrame(np.array([[dog_num_200,dog_num_500,dog_num_1000]]),columns = ['200','500','1000'], index=['Dog gut'])
+    print(subset)
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#1b9e77', '#7570b3','#ec7014'],figsize=(3,4))
+    ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
+    ax.set_title('Dog gut', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('Real_max_edge_dog_gut.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    ocean_num_200 = 0
+    ocean_num_500 = 0
+    ocean_num_1000 = 0
+    for sample in transfer_single_tara:
+        ocean_num_200 += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/SemiBin/result.csv'.format(sample))
+        ocean_num_500 += get_hq_num('updated_results/effect_max_edge/ocean/500/{}/result.csv'.format(sample))
+        ocean_num_1000 += get_hq_num('updated_results/effect_max_edge/ocean/1000/{}/result.csv'.format(sample))
+    subset = pd.DataFrame(np.array([[ocean_num_200,ocean_num_500,ocean_num_1000]]),columns = ['200','500','1000'], index=['Ocean'])
+    print(subset)
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#1b9e77', '#7570b3','#ec7014'],figsize=(3,4))
+    ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
+    ax.set_title('Ocean', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('Real_max_edge_ocean.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+built_environment_test= ['SAMN03270049', 'SAMN03270027', 'SAMN03270036', 'SAMN03270052', 'SAMN03270038', 'SAMN03270056', 'SAMN03270028', 'SAMN03270031', 'SAMN03270033', 'SAMN03270043']
+cat_gut_test = ['SAMEA2150826', 'SAMEA2153824', 'SAMEA2145937', 'SAMEA2144282', 'SAMEA2144745', 'SAMEA2147091', 'SAMEA2142929', 'SAMEA2155252', 'SAMEA2151095', 'SAMEA2143833']
+human_oral_test = ['SAMEA2737990', 'SAMEA2737917', 'SAMEA2738035', 'SAMEA2737935', 'SAMEA2738027', 'SAMEA2738037', 'SAMEA2737954', 'SAMEA2738002', 'SAMEA2738014']
+mouse_gut_test = ['SAMEA3134376', 'SAMEA3134377', 'SAMEA3134375', 'SAMEA3134368', 'SAMEA3134382', 'SAMEA3134364', 'SAMEA3134369', 'SAMEA3134366', 'SAMEA3134372', 'SAMEA3134385']
+pig_gut_test = ['SAMEA3663026', 'SAMEA3663021', 'SAMEA3663031', 'SAMEA3663022', 'SAMEA3663029', 'SAMEA3663013', 'SAMEA3663015', 'SAMEA3663007', 'SAMEA3663010', 'SAMEA3663017']
+wastewater_test = ['SAMN04262559', 'SAMN04262501', 'SAMN04262589', 'SAMN04262510', 'SAMN04262568', 'SAMN04262552', 'SAMN04262573', 'SAMN04262500', 'SAMN04262508', 'SAMN04262553']
+
+def extra_env_benchmark():
+    def get_hq_num(result):
+        binning_result = pd.read_csv(result, index_col=0)
+        high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(
+                contamination * 100)) & (binning_result['pass.GUNC'] == True)]
+        return len(high_quality)
+    Metabat2 = {'cat_gut':0, 'built_environment':0, 'human_oral':0, 'mouse_gut':0, 'pig_gut':0, 'wastewater':0}
+    SemiBin = {'cat_gut':0, 'built_environment':0, 'human_oral':0, 'mouse_gut':0, 'pig_gut':0, 'wastewater':0}
+
+    for env in ['cat_gut', 'built_environment', 'human_oral', 'mouse_gut', 'pig_gut', 'wastewater']:
+        if env == 'built_environment':
+            sample_list = built_environment_test
+        if env == 'cat_gut':
+            sample_list = cat_gut_test
+        if env == 'human_oral':
+            sample_list = human_oral_test
+        if env == 'mouse_gut':
+            sample_list = mouse_gut_test
+        if env == 'pig_gut':
+            sample_list = pig_gut_test
+        if env == 'wastewater':
+            sample_list = wastewater_test
+        for sample in sample_list:
+            Metabat2[env] += get_hq_num('updated_results/extra_env/{0}/Metabat2/{1}/result.csv'.format(env, sample))
+            SemiBin[env] += get_hq_num('updated_results/extra_env/{0}/SemiBin/{1}/result.csv'.format(env, sample))
+    print(Metabat2)
+    print(SemiBin)
+
+    for env in ['cat_gut', 'built_environment', 'human_oral', 'mouse_gut', 'pig_gut', 'wastewater']:
+        print(env)
+        print((SemiBin[env] - Metabat2[env]) / Metabat2[env])
+
+    subset = pd.DataFrame(np.array([[Metabat2['cat_gut'],SemiBin['cat_gut']],[Metabat2['mouse_gut'],SemiBin['mouse_gut']],[Metabat2['pig_gut'],SemiBin['pig_gut']],[Metabat2['built_environment'],SemiBin['built_environment']],[Metabat2['human_oral'],SemiBin['human_oral']],[Metabat2['wastewater'],SemiBin['wastewater']]]),columns = ['Metabat2','SemiBin'], index=['Cat gut','Mouse gut','Pig gut','Built environment','Human oral','Wastewater'])
+    print(subset)
+
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#7570b3', '#1b9e77'])
+    # ax.set_yticks(ticks=[0,800,1600,2400,3200])
+    # ax.set_yticklabels(labels=[0,800,1600,2400,3200],fontsize=12,color = 'black')
+    ax.set_xticklabels(labels=['Cat gut','Mouse gut','Pig gut','Built environment','Human oral','Wastewater'], fontsize=15,color = 'black',rotation = 50)
+    ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
+    plt.savefig('Extra_env_benchmark.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_cross_validation():
+    def get_hq_num(result):
+        binning_result = pd.read_csv(result, index_col=0)
+        high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(
+                contamination * 100)) & (binning_result['pass.GUNC'] == True)]
+        return len(high_quality)
+
+    environment = ['human_gut', 'dog_gut', 'ocean', 'soil', 'cat_gut', 'human_oral', 'mouse_gut', 'pig_gut', 'built_environment', 'wastewater']
+    result = []
+    for train_env in environment:
+        result_train_env = []
+        for test_env in environment:
+            if test_env == 'human_gut':
+                testing_set = transfer_multi_human
+                num_result = 0
+                if train_env == 'human_gut':
+                    for sample in testing_set:
+                        num_result += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'dog_gut':
+                testing_set = transfer_multi_dog
+                num_result = 0
+                if train_env == 'dog_gut':
+                    for sample in testing_set:
+                        num_result += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'ocean':
+                testing_set = transfer_multi_tara
+                num_result = 0
+                if train_env == 'ocean':
+                    for sample in testing_set:
+                        num_result += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'soil':
+                testing_set = transfer_multi_soil
+                num_result = 0
+                if train_env == 'soil':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'cat_gut':
+                testing_set = cat_gut_test
+                num_result = 0
+                if train_env == 'cat_gut':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/extra_env/cat_gut/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'human_oral':
+                testing_set = human_oral_test
+                num_result = 0
+                if train_env == 'human_oral':
+                    for sample in testing_set:
+                        if sample == 'SAMEA2738039':
+                            continue
+                        num_result += get_hq_num('updated_results/extra_env/human_oral/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'mouse_gut':
+                testing_set = mouse_gut_test
+                num_result = 0
+                if train_env == 'mouse_gut':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/extra_env/mouse_gut/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'pig_gut':
+                testing_set = pig_gut_test
+                num_result = 0
+                if train_env == 'pig_gut':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/extra_env/pig_gut/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'built_environment':
+                testing_set = built_environment_test
+                num_result = 0
+                if train_env == 'built_environment':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/extra_env/built_environment/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            if test_env == 'wastewater':
+                testing_set = wastewater_test
+                num_result = 0
+                if train_env == 'wastewater':
+                    for sample in testing_set:
+                        num_result += get_hq_num('updated_results/extra_env/wastewater/SemiBin/{}/result.csv'.format(sample))
+                    result_train_env.append(num_result)
+                    continue
+
+            num_result = 0
+            for sample in testing_set:
+                if sample == 'SAMEA2738039':
+                    continue
+                num_result += get_hq_num('updated_results/cross_validation/{0}/{1}/{2}/result.csv'.format(train_env, test_env, sample))
+            result_train_env.append(num_result)
+        result.append(result_train_env)
+    result = np.array(result)
+    print(result)
+
+    df = pd.DataFrame((result), index=['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
+                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
+                   'Wastewater'], columns=['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
+                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
+                   'Wastewater'])
+    print(df)
 
 if __name__ == '__main__':
     # print('human')
@@ -1284,7 +1564,7 @@ if __name__ == '__main__':
     # print('tara')
     # plot_bar_per_sample_com('tara',[-20,-15,-10,-5,0,5], [0,100,200,300,400,500])
 
-    #tranfer_multi()
+    # tranfer_multi()
 
     ### bar plot high quality genomes comparison
     # plot_checkm_high_quality_comparison()
@@ -1298,7 +1578,7 @@ if __name__ == '__main__':
     # plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
 
     ### recall, precision, F1-score box plot
-
+    #
     # plot_overlap_F1('human')
     # plot_overlap_F1()
     # plot_overlap_F1('tara')
@@ -1319,4 +1599,12 @@ if __name__ == '__main__':
 
     # plot_extra_per_sample()
 
-    CAT_mmseqs()
+    # CAT_mmseqs()
+
+    # seq_depth_effect()
+
+    # max_edge_effect()
+
+    # extra_env_benchmark()
+
+    plot_cross_validation()

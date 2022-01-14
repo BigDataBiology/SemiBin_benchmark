@@ -573,11 +573,510 @@ def plot_comparsion_Metabat2():
     plt.close()
     plt.show()
 
+def get_result(dataset='skin', input = None):
+    if dataset == 'skin':
+        data_index = [1, 13, 14, 15, 16, 17, 18, 19, 20, 28]
+    else:
+        data_index = [6, 7, 8, 13, 14, 15, 16, 17, 18, 19]
+    genome_path = os.path.join('{0}/{1}/{1}_{2}'.format(input, dataset,data_index[0]),'genome')
+    method_list = {}
+    species_list = {}
+    genus_list = {}
+
+    for root, dirs, files in os.walk(genome_path, topdown=False):
+        for name in dirs:
+            method_list[name] = []
+            species_list[name] = []
+            genus_list[name] = []
+
+    for temp in data_index:
+        taxi = pd.read_csv(
+            'Results/Simulated/CAMI_II/{0}/taxonomic_profile.txt'.format(dataset, temp), sep='\t', skiprows=3, dtype={'@@TAXID': str, 'TAXPATH': str})
+        taxi_genus = taxi[taxi['RANK'] == 'genus']['@@TAXID'].values.tolist()
+        taxi_species = taxi[taxi['RANK'] == 'species']['@@TAXID'].values.tolist()
+        method_path_list = []
+        genome_path = os.path.join('{0}/{1}/{1}_{2}'.format(input, dataset, temp), 'genome')
+
+        for root, dirs, files in os.walk(genome_path, topdown=False):
+            for name in dirs:
+                method_path_list.append(os.path.join(root, name))
+
+        for method_path in method_path_list:
+            metric = pd.read_csv(os.path.join(method_path, 'metrics_per_bin.tsv'), sep='\t')
+            com_90_pur_95 = metric[(metric['Completeness (bp)'].astype(float) > float(0.9)) & (metric['Purity (bp)'].astype(float) >= float(0.95))]
+            strain_list = com_90_pur_95['Most abundant genome'].values.tolist()
+            method_list[method_path.split('/')[-1]].extend(strain_list)
+
+            for temp_strain in strain_list:
+                if temp_strain in taxi['_CAMI_GENOMEID'].values.tolist():
+                    taxi_split = taxi[taxi['_CAMI_GENOMEID'] == temp_strain]['TAXPATH'].values[0].split('|')
+                    if taxi_split[-2] in taxi_species:
+                        species_list[method_path.split('/')[-1]].append(taxi_split[-2])
+                    else:
+                        print(method_path, 'error1')
+                    if taxi_split[-3] in taxi_genus:
+                        genus_list[method_path.split('/')[-1]].append(taxi_split[-3])
+                    else:
+                        print(method_path, 'error2')
+    return method_list, species_list, genus_list
+
+def plot_recluster():
+    def get_recluster(dataset, input = None):
+        method_list, species_list, genus_list = get_result(dataset, input)
+        result = {'No_recluster': {
+            'strain': list(set(method_list['SemiBin_no_relcluster'])),
+            'species': list(set(species_list['SemiBin_no_relcluster'])),
+            'genus': list(set(genus_list['SemiBin_no_relcluster']))},
+                  'SemiBin': {'strain': list(set(method_list['SemiBin'])),
+                              'species': list(set(species_list['SemiBin'])),
+                              'genus': list(set(genus_list['SemiBin']))}, }
+        return result
+    skin_result = get_recluster('skin', 'updated_results/effect_reclustering')
+    skin_strain_no_recluster = len(skin_result['No_recluster']['strain'])
+    skin_species_no_recluster = len(skin_result['No_recluster']['species'])
+    skin_genus_no_recluster = len(skin_result['No_recluster']['genus'])
+
+    skin_strain_SemiBin = len(skin_result['SemiBin']['strain'])
+    skin_species_SemiBin = len(skin_result['SemiBin']['species'])
+    skin_genus_SemiBin = len(skin_result['SemiBin']['genus'])
+    print(skin_strain_no_recluster, skin_species_no_recluster, skin_genus_no_recluster)
+    print(skin_strain_SemiBin, skin_species_SemiBin, skin_genus_SemiBin)
+
+    oral_result = get_recluster('oral', 'updated_results/effect_reclustering')
+    oral_strain_no_recluster = len(oral_result['No_recluster']['strain'])
+    oral_species_no_recluster = len(oral_result['No_recluster']['species'])
+    oral_genus_no_recluster = len(oral_result['No_recluster']['genus'])
+
+    oral_strain_SemiBin = len(oral_result['SemiBin']['strain'])
+    oral_species_SemiBin = len(oral_result['SemiBin']['species'])
+    oral_genus_SemiBin = len(oral_result['SemiBin']['genus'])
+    print(oral_strain_no_recluster, oral_species_no_recluster, oral_genus_no_recluster)
+    print(oral_strain_SemiBin, oral_species_SemiBin, oral_genus_SemiBin)
+
+    line_width = 1
+
+    plt.plot(['genus', 'species', 'strain'],
+             [skin_genus_no_recluster, skin_species_no_recluster, skin_strain_no_recluster],
+             label='No recluster', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['genus', 'species', 'strain'],
+             [skin_genus_SemiBin, skin_species_SemiBin, skin_strain_SemiBin],
+             label='SemiBin',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Skin', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_skin_recluster.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    plt.plot(['genus', 'species', 'strain'],
+             [oral_genus_no_recluster, oral_species_no_recluster, oral_strain_no_recluster],
+             label='No recluster', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['genus', 'species', 'strain'],
+             [oral_genus_SemiBin, oral_species_SemiBin, oral_strain_SemiBin],
+             label='SemiBin',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Oral', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_oral_recluster.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_cluster_alternative():
+    def get_cluster(dataset='skin', input = None):
+        method_list, species_list, genus_list = get_result(dataset, input)
+        result = {'lp': {'strain': list(set(method_list['lp'])),'species': list(set(species_list['lp'])),'genus': list(set(genus_list['lp']))},
+                  'leiden': {'strain': list(set(method_list['leiden'])),'species': list(set(species_list['leiden'])),'genus': list(set(genus_list['leiden']))},
+                  'multi_level': {'strain': list(set(method_list['multi_level'])),'species': list(set(species_list['multi_level'])),'genus': list(set(genus_list['multi_level']))},
+                  'infomap': {'strain': list(set(method_list['infomap'])),'species': list(set(species_list['infomap'])),'genus': list(set(genus_list['infomap']))}, }
+        return result
+    skin_result = get_cluster('skin', 'updated_results/effect_clustering/cluster')
+    skin_strain_lp = len(skin_result['lp']['strain'])
+    skin_species_lp = len(skin_result['lp']['species'])
+    skin_genus_lp = len(skin_result['lp']['genus'])
+
+    skin_strain_leiden = len(skin_result['leiden']['strain'])
+    skin_species_leiden = len(skin_result['leiden']['species'])
+    skin_genus_leiden = len(skin_result['leiden']['genus'])
+
+    skin_strain_multi_level = len(skin_result['multi_level']['strain'])
+    skin_species_multi_level = len(skin_result['multi_level']['species'])
+    skin_genus_multi_level = len(skin_result['multi_level']['genus'])
+
+    skin_strain_infomap = len(skin_result['infomap']['strain'])
+    skin_species_infomap = len(skin_result['infomap']['species'])
+    skin_genus_infomap = len(skin_result['infomap']['genus'])
+
+    print(skin_strain_lp, skin_species_lp, skin_genus_lp)
+    print(skin_strain_leiden, skin_species_leiden, skin_genus_leiden)
+    print(skin_strain_multi_level, skin_species_multi_level, skin_genus_multi_level)
+    print(skin_strain_infomap, skin_species_infomap, skin_genus_infomap)
+
+    oral_result = get_cluster('oral', 'updated_results/effect_clustering/cluster')
+    oral_strain_lp = len(oral_result['lp']['strain'])
+    oral_species_lp = len(oral_result['lp']['species'])
+    oral_genus_lp = len(oral_result['lp']['genus'])
+
+    oral_strain_leiden = len(oral_result['leiden']['strain'])
+    oral_species_leiden = len(oral_result['leiden']['species'])
+    oral_genus_leiden = len(oral_result['leiden']['genus'])
+
+    oral_strain_multi_level = len(oral_result['multi_level']['strain'])
+    oral_species_multi_level = len(oral_result['multi_level']['species'])
+    oral_genus_multi_level = len(oral_result['multi_level']['genus'])
+
+    oral_strain_infomap = len(oral_result['infomap']['strain'])
+    oral_species_infomap = len(oral_result['infomap']['species'])
+    oral_genus_infomap = len(oral_result['infomap']['genus'])
+    
+    print(oral_strain_lp, oral_species_lp, oral_genus_lp)
+    print(oral_strain_leiden, oral_species_leiden, oral_genus_leiden)
+    print(oral_strain_multi_level, oral_species_multi_level, oral_genus_multi_level)
+    print(oral_strain_infomap, oral_species_infomap, oral_genus_infomap)
+
+    line_width = 1
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_lp, skin_species_lp,
+              skin_strain_lp],
+             label='Label propagation', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_multi_level, skin_species_multi_level, skin_strain_multi_level],
+             label='Louvain',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_leiden, skin_species_leiden, skin_strain_leiden],
+             label='Leiden',
+             color='#d95f02', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_infomap, skin_species_infomap, skin_strain_infomap],
+             label='Infomap',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.title('Skin', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_skin_cluster_alternative.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_lp, oral_species_lp, oral_strain_lp],
+             label='Label propagation', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_multi_level, oral_species_multi_level, oral_strain_multi_level],
+             label='Louvain',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_leiden, oral_species_leiden, oral_strain_leiden],
+             label='Leiden',
+             color='#d95f02', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_infomap, oral_species_infomap, oral_strain_infomap],
+             label='Infomap',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Oral', fontsize=15, alpha=1.0)
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.savefig('CAMI_II_oral_cluster_alternative.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_max_edge():
+    def get_cluster(dataset='skin', input=None):
+        method_list, species_list, genus_list = get_result(dataset, input)
+        result = {'200': {'strain': list(set(method_list['200'])),
+                         'species': list(set(species_list['200'])),
+                         'genus': list(set(genus_list['200']))},
+                  '500': {'strain': list(set(method_list['500'])),
+                             'species': list(set(species_list['500'])),
+                             'genus': list(set(genus_list['500']))},
+                  '1000': {'strain': list(set(method_list['1000'])),
+                      'species': list(set(species_list['1000'])),
+                      'genus': list(set(genus_list['1000']))}, }
+        return result
+
+    skin_result = get_cluster('skin', 'updated_results/effect_max_edge')
+    skin_strain_200 = len(skin_result['200']['strain'])
+    skin_species_200 = len(skin_result['200']['species'])
+    skin_genus_200 = len(skin_result['200']['genus'])
+
+    skin_strain_500 = len(skin_result['500']['strain'])
+    skin_species_500 = len(skin_result['500']['species'])
+    skin_genus_500 = len(skin_result['500']['genus'])
+
+    skin_strain_1000 = len(skin_result['1000']['strain'])
+    skin_species_1000 = len(skin_result['1000']['species'])
+    skin_genus_1000 = len(skin_result['1000']['genus'])
+
+    print(skin_strain_200, skin_species_200, skin_genus_200)
+    print(skin_strain_500, skin_species_500, skin_genus_500)
+    print(skin_strain_1000, skin_species_1000, skin_genus_1000)
+
+
+    oral_result = get_cluster('oral', 'updated_results/effect_max_edge')
+    oral_strain_200 = len(oral_result['200']['strain'])
+    oral_species_200 = len(oral_result['200']['species'])
+    oral_genus_200 = len(oral_result['200']['genus'])
+
+    oral_strain_500 = len(oral_result['500']['strain'])
+    oral_species_500 = len(oral_result['500']['species'])
+    oral_genus_500 = len(oral_result['500']['genus'])
+
+    oral_strain_1000 = len(oral_result['1000']['strain'])
+    oral_species_1000 = len(oral_result['1000']['species'])
+    oral_genus_1000 = len(oral_result['1000']['genus'])
+
+    print(oral_strain_200, oral_species_200, oral_genus_200)
+    print(oral_strain_500, oral_species_500, oral_genus_500)
+    print(oral_strain_1000, oral_species_1000, oral_genus_1000)
+
+    line_width = 1
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_1000, skin_species_1000,
+              skin_strain_1000],
+             label='1000', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_500, skin_species_500, skin_strain_500],
+             label='500',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_200, skin_species_200, skin_strain_200],
+             label='200',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.title('Skin', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_skin_max_edges.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_1000, oral_species_1000, oral_strain_1000],
+             label='1000', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_500, oral_species_500, oral_strain_500],
+             label='500',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_200, oral_species_200, oral_strain_200],
+             label='200',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Oral', fontsize=15, alpha=1.0)
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.savefig('CAMI_II_oral_max_edges.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_recluster_alternative():
+    def get_recluster(dataset='skin', input=None):
+        method_list, species_list, genus_list = get_result(dataset, input)
+        result = {'kmeans': {'strain': list(set(method_list['kmeans'])),
+                         'species': list(set(species_list['kmeans'])),
+                         'genus': list(set(genus_list['kmeans']))},
+                  'spec': {'strain': list(set(method_list['spec'])),
+                             'species': list(set(species_list['spec'])),
+                             'genus': list(set(genus_list['spec']))},
+                  'agg': {
+                      'strain': list(set(method_list['agg'])),
+                      'species': list(set(species_list['agg'])),
+                      'genus': list(set(genus_list['agg']))},
+                  'dbscan': {'strain': list(set(method_list['dbscan'])),
+                              'species': list(set(species_list['dbscan'])),
+                              'genus': list(set(genus_list['dbscan']))}, }
+        return result
+
+    skin_result = get_recluster('skin',
+                              'updated_results/effect_clustering/recluster')
+    skin_strain_kmeans = len(skin_result['kmeans']['strain'])
+    skin_species_kmeans = len(skin_result['kmeans']['species'])
+    skin_genus_kmeans = len(skin_result['kmeans']['genus'])
+
+    skin_strain_spec = len(skin_result['spec']['strain'])
+    skin_species_spec = len(skin_result['spec']['species'])
+    skin_genus_spec = len(skin_result['spec']['genus'])
+
+    skin_strain_agg = len(skin_result['agg']['strain'])
+    skin_species_agg = len(skin_result['agg']['species'])
+    skin_genus_agg = len(skin_result['agg']['genus'])
+
+    skin_strain_dbscan = len(skin_result['dbscan']['strain'])
+    skin_species_dbscan = len(skin_result['dbscan']['species'])
+    skin_genus_dbscan = len(skin_result['dbscan']['genus'])
+
+    print(skin_strain_kmeans, skin_species_kmeans, skin_genus_kmeans)
+    print(skin_strain_spec, skin_species_spec, skin_genus_spec)
+    print(skin_strain_agg, skin_species_agg,
+          skin_genus_agg)
+    print(skin_strain_dbscan, skin_species_dbscan, skin_genus_dbscan)
+
+    oral_result = get_recluster('oral',
+                              'updated_results/effect_clustering/recluster')
+    oral_strain_kmeans = len(oral_result['kmeans']['strain'])
+    oral_species_kmeans = len(oral_result['kmeans']['species'])
+    oral_genus_kmeans = len(oral_result['kmeans']['genus'])
+
+    oral_strain_spec = len(oral_result['spec']['strain'])
+    oral_species_spec = len(oral_result['spec']['species'])
+    oral_genus_spec = len(oral_result['spec']['genus'])
+
+    oral_strain_agg = len(oral_result['agg']['strain'])
+    oral_species_agg = len(oral_result['agg']['species'])
+    oral_genus_agg = len(oral_result['agg']['genus'])
+
+    oral_strain_dbscan = len(oral_result['dbscan']['strain'])
+    oral_species_dbscan = len(oral_result['dbscan']['species'])
+    oral_genus_dbscan = len(oral_result['dbscan']['genus'])
+
+    print(oral_strain_kmeans, oral_species_kmeans, oral_genus_kmeans)
+    print(oral_strain_spec, oral_species_spec, oral_genus_spec)
+    print(oral_strain_agg, oral_species_agg,
+          oral_genus_agg)
+    print(oral_strain_dbscan, oral_species_dbscan, oral_genus_dbscan)
+
+    line_width = 1
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_dbscan, skin_species_dbscan,
+              skin_strain_dbscan],
+             label='DBSCAN', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_agg, skin_species_agg, skin_strain_agg],
+             label='Agglomerative',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_spec, skin_species_spec, skin_strain_spec],
+             label='Spectral',
+             color='#d95f02', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_kmeans, skin_species_kmeans, skin_strain_kmeans],
+             label='KMeans',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.title('Skin', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_skin_recluster_alternative.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_dbscan, oral_species_dbscan, oral_strain_dbscan],
+             label='DBSCAN', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_agg, oral_species_agg, oral_strain_agg],
+             label='Agglomerative',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_spec, oral_species_spec, oral_strain_spec],
+             label='Spectral',
+             color='#d95f02', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_kmeans, oral_species_kmeans, oral_strain_kmeans],
+             label='KMeans',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Oral', fontsize=15, alpha=1.0)
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.savefig('CAMI_II_oral_recluster_alternative.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_embeddings():
+    def get_recluster(dataset='skin', input=None):
+        method_list, species_list, genus_list = get_result(dataset, input)
+        result = {'hidden1': {'strain': list(set(method_list['hidden1'])),
+                         'species': list(set(species_list['hidden1'])),
+                         'genus': list(set(genus_list['hidden1']))},
+                  'hidden2': {'strain': list(set(method_list['hidden2'])),
+                             'species': list(set(species_list['hidden2'])),
+                             'genus': list(set(genus_list['hidden2']))},
+                  'output': {
+                      'strain': list(set(method_list['output'])),
+                      'species': list(set(species_list['output'])),
+                      'genus': list(set(genus_list['output']))}, }
+        return result
+
+    skin_result = get_recluster('skin', 'updated_results/effect_embeddings')
+    skin_strain_hidden1 = len(skin_result['hidden1']['strain'])
+    skin_species_hidden1 = len(skin_result['hidden1']['species'])
+    skin_genus_hidden1 = len(skin_result['hidden1']['genus'])
+
+    skin_strain_hidden2 = len(skin_result['hidden2']['strain'])
+    skin_species_hidden2 = len(skin_result['hidden2']['species'])
+    skin_genus_hidden2 = len(skin_result['hidden2']['genus'])
+
+    skin_strain_output = len(skin_result['output']['strain'])
+    skin_species_output = len(skin_result['output']['species'])
+    skin_genus_output = len(skin_result['output']['genus'])
+
+    print(skin_strain_hidden1, skin_species_hidden1, skin_genus_hidden1)
+    print(skin_strain_hidden2, skin_species_hidden2, skin_genus_hidden2)
+    print(skin_strain_output, skin_species_output,
+          skin_genus_output)
+
+    oral_result = get_recluster('oral', 'updated_results/effect_embeddings')
+    oral_strain_hidden1 = len(oral_result['hidden1']['strain'])
+    oral_species_hidden1 = len(oral_result['hidden1']['species'])
+    oral_genus_hidden1 = len(oral_result['hidden1']['genus'])
+
+    oral_strain_hidden2 = len(oral_result['hidden2']['strain'])
+    oral_species_hidden2 = len(oral_result['hidden2']['species'])
+    oral_genus_hidden2 = len(oral_result['hidden2']['genus'])
+
+    oral_strain_output = len(oral_result['output']['strain'])
+    oral_species_output = len(oral_result['output']['species'])
+    oral_genus_output = len(oral_result['output']['genus'])
+
+    print(oral_strain_hidden1, oral_species_hidden1, oral_genus_hidden1)
+    print(oral_strain_hidden2, oral_species_hidden2, oral_genus_hidden2)
+    print(oral_strain_output, oral_species_output,
+          oral_genus_output)
+
+    line_width = 1
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_hidden1, skin_species_hidden1,
+              skin_strain_hidden1],
+             label='Hidden1', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_hidden2, skin_species_hidden2, skin_strain_hidden2],
+             label='Hidden2',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [skin_genus_output, skin_species_output, skin_strain_output],
+             label='Output',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.title('Skin', fontsize=15, alpha=1.0)
+    plt.savefig('CAMI_II_skin_embeddings.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_hidden1, oral_species_hidden1, oral_strain_hidden1],
+             label='Hidden1', color='#ec7014', linewidth=line_width,
+             marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_hidden2, oral_species_hidden2, oral_strain_hidden2],
+             label='Hidden2',
+             color='#7570b3', linewidth=line_width, marker='o', )
+    plt.plot(['Genus', 'Species', 'Strain'],
+             [oral_genus_output, oral_species_output, oral_strain_output],
+             label='Output',
+             color='#1b9e77', linewidth=line_width, marker='o', )
+    plt.legend()
+    plt.title('Oral', fontsize=15, alpha=1.0)
+    # plt.xticks(['Strain', 'Species', 'Genus'])
+    plt.savefig('CAMI_II_oral_embeddings.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
 if __name__ == '__main__':
     ### bar plot in strain/species/genus level
 
-    #plot_hq_num()
-    # plot_comparsion_Metabat2()
+    # plot_hq_num()
+    #plot_comparsion_Metabat2()
 
     ### venn plot in strain/species/genus level
     #plot_venn_plot()
@@ -587,5 +1086,10 @@ if __name__ == '__main__':
 
     ### bar plot with different similarities
     #plot_bar_strain_simiarity()
-    #
-    plot_generalization()
+
+    # plot_generalization()
+    # plot_recluster()
+    # plot_cluster_alternative()
+    plot_max_edge()
+    # plot_recluster_alternative()
+    # plot_embeddings()

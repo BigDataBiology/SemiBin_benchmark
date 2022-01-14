@@ -288,8 +288,190 @@ def plot_bar_generalization(amber_path, title,add_legend=True,y_label = None, ou
     plt.close()
     plt.show()
 
+def plot_recluster(amber_path, y_label, title, add_legend = True, output = None):
+    data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
+    subset = data.loc[[
+        'SemiBin_no_recluster',
+        'SemiBin',]]
+    subset.rename(index={
+        'SemiBin_no_recluster': 'No_recluster',
+    }, inplace=True)
+    subset = subset[[90, 80, 70, 60]]
+    print(subset)
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
+
+    if add_legend:
+        ax.legend(['>90', '>80', '>70', '>60'],
+                  loc='lower right', fontsize=10, title='completeness')
+    ax.set_xticks(ticks=y_label)
+    ax.set_xticklabels(labels=y_label, fontsize=15, color='black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15, color='black')
+    ax.set_xlabel('Bins(< 5% contamination)', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+
+    plt.tight_layout()
+    plt.savefig(output, dpi=300)
+    plt.close()
+    plt.show()
+
+def plot_must_cannot(amber_path, add_legend = True, title = None, output = None):
+    data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
+    subset = data.loc[[
+    '1_1000',
+    '1_4000',
+    '1_10000',
+    '50_1000',
+    '50_4000',
+    '50_10000',
+    '400_1000',
+    '400_4000',
+    '400_10000',
+    '1000_1000',
+    '1000_4000',
+    '1000_10000']]
+    print(subset)
+    subset = subset[[90]].values
+    subset = [temp[0] for temp in subset]
+    data_plot = pd.DataFrame(([
+                                [subset[0], subset[3], subset[6], subset[9]],
+                                [subset[1], subset[4], subset[7], subset[10]],
+                                [subset[2], subset[5], subset[8], subset[11]]
+                               ]), index=['> 1000', '> 4000', '> 10000'], columns=['10000','500000','4000000','10000000'])
+    print(data_plot)
+    # plt.imshow(data_plot, cmap='hot', interpolation='nearest')
+    from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+    colormap = ['#084594', '#2171b5', '#4292c6', '#6baed6', '#9ecae1', '#c6dbef', '#deebf7']
+    colormap.reverse()
+    newcmp1 = LinearSegmentedColormap.from_list('cmps', colormap)
+
+    ax = sns.heatmap(data_plot, cmap=newcmp1)
+    ax.set_xlabel('Cannot-link', fontsize=15, color='black')
+    ax.set_ylabel('Must-link', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+    plt.savefig(output, dpi=300)
+    plt.close()
+
+def plot_cluster_alternative(amber_path, y_label, title, add_legend = True, output = None):
+    data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
+    subset = data.loc[['lp','leiden','multi_level','infomap']]
+    subset.rename(index={
+        'lp': 'Label propagation',
+        'leiden': 'Leiden',
+        'multi_level': 'Louvain',
+        'infomap':'Infomap'
+    }, inplace=True)
+    subset = subset[[90, 80, 70, 60]]
+    print(subset)
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
+
+    if add_legend:
+        ax.legend(['>90', '>80', '>70', '>60'],
+                  loc='lower right', fontsize=10, title='completeness')
+    ax.set_xticks(ticks=y_label)
+    ax.set_xticklabels(labels=y_label, fontsize=15, color='black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15, color='black')
+    ax.set_xlabel('Bins(< 5% contamination)', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+
+    plt.tight_layout()
+    plt.savefig(output, dpi=300)
+    plt.close()
+    plt.show()
+
+def plot_recluster_alternative(amber_path, y_label, title, add_legend = True, output = None):
+    data = get_number_of_genomes_per_completeness(amber_path, return_pandas=True)
+    subset = data.loc[['spec','agg','dbscan','kmeans']]
+    subset.rename(index={
+        'kmeans': 'KMeans',
+        'spec': 'Spectral',
+        'agg': 'Agglomerative',
+        'dbscan':'DBSCAN'
+    }, inplace=True)
+    subset = subset[[90, 80, 70, 60]]
+    print(subset)
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
+
+    if add_legend:
+        ax.legend(['>90', '>80', '>70', '>60'],
+                  loc='lower right', fontsize=10, title='completeness')
+    ax.set_xticks(ticks=y_label)
+    ax.set_xticklabels(labels=y_label, fontsize=15, color='black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15, color='black')
+    ax.set_xlabel('Bins(< 5% contamination)', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+
+    plt.tight_layout()
+    plt.savefig(output, dpi=300)
+    plt.close()
+    plt.show()
+
+def plot_embeddings(amber_path, y_label, title, add_legend=True,
+                                   output=None):
+    data = get_number_of_genomes_per_completeness(amber_path,
+                                                  return_pandas=True)
+    subset = data.loc[['hidden1', 'hidden2', 'output']]
+    subset.rename(index={
+        'hidden1': 'Hidden1',
+        'hidden2': 'Hidden2',
+        'output': 'Output',
+    }, inplace=True)
+    subset = subset[[90, 80, 70, 60]]
+    print(subset)
+
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
+
+    if add_legend:
+        ax.legend(['>90', '>80', '>70', '>60'],
+                  loc='lower right', fontsize=10, title='completeness')
+    ax.set_xticks(ticks=y_label)
+    ax.set_xticklabels(labels=y_label, fontsize=15, color='black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15, color='black')
+    ax.set_xlabel('Bins(< 5% contamination)', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+
+    plt.tight_layout()
+    plt.savefig(output, dpi=300)
+    plt.close()
+    plt.show()
+
+def plot_remove_genomes(amber_path, y_label, title, add_legend=True,
+                                   output=None):
+    data = get_number_of_genomes_per_completeness(amber_path,
+                                                  return_pandas=True)
+    subset = data.loc[['Ori', 'species', 'genus', 'family', 'order', 'class', 'phylum']]
+    subset.rename(index={
+        'Ori': 'Origin',
+        'species': 'Species',
+        'genus': 'Genus',
+        'family': 'Family',
+        'order': 'Order',
+        'class': 'Class',
+        'phylum': 'Phylum'
+    }, inplace=True)
+    subset = subset[[90, 80, 70, 60]]
+    print(subset)
+
+    ax = subset.plot(kind="barh", stacked=True, legend=False, color=color_map)
+
+    if add_legend:
+        ax.legend(['>90', '>80', '>70', '>60'],
+                  loc='lower right', fontsize=10, title='completeness')
+    ax.set_xticks(ticks=y_label)
+    ax.set_xticklabels(labels=y_label, fontsize=15, color='black')
+    ax.set_yticklabels(labels=subset.index, fontsize=15, color='black')
+    ax.set_xlabel('Bins(< 5% contamination)', fontsize=15, color='black')
+    ax.set_title(title, fontsize=15, alpha=1.0)
+
+    plt.tight_layout()
+    plt.savefig(output, dpi=300)
+    plt.close()
+    plt.show()
+
+
+
+
 if __name__ == '__main__':
-    base_path = 'Results/Simulated/CAMI_I/'
+    base_path = '../Results/Simulated/CAMI_I/'
 
     # whole comparsion
     amber_path_low = base_path + 'whole/low'
@@ -311,6 +493,30 @@ if __name__ == '__main__':
     # plot_bar(amber_path_medium, y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity(all)', add_legend=False, output='CAMI_I_medium_whole.pdf')
     # plot_bar(amber_path_high, y_label=[0, 100, 200, 300, 400], title='High-complexity(all)', add_legend=False, output='CAMI_I_high_whole.pdf')
 
+    # plot_recluster('updated_results/effect_reclustering/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster.pdf')
+    # plot_recluster('updated_results/effect_reclustering/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster.pdf')
+    # plot_recluster('updated_results/effect_reclustering/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster.pdf')
+
+    # plot_must_cannot('updated_results/effect_must_cannot/amber_low', title='Low-complexity', output='CAMI_I_low_must_cannot.pdf')
+    # plot_must_cannot('updated_results/effect_must_cannot/amber_medium', title='Medium-complexity', add_legend=False, output='CAMI_I_medium_must_cannot.pdf')
+    # plot_must_cannot('updated_results/effect_must_cannot/amber_high', title='High-complexity', add_legend=False, output='CAMI_I_high_must_cannot.pdf')
+
+    # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_cluster_alternative.pdf')
+    # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_cluster_alternative.pdf')
+    # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_cluster_alternative.pdf')
+
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster_alternative.pdf')
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster_alternative.pdf')
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster_alternative.pdf')
+
+    plot_embeddings('updated_results/effect_embeddings/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_embeddings.pdf')
+    plot_embeddings('updated_results/effect_embeddings/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_embeddings.pdf')
+    plot_embeddings('updated_results/effect_embeddings/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_embeddings.pdf')
+
+    # plot_remove_genomes('updated_results/effect_remove_genomes/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_remove_genomes.pdf')
+    # plot_remove_genomes('updated_results/effect_remove_genomes/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_remove_genomes.pdf')
+    # plot_remove_genomes('updated_results/effect_remove_genomes/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_remove_genomes.pdf')
+
     ## whole comparison F1 box plot
 
     # plot_f1_score(amber_path_low,y_label=[0.6,0.7,0.8,0.9,1.0],title='Low-complexity(all)', output='CAMI_I_low_whole_F1.pdf')
@@ -324,7 +530,7 @@ if __name__ == '__main__':
     #        add_legend=False,output='CAMI_I_medium_common.pdf')
     # plot_bar(amber_path_high_common, y_label=[0, 30, 60, 90, 120, 150], title='High-complexity(common strain)',
     #        add_legend=False,output='CAMI_I_high_common.pdf')
-    #
+    
     ### CAMI I unique comparison bar plot
 
     # plot_bar(amber_path_low_unique, y_label=[0, 5, 10, 15], title='Low-complexity(unique strain)',  add_legend=False, output='CAMI_I_low_unique.pdf')
@@ -352,8 +558,15 @@ if __name__ == '__main__':
     # plot_bar_semi_no_semi(amber_path_medium,  y_label=[0,20,40,60,80,100],output='CAMI_I_medium_semi_nosemi.pdf')
     # plot_bar_semi_no_semi(amber_path_high, y_label=[0,100,200,300,400,500],output='CAMI_I_high_semi_nosemi.pdf')
 
+    ### F1 box plot with Semi vs no semi
+
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_low, y_label=[0.6, 0.7,  0.8, 0.9, 1.0],
+    #                                size=5,output='CAMI_I_low_semi_nosemi_F1.pdf' )
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_medium, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=3,output='CAMI_I_medium_semi_nosemi_F1.pdf')
+    # plot_f1_boxplot_semi_to_nosemi(amber_path_high, y_label=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0], size=2,output='CAMI_I_high_semi_nosemi_F1.pdf')
+
     ### comparison of generalization(NoSemi, SemiBin_c, SemiBin_m, SemiBin_mc)
 
-    plot_bar_generalization(amber_path_low,'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
-    plot_bar_generalization(amber_path_medium,'Medium complexity', y_label=[0,20,40,60,80],add_legend=False, output='CAMI_I_generalization_medium.pdf')
-    plot_bar_generalization(amber_path_high, 'High complexity', y_label=[0,100,200,300,400],add_legend=False, output='CAMI_I_generalization_high.pdf')
+    # plot_bar_generalization(amber_path_low,'Low complexity',y_label=[0,5,10,15,20,25], output='CAMI_I_generalization_low.pdf')
+    # plot_bar_generalization(amber_path_medium,'Medium complexity', y_label=[0,20,40,60,80],add_legend=False, output='CAMI_I_generalization_medium.pdf')
+    # plot_bar_generalization(amber_path_high, 'High complexity', y_label=[0,100,200,300,400],add_legend=False, output='CAMI_I_generalization_high.pdf')
