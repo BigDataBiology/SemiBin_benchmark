@@ -747,7 +747,7 @@ def plot_cluster_alternative():
     plt.plot(['Genus', 'Species', 'Strain'],
              [skin_genus_leiden, skin_species_leiden, skin_strain_leiden],
              label='Leiden',
-             color='#d95f02', linewidth=line_width, marker='o', )
+             color='#e7298a', linewidth=line_width, marker='o', )
     plt.plot(['Genus', 'Species', 'Strain'],
              [skin_genus_infomap, skin_species_infomap, skin_strain_infomap],
              label='Infomap',
@@ -769,7 +769,7 @@ def plot_cluster_alternative():
     plt.plot(['Genus', 'Species', 'Strain'],
              [oral_genus_leiden, oral_species_leiden, oral_strain_leiden],
              label='Leiden',
-             color='#d95f02', linewidth=line_width, marker='o', )
+             color='#e7298a', linewidth=line_width, marker='o', )
     plt.plot(['Genus', 'Species', 'Strain'],
              [oral_genus_infomap, oral_species_infomap, oral_strain_infomap],
              label='Infomap',
@@ -948,7 +948,7 @@ def plot_recluster_alternative():
     plt.plot(['Genus', 'Species', 'Strain'],
              [skin_genus_spec, skin_species_spec, skin_strain_spec],
              label='Spectral',
-             color='#d95f02', linewidth=line_width, marker='o', )
+             color='#e7298a', linewidth=line_width, marker='o', )
     plt.plot(['Genus', 'Species', 'Strain'],
              [skin_genus_kmeans, skin_species_kmeans, skin_strain_kmeans],
              label='KMeans',
@@ -970,7 +970,7 @@ def plot_recluster_alternative():
     plt.plot(['Genus', 'Species', 'Strain'],
              [oral_genus_spec, oral_species_spec, oral_strain_spec],
              label='Spectral',
-             color='#d95f02', linewidth=line_width, marker='o', )
+             color='#e7298a', linewidth=line_width, marker='o', )
     plt.plot(['Genus', 'Species', 'Strain'],
              [oral_genus_kmeans, oral_species_kmeans, oral_strain_kmeans],
              label='KMeans',
@@ -1090,6 +1090,6 @@ if __name__ == '__main__':
     # plot_generalization()
     # plot_recluster()
     # plot_cluster_alternative()
-    plot_max_edge()
-    # plot_recluster_alternative()
+    # plot_max_edge()
+    plot_recluster_alternative()
     # plot_embeddings()

@@ -78,6 +78,8 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
         sample_list = human_list
     elif dataset == 'tara':
         sample_list = tara_list
+    elif dataset == 'soil':
+        sample_list = soil_list
     elif dataset == 'PRJNA290729':
         sample_list = PRJNA290729_list
     elif dataset == 'PRJNA504891':
@@ -100,13 +102,19 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
     elif dataset == 'tara_transfer_multi':
         sample_list = transfer_multi_tara
         dataset = 'tara'
+    elif dataset == 'soil_transfer_multi':
+        sample_list = transfer_multi_soil
+        dataset = 'soil'
     else:
         raise KeyError(f"Unknown dataset {dataset}")
 
     result = {}
     if method == 'VAMB' and binning_mode == 'multi_sample':
         result = {'high quality': []}
-        binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/multi_sample/VAMB_multi.csv'.format(dataset),index_col=0)
+        if dataset != 'soil':
+            binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/multi_sample/VAMB_multi.csv'.format(dataset),index_col=0)
+        else:
+            binning_result = pd.read_csv('updated_results/Soil_benchmark/CheckM_GUNC/multi_sample/VAMB_multi.csv', index_col=0)
         if not checkm_only:
             high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                     binning_result['Contamination'].astype(float) < float(contamination * 100)) & (binning_result['pass.GUNC'] == True)]
@@ -120,7 +128,10 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
     else:
         for sample in sample_list:
             result[sample] = {'high quality':[]}
-            binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/{1}/{2}/{3}/result.csv'.format(dataset,binning_mode, sample, method), index_col=0)
+            if dataset != 'soil' and dataset != 'soil_transfer_multi':
+                binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/{1}/{2}/{3}/result.csv'.format(dataset,binning_mode, sample, method), index_col=0)
+            else:
+                binning_result = pd.read_csv('updated_results/Soil_benchmark/CheckM_GUNC/{0}/{1}/{2}/result.csv'.format(binning_mode, sample, method), index_col=0)
             if not checkm_only:
                 high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                         binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
@@ -170,9 +181,15 @@ def get_num_high_quality_pretrain(dataset, num_run, num_sample):
         sample_list = transfer_multi_dog
     if dataset == 'tara':
         sample_list = transfer_multi_tara
+    if dataset == 'soil':
+        sample_list = transfer_multi_soil
+
     num_high_quality = 0
     for sample in sample_list:
-        binning_result = pd.read_csv('Results/Real/CheckM_GUNC/Pretrain/{3}/{0}/{1}/{2}/result.csv'.format(num_run, num_sample, sample,dataset),index_col=0)
+        if dataset != 'soil':
+            binning_result = pd.read_csv('Results/Real/CheckM_GUNC/Pretrain/{3}/{0}/{1}/{2}/result.csv'.format(num_run, num_sample, sample,dataset),index_col=0)
+        else:
+            binning_result = pd.read_csv('updated_results/Soil_round/{0}/{1}/{2}/result.csv'.format(num_run, num_sample, sample))
         high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
                 binning_result['Contamination'].astype(float) < float(contamination * 100)) & (
                                                   binning_result['pass.GUNC'] == True)]
@@ -185,14 +202,22 @@ def tranfer_multi():
     human_result = {1:[],3:[],5:[],10:[],15:[],20:[]}
     dog_result = {1:[],3:[],5:[],10:[],15:[],20:[]}
     tara_result = {1:[],3:[],5:[],10:[],15:[],20:[]}
+    soil_result = {1:[],3:[],5:[],10:[],15:[],20:[]}
 
+    # soil_result = {1:[9, 12, 10, 9, 11],
+    #                3:[13, 13, 13, 10, 11],
+    #                5:[15, 13, 15, 15, 14],
+    #                10:[12, 15, 15, 13, 12],
+    #                15:[15, 17, 14, 15, 15],
+    #                20:[13, 13, 14, 12, 14]}
 
     for j in [1,3,5,10,15,20]:
         for i in [1, 2, 3, 4, 5]:
             human_result[j].append(get_num_high_quality_pretrain('human', i, j))
             dog_result[j].append(get_num_high_quality_pretrain('dog', i, j))
             tara_result[j].append(get_num_high_quality_pretrain('tara', i, j))
-
+            soil_result[j].append(get_num_high_quality_pretrain('soil', i, j))
+    print(soil_result)
     human_SemiBin = get_num_high_quality('human_transfer_multi', 'SemiBin')
     human_Metabat2 = get_num_high_quality('human_transfer_multi', 'Metabat2')
 
@@ -201,6 +226,11 @@ def tranfer_multi():
 
     tara_SemiBin = get_num_high_quality('tara_transfer_multi', 'SemiBin')
     tara_Metabat2 = get_num_high_quality('tara_transfer_multi', 'Metabat2')
+
+    soil_SemiBin = get_num_high_quality('soil_transfer_multi', 'SemiBin')
+    soil_Metabat2 = get_num_high_quality('soil_transfer_multi', 'Metabat2')
+    print(soil_SemiBin)
+    print(soil_Metabat2)
 
     x1 = [1, 2, 3, 4, 5, 6]
     y_human_multi = []
@@ -221,6 +251,12 @@ def tranfer_multi():
     y_tara_semibin = [tara_SemiBin] * 6
     y_tara_metabat2 = [tara_Metabat2] * 6
 
+    y_soil_multi = []
+    y_soil_err_max = []
+    y_soil_err_min = []
+    y_soil_semibin = [soil_SemiBin] * 6
+    y_soil_metabat2 = [soil_Metabat2] * 6
+
     for i in [1,3,5,10,15,20]:
         y_human_multi.append(np.mean(human_result[i]))
         y_human_err_max.append(np.max(human_result[i]) - np.mean(human_result[i]))
@@ -234,32 +270,66 @@ def tranfer_multi():
         y_tara_err_max.append(np.max(tara_result[i]) - np.mean(tara_result[i]))
         y_tara_err_min.append(np.mean(tara_result[i]) - np.min(tara_result[i]))
 
-    fig, ax = plt.subplots(figsize = (2,4))
+        y_soil_multi.append(np.mean(soil_result[i]))
+        y_soil_err_max.append(np.max(soil_result[i]) - np.mean(soil_result[i]))
+        y_soil_err_min.append(np.mean(soil_result[i]) - np.min(soil_result[i]))
+    fig, ax = plt.subplots(figsize = (4,2))
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     line_width = 1
-    plt.errorbar(x1,y_human_multi,yerr=[y_human_err_min, y_human_err_max],label='SemiBin(pretrain)',color='#034e7b',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
-    plt.plot(x1, y_human_semibin, label='SemiBin',color='#0570b0',linewidth=line_width)
-    plt.plot(x1, y_human_metabat2, label='Metabat2',color='#74a9cf',linewidth=line_width)
-
-    plt.errorbar(x1,y_dog_multi,yerr=[y_dog_err_min, y_dog_err_max],label='SemiBin(pretrain)',color='#005a32',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
-    plt.plot(x1, y_dog_semibin, label='SemiBin',color='#238443',linewidth=line_width)
-    plt.plot(x1, y_dog_metabat2, label='Metabat2',color='#78c679',linewidth=line_width)
-
-    plt.errorbar(x1,y_tara_multi,yerr=[y_tara_err_min, y_tara_err_max],label='SemiBin(pretrain)',color='#8c2d04',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
-    plt.plot(x1, y_tara_semibin, label='SemiBin',color='#cc4c02',linewidth=line_width)
-    plt.plot(x1, y_tara_metabat2, label='Metabat2',color='#fe9929',linewidth=line_width)
-
+    plt.errorbar(x1,y_human_multi,yerr=[y_human_err_min, y_human_err_max],label='SemiBin(pretrain)',color = '#005A32',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
+    plt.plot(x1, y_human_semibin, label='SemiBin',color='#41AB5D',linewidth=line_width)
+    plt.plot(x1, y_human_metabat2, label='Metabat2',color='#ec7014',linewidth=line_width)
     ax.set_xticks([1,2,3,4,5,6])
     ax.set_ylabel('High quality bins', fontsize=15, color='black')
     ax.set_xlabel('Number of samples', fontsize=15, color='black')
     ax.set_xticklabels([1,3,5,10,15,20],color = 'black')
     plt.yticks([0,25,50,75,100,125,150,175,200], color='black')
-
     plt.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad = 0., fontsize=8)
-    plt.savefig('transfer_multiple.pdf', dpi=300, bbox_inches='tight')
+    plt.savefig('transfer_multiple_human.pdf', dpi=300, bbox_inches='tight')
     plt.close()
 
+
+    fig, ax = plt.subplots(figsize = (4,2))
+    plt.errorbar(x1,y_dog_multi,yerr=[y_dog_err_min, y_dog_err_max],label='SemiBin(pretrain)',color='#005A32',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
+    plt.plot(x1, y_dog_semibin, label='SemiBin',color='#41AB5D',linewidth=line_width)
+    plt.plot(x1, y_dog_metabat2, label='Metabat2',color='#ec7014',linewidth=line_width)
+    ax.set_xticks([1,2,3,4,5,6])
+    ax.set_ylabel('High quality bins', fontsize=15, color='black')
+    ax.set_xlabel('Number of samples', fontsize=15, color='black')
+    ax.set_xticklabels([1,3,5,10,15,20],color = 'black')
+    plt.yticks([0,25,50,75,100,125,150,175,200], color='black')
+    plt.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad = 0., fontsize=8)
+    plt.savefig('transfer_multiple_dog.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+    fig, ax = plt.subplots(figsize = (4,2))
+    plt.errorbar(x1,y_tara_multi,yerr=[y_tara_err_min, y_tara_err_max],label='SemiBin(pretrain)',color='#005A32',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
+    plt.plot(x1, y_tara_semibin, label='SemiBin',color='#41AB5D',linewidth=line_width)
+    plt.plot(x1, y_tara_metabat2, label='Metabat2',color='#ec7014',linewidth=line_width)
+    ax.set_xticks([1,2,3,4,5,6])
+    ax.set_ylabel('High quality bins', fontsize=15, color='black')
+    ax.set_xlabel('Number of samples', fontsize=15, color='black')
+    ax.set_xticklabels([1,3,5,10,15,20],color = 'black')
+    plt.yticks([0,5,10,15,20,25], color='black')
+    plt.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad = 0., fontsize=8)
+    plt.savefig('transfer_multiple_ocean.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+    fig, ax = plt.subplots(figsize = (4,2))
+    plt.errorbar(x1,y_soil_multi,yerr=[y_soil_err_min, y_soil_err_max],label='SemiBin(pretrain)',color='#005A32',fmt='k-o',lw = line_width,elinewidth=1,ms=3,capsize=3)
+    plt.plot(x1, y_soil_semibin, label='SemiBin',color='#41AB5D',linewidth=line_width)
+    plt.plot(x1, y_soil_metabat2, label='Metabat2',color='#ec7014',linewidth=line_width)
+    ax.set_xticks([1,2,3,4,5,6])
+    ax.set_ylabel('High quality bins', fontsize=15, color='black')
+    ax.set_xlabel('Number of samples', fontsize=15, color='black')
+    ax.set_xticklabels([1,3,5,10,15,20],color = 'black')
+    plt.yticks([0,5,10,15,20], color='black')
+    plt.legend(loc=2, bbox_to_anchor=(1.05,1.0),borderaxespad = 0., fontsize=8)
+    plt.savefig('transfer_multiple_soil.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
 
 def plot_bar_per_sample_com(dataset, diff_label = None, num_label = None):
     num_single = pd.concat([
@@ -281,7 +351,6 @@ def plot_bar_per_sample_com(dataset, diff_label = None, num_label = None):
     counts_multi = counts_multi.fillna(0)
 
     counts = pd.concat((counts_single,counts_multi),axis=1)
-
     Maxbin2 = counts['Maxbin2'].values
     VAMB = counts['VAMB'].values
     Metabat2 = counts['Metabat2'].values
@@ -300,9 +369,13 @@ def plot_bar_per_sample_com(dataset, diff_label = None, num_label = None):
     print('SemiBin_multi compared to VAMB_multi: {0}({1}) improvement'.format(np.sum(SemiBin_multi) - np.sum(VAMB_multi), (np.sum(SemiBin_multi) - np.sum(VAMB_multi))/ np.sum(VAMB_multi)))
     print('Compared to VAMB_multi wilcoxon:', wilcoxon(VAMB_multi, SemiBin_multi))
 
-    diff_single = counts_single.T - counts_single.SemiBin_pretrain
-    diff_multi = counts_multi.T - counts_multi.SemiBin_multi
+    # diff_single = counts_single.T - counts_single.SemiBin_pretrain
+    # diff_multi = counts_multi.T - counts_multi.SemiBin_multi
 
+    diff_single = counts_single.SemiBin_pretrain - counts_single.T
+    print('Others better than SemiBin:')
+    print((diff_single.T['Maxbin2'] < 0).sum() + (diff_single.T['Metabat2'] < 0).sum() + (diff_single.T['VAMB'] < 0).sum())
+    diff_multi = counts_multi.SemiBin_multi - counts_multi.T
     diff = pd.concat((diff_single,diff_multi))
     fig,axes = plt.subplots(1, 2, sharex='col',figsize = (9,3))
 
@@ -349,10 +422,16 @@ def plot_checkm_high_quality_comparison():
     num_tara_semibin_single = get_num_high_quality(dataset='tara', method='SemiBin',checkm_only=True)
     num_tara_semibin_pretrain_single = get_num_high_quality(dataset='tara', method='SemiBin_pretrain',checkm_only=True)
 
+    num_soil_maxbin2_single = get_num_high_quality(dataset='soil',checkm_only=True)
+    num_soil_vamb_single = get_num_high_quality(dataset='soil', method='VAMB',checkm_only=True)
+    num_soil_metabat2_single = get_num_high_quality(dataset='soil', method='Metabat2',checkm_only=True)
+    num_soil_semibin_single = get_num_high_quality(dataset='soil', method='SemiBin',checkm_only=True)
+    num_soil_semibin_pretrain_single = get_num_high_quality(dataset='soil', method='SemiBin_pretrain',checkm_only=True)
 
     print(num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single, num_dog_semibin_pretrain_single)
     print(num_human_maxbin2_single,num_human_vamb_single,num_human_metabat2_single,num_human_semibin_single, num_human_semibin_pretrain_single)
     print(num_tara_maxbin2_single,num_tara_vamb_single,num_tara_metabat2_single,num_tara_semibin_single,num_tara_semibin_pretrain_single)
+    print(num_soil_maxbin2_single, num_soil_vamb_single, num_soil_metabat2_single, num_soil_semibin_single, num_soil_semibin_pretrain_single)
 
     subset = pd.DataFrame(np.array([[num_dog_maxbin2_single,num_dog_vamb_single,num_dog_metabat2_single,num_dog_semibin_single,num_dog_semibin_pretrain_single]]),columns = ['Maxbin2','VAMB','Metabat2','SemiBin','SemiBin(pretrain)'], index=['Dog gut'])
     print(subset)
@@ -386,6 +465,15 @@ def plot_checkm_high_quality_comparison():
     plt.close()
     plt.show()
 
+    subset = pd.DataFrame(np.array([[num_soil_maxbin2_single,num_soil_vamb_single,num_soil_metabat2_single,num_soil_semibin_single, num_soil_semibin_pretrain_single]]),columns = ['Maxbin2','VAMB','Metabat2','SemiBin','SemiBin(pre-train)'], index=['Soil'])
+    print(subset)
+    ax = subset.plot(kind='bar',figsize=(3,4),legend = False, color=['#e7298a','#7570b3','#ec7014','#41AB5D','#005A32'])
+    ax.set_yticks(ticks=[0,20,40,60,80,100])
+    ax.set_yticklabels(labels=[0,20,40,60,80,100],fontsize=12,color = 'black')
+    ax.set_xticklabels(labels=['Soil'], fontsize=15,color = 'black',rotation = 360)
+    plt.savefig('Real_soil_hq_checkm.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+    plt.show()
 
     num_dog_vamb_mulit = get_num_high_quality(method='VAMB',binning_mode='multi_sample',checkm_only=True)
     num_dog_semibin_multi = get_num_high_quality(method='SemiBin',binning_mode='multi_sample',checkm_only=True)
@@ -396,9 +484,13 @@ def plot_checkm_high_quality_comparison():
     num_tara_vamb_multi = get_num_high_quality(dataset='tara', method='VAMB', binning_mode='multi_sample',checkm_only=True)
     num_tara_semibin_multi = get_num_high_quality(dataset='tara', method='SemiBin', binning_mode='multi_sample',checkm_only=True)
 
+    num_soil_vamb_multi = get_num_high_quality(dataset='soil', method='VAMB', binning_mode='multi_sample',checkm_only=True)
+    num_soil_semibin_multi = get_num_high_quality(dataset='soil', method='SemiBin', binning_mode='multi_sample',checkm_only=True)
+
     print(num_dog_vamb_mulit,num_dog_semibin_multi)
     print(num_human_vamb_multi, num_human_semibin_multi)
     print(num_tara_vamb_multi,num_tara_semibin_multi)
+    print(num_soil_vamb_multi,num_soil_semibin_multi)
 
     subset = pd.DataFrame(np.array([[num_dog_vamb_mulit,num_dog_semibin_multi]]),columns = ['VAMB','SemiBin'], index=['Dog gut'])
     print(subset)
@@ -434,14 +526,26 @@ def plot_checkm_high_quality_comparison():
     plt.close()
     plt.show()
 
+    subset = pd.DataFrame(np.array([[num_soil_vamb_multi,num_soil_semibin_multi]]), columns=['VAMB', 'SemiBin'],
+                          index=['Soil'])
+    print(subset)
+    ax = subset.plot(kind='bar', figsize=(2, 4),legend = False, color=['#41AB5D','#7570b3'])
+    ax.set_yticks(ticks=[0, 50, 100, 150, 200, 250])
+    ax.set_yticklabels(labels=[0, 50, 100, 150, 200, 250], fontsize=12, color='black')
+    ax.set_xticklabels(labels=['Soil'], fontsize=15, color='black', rotation=360)
+    plt.savefig('Real_soil_hq_multi_checkm.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+    plt.show()
+
     print('Dog single ', (num_dog_semibin_pretrain_single - num_dog_metabat2_single), (num_dog_semibin_pretrain_single - num_dog_metabat2_single)/num_dog_metabat2_single)
     print('human single ', (num_human_semibin_pretrain_single - num_human_metabat2_single), (num_human_semibin_pretrain_single - num_human_metabat2_single) / num_human_metabat2_single)
     print('ocean single ', (num_tara_semibin_pretrain_single - num_tara_metabat2_single), (num_tara_semibin_pretrain_single - num_tara_metabat2_single) / num_tara_metabat2_single)
+    print('soil single ', (num_soil_semibin_pretrain_single - num_soil_metabat2_single), (num_soil_semibin_pretrain_single - num_soil_metabat2_single) / num_soil_metabat2_single)
 
     print('Dog multi', (num_dog_semibin_multi - num_dog_vamb_mulit), (num_dog_semibin_multi - num_dog_vamb_mulit)/num_dog_vamb_mulit)
     print('human multi', (num_human_semibin_multi - num_human_vamb_multi), (num_human_semibin_multi - num_human_vamb_multi) / num_human_vamb_multi)
     print('tara multi', (num_tara_semibin_multi - num_tara_vamb_multi), (num_tara_semibin_multi - num_tara_vamb_multi) / num_tara_vamb_multi)
-
+    print('soil multi', (num_soil_semibin_multi - num_soil_vamb_multi), (num_soil_semibin_multi - num_soil_vamb_multi) / num_soil_vamb_multi)
 
 def get_taxi_list(bac_path,  arr_path = None):
     bac = pd.read_csv(bac_path, '\t').values
@@ -481,6 +585,15 @@ def get_taxi_list(bac_path,  arr_path = None):
                 genus_list.append(genus)
             if family != 'f__':
                 family_list.append(family)
+    # for temp in family_list:
+    #     if temp[0:3] != 'f__':
+    #         print(temp)
+    # for temp in genus_list:
+    #     if temp[0:3] != 'g__':
+    #         print(temp)
+    # for temp in species_list:
+    #     if temp[0:3] != 's__':
+    #         print(temp)
     return set(family_list), set(genus_list), set(species_list)
 
 
@@ -504,6 +617,12 @@ def plot_multi_venn_comparison():
     tara_SemiBin_family, tara_SemiBin_genus, tara_SemiBin_species = get_taxi_list(base_path + 'multi_sample/tara/SemiBin/gtdbtk.bac120.summary.tsv')
     tara_SemiBin_family_single, tara_SemiBin_genus_single, tara_SemiBin_species_single = get_taxi_list(base_path + 'single_sample/tara/SemiBin/gtdbtk.bac120.summary.tsv')
 
+    print('soil')
+    soil_VAMB_family, soil_VAMB_genus, soil_VAMB_species = get_taxi_list( 'updated_results/Soil_benchmark/gtdbtk_annotations/multi_sample/VAMB/gtdbtk.bac120.summary.tsv','updated_results/Soil_benchmark/gtdbtk_annotations/multi_sample/VAMB/gtdbtk.ar122.summary.tsv')
+    soil_SemiBin_family, soil_SemiBin_genus, soil_SemiBin_species = get_taxi_list('updated_results/Soil_benchmark/gtdbtk_annotations/multi_sample/SemiBin/gtdbtk.bac120.summary.tsv', 'updated_results/Soil_benchmark/gtdbtk_annotations/multi_sample/SemiBin/gtdbtk.ar122.summary.tsv')
+    soil_SemiBin_family_single, soil_SemiBin_genus_single, soil_SemiBin_species_single = get_taxi_list('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin/gtdbtk.bac120.summary.tsv',
+'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin/gtdbtk.ar122.summary.tsv')
+
     out = venn3_unweighted([set(dog_VAMB_family), set(dog_SemiBin_family), set(dog_SemiBin_family_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
     for text in out.subset_labels:
@@ -513,7 +632,6 @@ def plot_multi_venn_comparison():
     plt.title("family(Dog gut)", fontsize=20, alpha=1.0, color='black')
     plt.savefig('multi_sample_dog_family.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(dog_VAMB_genus), set(dog_SemiBin_genus), set(dog_SemiBin_genus_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -525,7 +643,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_dog_genus.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(dog_VAMB_species), set(dog_SemiBin_species), set(dog_SemiBin_species_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -537,7 +654,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_dog_species.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(human_VAMB_family), set(human_SemiBin_family), set(human_SemiBin_family_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -549,7 +665,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_human_family.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(human_VAMB_genus), set(human_SemiBin_genus), set(human_SemiBin_genus_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -561,7 +676,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_human_genus.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(human_VAMB_species), set(human_SemiBin_species), set(human_SemiBin_species_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -573,7 +687,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_human_species.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(tara_VAMB_family), set(tara_SemiBin_family), set(tara_SemiBin_family_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -585,7 +698,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_tara_family.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(tara_VAMB_genus), set(tara_SemiBin_genus), set(tara_SemiBin_genus_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -597,7 +709,6 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_tara_genus.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
 
     out = venn3_unweighted([set(tara_VAMB_species), set(tara_SemiBin_species), set(tara_SemiBin_species_single)],
                            set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
@@ -609,7 +720,41 @@ def plot_multi_venn_comparison():
 
     plt.savefig('multi_sample_tara_species.pdf', dpi=300, bbox_inches='tight')
     plt.close()
-    plt.show()
+
+    out = venn3_unweighted([set(soil_VAMB_family), set(soil_SemiBin_family), set(soil_SemiBin_family_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
+    for text in out.subset_labels:
+        text.set_fontsize(16)
+    for text in out.set_labels:
+        text.set_fontsize(16)
+    plt.title("family(Soil)", fontsize=20, alpha=1.0, color='black')
+
+    plt.savefig('multi_sample_soil_family.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    out = venn3_unweighted([set(soil_VAMB_genus), set(soil_SemiBin_genus), set(soil_SemiBin_genus_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
+    for text in out.subset_labels:
+        text.set_fontsize(16)
+    for text in out.set_labels:
+        text.set_fontsize(16)
+    plt.title("genus(Soil)", fontsize=20, alpha=1.0, color='black')
+
+    plt.savefig('multi_sample_soil_genus.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    out = venn3_unweighted([set(soil_VAMB_species), set(soil_SemiBin_species), set(soil_SemiBin_species_single)],
+                           set_labels=('VAMB', 'SemiBin_multi', 'SemiBin_single'), normalize_to=5.0,set_colors=('#ec7014', '#7570b3', '#1b9e77'))
+    for text in out.subset_labels:
+        text.set_fontsize(16)
+    for text in out.set_labels:
+        text.set_fontsize(16)
+    plt.title("species(Soil)", fontsize=20, alpha=1.0, color='black')
+
+    plt.savefig('multi_sample_soil_species.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
 
 
 def get_overlap(dataset = 'dog'):
@@ -619,6 +764,8 @@ def get_overlap(dataset = 'dog'):
         sample_list = human_list
     if dataset == 'tara':
         sample_list = tara_list
+    if dataset == 'soil':
+        sample_list = soil_list
 
     SemiBin_hq_list = []
     SemiBin_mq_list = []
@@ -632,7 +779,10 @@ def get_overlap(dataset = 'dog'):
     Metabat2_bin_dict = {}
 
     for sample in sample_list:
-        SemiBin_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/SemiBin_pretrain/result.csv'.format(dataset,sample),index_col=0)
+        if dataset != 'soil':
+            SemiBin_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/SemiBin_pretrain/result.csv'.format(dataset,sample),index_col=0)
+        else:
+            SemiBin_binning_result = pd.read_csv('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{0}/SemiBin_pretrain/result.csv'.format(sample), index_col=0)
         all_values = SemiBin_binning_result.values
         all_bin = SemiBin_binning_result.index.tolist()
         for bin_index, checkm_index in zip(all_bin, all_values):
@@ -648,7 +798,10 @@ def get_overlap(dataset = 'dog'):
 
         assert len(SemiBin_hq) + len(SemiBin_mq) + len(SemiBin_others) == len(SemiBin_all_bin)
 
-        Metabat2_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/Metabat2/result.csv'.format(dataset,sample),index_col=0)
+        if dataset != 'soil':
+            Metabat2_binning_result = pd.read_csv('Results/Real/CheckM_GUNC/{0}/single_sample/{1}/Metabat2/result.csv'.format(dataset,sample),index_col=0)
+        else:
+            Metabat2_binning_result = pd.read_csv('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{0}/Metabat2/result.csv'.format(sample), index_col=0)
 
         all_values = Metabat2_binning_result.values
         all_bin = Metabat2_binning_result.index.tolist()
@@ -672,7 +825,10 @@ def get_overlap(dataset = 'dog'):
 
         assert len(Metabat2_hq) + len(Metabat2_mq) + len(Metabat2_others) == len(Metabat2_all_bin)
 
-        data = pd.read_csv('Results/Real/Mash_dist/{0}/{1}/Mash_SemiBin_pretrain_Metabat2.txt'.format(dataset, sample),header=None,sep='\t')
+        if dataset != 'soil':
+            data = pd.read_csv('Results/Real/Mash_dist/{0}/{1}/Mash_SemiBin_pretrain_Metabat2.txt'.format(dataset, sample),header=None,sep='\t')
+        else:
+            data = pd.read_csv('updated_results/Soil_benchmark/Mash_dist/{}/Mash_SemiBin_pretrain_Metabat2.txt'.format(sample), header=None,sep='\t')
         data.columns = ['genome_id_1', 'genome_id_2', 'dis', 'p_value', 'Matching-hashes']
         data = data[data['dis'] <= 0.01].values
         for temp in data:
@@ -721,12 +877,15 @@ def plot_sankey_overlap(dataset = 'dog', output = None):
 
     layout = go.Layout(autosize=True, margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
     # plotly setup
-    if dataset != 'dog':
+    if dataset == 'human' or dataset == 'tara':
         x_ = [0.1, 0.1, 0.1, 0.1, 0.4, 0.4, 0.4, 0.4]
         y_ = [0.15, 0.2, 0.3, 0.4, 0.1, 0.3, 0.4, 0.48]
-    else:
+    elif dataset == 'dog':
         x_ = [0.1, 0.1, 0.1, 0.1, 0.4, 0.4, 0.4, 0.4]
         y_ = [0.15, 0.2, 0.3, 0.4, 0.1, 0.3, 0.4, 0.52]
+    else:
+        x_ = [0.1, 0.1, 0.1, 0.1, 0.4, 0.4, 0.4, 0.4]
+        y_ = [0.15, 0.2, 0.3, 0.4, 0.05, 0.3, 0.4, 0.52]
     fig = go.Figure(layout=layout, data=[go.Sankey(
         arrangement='snap',
         orientation="h",
@@ -755,12 +914,12 @@ def plot_sankey_overlap(dataset = 'dog', output = None):
 
 def plot_overlap_F1(dataset = 'dog'):
     SemiBin_hq_list, SemiBin_mq_list, SemiBin_others_list, Metabat2_hq_list, Metabat2_mq_list, Metabat2_others_list,SemiBin_bin_dict, Metabat2_bin_dict = get_overlap(dataset)
-    # print(len(SemiBin_hq_list), len(set(SemiBin_hq_list)))
-    # print(len(SemiBin_mq_list), len(set(SemiBin_mq_list)))
-    # print(len(SemiBin_others_list), len(set(SemiBin_others_list)))
-    # print(len(Metabat2_hq_list), len(set(Metabat2_hq_list)))
-    # print(len(Metabat2_mq_list), len(set(Metabat2_mq_list)))
-    # print(len(Metabat2_others_list), len(set(Metabat2_others_list)))
+    print(len(SemiBin_hq_list), len(set(SemiBin_hq_list)))
+    print(len(SemiBin_mq_list), len(set(SemiBin_mq_list)))
+    print(len(SemiBin_others_list), len(set(SemiBin_others_list)))
+    print(len(Metabat2_hq_list), len(set(Metabat2_hq_list)))
+    print(len(Metabat2_mq_list), len(set(Metabat2_mq_list)))
+    print(len(Metabat2_others_list), len(set(Metabat2_others_list)))
 
     SemiBin_recall = []
     SemiBin_precision = []
@@ -801,13 +960,11 @@ def plot_overlap_F1(dataset = 'dog'):
 
     data = pd.DataFrame(np.array(data), columns=['metrics', 'value', 'Method'])
     data[['value']] = data[['value']].astype(float)
-
+    print(data)
     plt.figure(figsize=(4, 4))
     ax = sns.boxplot(x="metrics", y="value", hue="Method",
                      data=data, fliersize=0, palette= ['#ec7014','#1b9e77'],linewidth=0.1)
     # sns.stripplot(data=data, x="metrics",dodge=True, y="value", hue="Method", size=2, palette= ['#a6cee3','#1f78b4'],)
-
-
 
     ax.set_yticks(ticks=[0.9, 0.92, 0.94, 0.96, 0.98, 1.0])
     ax.set_yticklabels(labels=[0.9, 0.92, 0.94, 0.96, 0.98, 1.0], fontsize=12, color='black')
@@ -819,9 +976,9 @@ def plot_overlap_F1(dataset = 'dog'):
         ax.set_title('{}'.format('Human gut'), fontsize=15, alpha=1.0, color='black')
     if dataset == 'tara':
         ax.set_title('{}'.format('Ocean'), fontsize=15, alpha=1.0, color='black')
-
+    if dataset == 'soil':
+        ax.set_title('{}'.format('Soil'), fontsize=15, alpha=1.0, color='black')
     plt.title('HQ in both')
-    plt.show()
     plt.savefig('{}_F1_distribution.pdf'.format(dataset), dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -852,6 +1009,8 @@ def get_taxa_list(bac_path, arr_path = None):
         Class = split[-5]
         phylum = split[-6]
         domain = split[-7]
+        if species[0:3] != 's__' or genus[0:3] != 'g__' or family[0:3] != 'f__' or order[0:3] != 'o__' or Class[0:3] != 'c__' or phylum[0:3] != 'p__' or domain[0:3] != 'd__':
+            print('error')
 
         if species != 's__':
             species_list.append(species)
@@ -872,14 +1031,19 @@ def get_taxa_list(bac_path, arr_path = None):
 
 
 def plot_all_taxi_overlap(dataset = 'dog', output = None,y_label = None):
-    if dataset != 'human':
+    if dataset == 'dog' or dataset == 'tara':
         SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset))
 
         Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset))
-    else:
+    if dataset == 'human':
         SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.ar122.summary.tsv'.format(dataset))
 
         Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.ar122.summary.tsv'.format(dataset))
+
+    if dataset == 'soil':
+        SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.bac120.summary.tsv', 'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.ar122.summary.tsv')
+
+        Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.bac120.summary.tsv','updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.ar122.summary.tsv')
     # print(len(SemiBin_domain_list), len(SemiBin_phylum_list), len(SemiBin_Class_list), len(SemiBin_order_list), len(SemiBin_family_list), len(SemiBin_genus_list), len(SemiBin_species_list))
     # print(len(Metabat2_domain_list), len(Metabat2_phylum_list), len(Metabat2_Class_list), len(Metabat2_order_list), len(Metabat2_family_list), len(Metabat2_genus_list), len(Metabat2_species_list))
 
@@ -947,7 +1111,7 @@ def plot_all_taxi_overlap(dataset = 'dog', output = None,y_label = None):
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
 
-    ax.set_xticklabels(labels=['Species', 'Genus', 'Family', 'Order', 'Class', 'phylum', 'domain'], rotation=50,
+    ax.set_xticklabels(labels=['Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum', 'Domain'], rotation=50,
                        minor=False, fontsize=15, color='black')
     ax.set_ylabel('Taxas', fontsize=15, color='black')
     if dataset == 'dog':
@@ -956,7 +1120,9 @@ def plot_all_taxi_overlap(dataset = 'dog', output = None,y_label = None):
         ax.set_title('{}'.format('Human gut'), fontsize=15, alpha=1.0, color='black')
     if dataset == 'tara':
         ax.set_title('{}'.format('Tara'), fontsize=15, alpha=1.0, color='black')
-    plt.show()
+    if dataset == 'soil':
+        ax.set_title('{}'.format('Soil'), fontsize=15, alpha=1.0, color='black')
+    # plt.show()
     plt.savefig(output, dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -973,6 +1139,8 @@ def get_known_unknown(bac_path,  arr_path = None):
         species = split[-1]
 
         if species != 's__':
+            if species[0:3] != 's__':
+                print('error')
             known_list.append(species)
         else:
             unknown_list.append(species)
@@ -986,6 +1154,8 @@ def get_known_unknown(bac_path,  arr_path = None):
             species = split[-1]
 
             if species != 's__':
+                if species[0:3] != 's__':
+                    print('error')
                 known_list.append(species)
             else:
                 unknown_list.append(species)
@@ -994,14 +1164,23 @@ def get_known_unknown(bac_path,  arr_path = None):
 
 
 def plot_comparison_known_unknown(dataset = 'dog', y_label = None,output = None):
-    if dataset != 'human':
+    if dataset == 'dog' or dataset == 'ocean':
         SemiBin_known, SemiBin_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset))
 
         Metabat2_known, Metabat2_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset))
-    else:
+    if dataset == 'human':
         SemiBin_known, SemiBin_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.ar122.summary.tsv'.format(dataset))
 
         Metabat2_known, Metabat2_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.ar122.summary.tsv'.format(dataset))
+
+    if dataset == 'soil':
+        SemiBin_known, SemiBin_unknown = get_known_unknown(
+            'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.bac120.summary.tsv',
+            'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.ar122.summary.tsv')
+
+        Metabat2_known, Metabat2_unknown = get_known_unknown(
+            'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.bac120.summary.tsv',
+            'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.ar122.summary.tsv')
 
     subset = np.array([[len(Metabat2_known), len(Metabat2_unknown)], [len(SemiBin_known), len(SemiBin_unknown)]])
     subset = pd.DataFrame(subset, index=['Metabat2', 'SemiBin(pretrain)'],
@@ -1025,8 +1204,8 @@ def plot_comparison_known_unknown(dataset = 'dog', y_label = None,output = None)
         ax.set_title('{}'.format('Human gut'), fontsize=15, alpha=1.0, color='black')
     if dataset == 'tara':
         ax.set_title('{}'.format('Tara'), fontsize=15, alpha=1.0, color='black')
-    plt.show()
-    plt.show()
+    if dataset == 'soil':
+        ax.set_title('{}'.format('Soil'), fontsize=15, alpha=1.0, color='black')
     plt.savefig(output, dpi=300, bbox_inches='tight')
     #plt.savefig('/home1/pansj/plot/human_unknown.jpg', dpi=300, bbox_inches='tight')
 
@@ -1304,11 +1483,12 @@ def CAT_mmseqs():
     plt.close()
 
 def seq_depth_effect():
-    num_human_semibin_pretrain_single = get_results_table(dataset='human', method='SemiBin_pretrain', checkm_only=True)
-    # num_human_semibin_pretrain_single = num_human_semibin_pretrain_single.set_index(['sample'])['nr_hq'].to_dict()
+    # human gut
+    num_human_semibin_pretrain_single = get_results_table(dataset='human', method='SemiBin_pretrain', checkm_only=False)
+    print(num_human_semibin_pretrain_single['nr_hq'].sum())
     sample_list = num_human_semibin_pretrain_single['sample'].values
 
-    human_gut_meta = pd.read_csv('updated_results/human_gut.txt', index_col=0, sep=',')
+    human_gut_meta = pd.read_csv('updated_results/sequence_depth/human_gut.txt', index_col=0, sep=',')
     sample_name = human_gut_meta['Alias'].values
     sample_base = human_gut_meta['Bases'].values
     base_dict = dict()
@@ -1326,10 +1506,122 @@ def seq_depth_effect():
         num_base_list.append(base_dict[sample])
 
     num_human_semibin_pretrain_single['bases'] = num_base_list
-
+    print(num_human_semibin_pretrain_single)
     sns.lmplot(x = 'bases', y = 'nr_hq', data = num_human_semibin_pretrain_single)
+    plt.title('Human gut', fontsize=20, alpha=1.0,color = 'black')
     plt.savefig('seq_effect_human.pdf', dpi=300, bbox_inches='tight')
     plt.close()
+
+    # dog gut
+    num_dog_semibin_pretrain_single = get_results_table(dataset='dog', method='SemiBin_pretrain', checkm_only=False)
+    print(num_dog_semibin_pretrain_single['nr_hq'].sum())
+    sample_list = num_dog_semibin_pretrain_single['sample'].values
+
+    dog_gut_meta = pd.read_csv('updated_results/sequence_depth/dog.txt', index_col=0, sep=',')
+    sample_name = dog_gut_meta['BioSample'].values
+    sample_base = dog_gut_meta['Bases'].values
+    base_dict = dict()
+
+    for sample, num_base in zip(sample_name, sample_base):
+        if sample not in base_dict:
+            base_dict[sample] = num_base/1e9
+        else:
+            base_dict[sample] += num_base / 1e9
+
+    num_base_list = []
+
+    for sample in sample_list:
+        num_base_list.append(base_dict[sample])
+
+    num_dog_semibin_pretrain_single['bases'] = num_base_list
+    print(num_dog_semibin_pretrain_single)
+    sns.lmplot(x = 'bases', y = 'nr_hq', data = num_dog_semibin_pretrain_single)
+    plt.title('Dog gut', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('seq_effect_dog.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    # soil
+    num_ocean_semibin_pretrain_single = get_results_table(dataset='tara', method='SemiBin_pretrain', checkm_only=False)
+    print(num_ocean_semibin_pretrain_single['nr_hq'].sum())
+    sample_list = num_ocean_semibin_pretrain_single['sample'].values
+    ocean_gut_meta = pd.read_csv('updated_results/sequence_depth/ocean.txt', index_col=None, sep=',')
+    ocean_gut_meta1 = pd.read_csv('updated_results/sequence_depth/ocean1.txt',index_col=None, sep=',')
+    ocean_gut_meta2 = pd.read_csv('updated_results/sequence_depth/ocean2.txt',index_col=None, sep=',')
+    ocean_gut_meta3 = pd.read_csv('updated_results/sequence_depth/ocean3.txt',index_col=None, sep=',')
+    run_name = ocean_gut_meta['Run'].values
+    run_base = ocean_gut_meta['Bases'].values
+
+    run_name1 = ocean_gut_meta1['Run'].values
+    run_base1 = ocean_gut_meta1['Bases'].values
+
+    run_name2 = ocean_gut_meta2['Run'].values
+    run_base2 = ocean_gut_meta2['Bases'].values
+
+    run_name3 = ocean_gut_meta3['Run'].values
+    run_base3 = ocean_gut_meta3['Bases'].values
+    run_dict = dict()
+
+    for run, base in zip(run_name, run_base):
+        run_dict[run] = base
+
+    for run, base in zip(run_name1, run_base1):
+        run_dict[run] = base
+
+    for run, base in zip(run_name2, run_base2):
+        run_dict[run] = base
+
+    for run, base in zip(run_name3, run_base3):
+        run_dict[run] = base
+    num_base_list = []
+    ocean_meta = pd.read_excel('updated_results/sequence_depth/tara.xlsx', sheet_name='tableS1', engine='openpyxl', )
+    for sample in sample_list:
+        if 'lt' in sample:
+            sample_ = sample.replace('lt', '<')
+        else:
+            sample_ = sample
+        ocean_meta_ = ocean_meta[ocean_meta['Sample label [TARA_station#_environmental-feature_size-fraction]'] == sample_]
+        run_list = ocean_meta_['INSDC run accession number(s)'].values[0]
+        run_list = run_list.split('|')
+        num_base = 0
+        for run in run_list:
+            num_base += run_dict[run]
+        num_base_list.append(num_base/1e9)
+
+    num_ocean_semibin_pretrain_single['bases'] = num_base_list
+    print(num_ocean_semibin_pretrain_single)
+    sns.lmplot(x = 'bases', y = 'nr_hq', data = num_ocean_semibin_pretrain_single)
+    plt.title('Ocean', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('seq_effect_ocean.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    num_soil_semibin_pretrain_single = get_results_table(dataset='soil', method='SemiBin_pretrain', checkm_only=False)
+    print(num_soil_semibin_pretrain_single['nr_hq'].sum())
+    sample_list = num_soil_semibin_pretrain_single['sample'].values
+    
+    # soil
+    soil_meta = pd.read_csv('updated_results/sequence_depth/soil.txt', index_col=0, sep='\t')
+    sample_name = soil_meta['BioSample'].values
+    sample_base = soil_meta['Bases'].values
+    base_dict = dict()
+
+    for sample, num_base in zip(sample_name, sample_base):
+        if sample not in base_dict:
+            base_dict[sample] = num_base/1e9
+        else:
+            base_dict[sample] += num_base / 1e9
+
+    num_base_list = []
+
+    for sample in sample_list:
+        num_base_list.append(base_dict[sample])
+
+    num_soil_semibin_pretrain_single['bases'] = num_base_list
+    print(num_soil_semibin_pretrain_single)
+    sns.lmplot(x = 'bases', y = 'nr_hq', data = num_soil_semibin_pretrain_single)
+    plt.title('Soil', fontsize=20, alpha=1.0,color = 'black')
+    plt.savefig('seq_effect_soil.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
+
 
 def max_edge_effect():
     def get_hq_num(result):
@@ -1427,8 +1719,6 @@ def extra_env_benchmark():
     print(subset)
 
     ax = subset.plot(kind='bar',width = 0.6,color = ['#7570b3', '#1b9e77'])
-    # ax.set_yticks(ticks=[0,800,1600,2400,3200])
-    # ax.set_yticklabels(labels=[0,800,1600,2400,3200],fontsize=12,color = 'black')
     ax.set_xticklabels(labels=['Cat gut','Mouse gut','Pig gut','Built environment','Human oral','Wastewater'], fontsize=15,color = 'black',rotation = 50)
     ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
     plt.savefig('Extra_env_benchmark.pdf', dpi=300, bbox_inches='tight')
@@ -1443,7 +1733,12 @@ def plot_cross_validation():
         return len(high_quality)
 
     environment = ['human_gut', 'dog_gut', 'ocean', 'soil', 'cat_gut', 'human_oral', 'mouse_gut', 'pig_gut', 'built_environment', 'wastewater']
+
     result = []
+    Metabat2_result = []
+    train_whole_result = []
+    SemiBin_pretrain_result = []
+
     for train_env in environment:
         result_train_env = []
         for test_env in environment:
@@ -1454,6 +1749,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/Metabat2/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+                    
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'dog_gut':
@@ -1463,6 +1769,16 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/Metabat2/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'ocean':
@@ -1472,6 +1788,16 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/Metabat2/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'soil':
@@ -1481,6 +1807,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{}/Metabat2/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'cat_gut':
@@ -1490,6 +1827,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/extra_env/cat_gut/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/cat_gut/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'human_oral':
@@ -1501,6 +1849,17 @@ def plot_cross_validation():
                             continue
                         num_result += get_hq_num('updated_results/extra_env/human_oral/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/human_oral/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'mouse_gut':
@@ -1510,6 +1869,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/extra_env/mouse_gut/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/mouse_gut/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'pig_gut':
@@ -1519,6 +1889,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/extra_env/pig_gut/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/pig_gut/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'built_environment':
@@ -1528,6 +1909,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/extra_env/built_environment/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/built_environment/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             if test_env == 'wastewater':
@@ -1537,6 +1929,17 @@ def plot_cross_validation():
                     for sample in testing_set:
                         num_result += get_hq_num('updated_results/extra_env/wastewater/SemiBin/{}/result.csv'.format(sample))
                     result_train_env.append(num_result)
+                    SemiBin_pretrain_result.append(num_result)
+
+                    num_result_metabat2 = 0
+                    for sample in testing_set:
+                        num_result_metabat2 += get_hq_num('updated_results/extra_env/wastewater/Metabat2/{}/result.csv'.format(sample))
+                    Metabat2_result.append(num_result_metabat2)
+
+                    num_result_whole = 0
+                    for sample in testing_set:
+                        num_result_whole += get_hq_num('updated_results/training_whole/{0}/{1}/result.csv'.format(train_env, sample))
+                    train_whole_result.append(num_result_whole)
                     continue
 
             num_result = 0
@@ -1546,23 +1949,205 @@ def plot_cross_validation():
                 num_result += get_hq_num('updated_results/cross_validation/{0}/{1}/{2}/result.csv'.format(train_env, test_env, sample))
             result_train_env.append(num_result)
         result.append(result_train_env)
+
+    result.insert(0, train_whole_result)
+    result.insert(0, Metabat2_result)
     result = np.array(result)
     print(result)
+    print(SemiBin_pretrain_result)
 
-    df = pd.DataFrame((result), index=['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
+    df = pd.DataFrame((result), index=['Metabat2','SemiBin(whole)','Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
                    'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
                    'Wastewater'], columns=['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
                    'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
                    'Wastewater'])
+    df = df.astype(int)
     print(df)
+
+    SemiBin_pretrain_result = [temp + 10 for temp in SemiBin_pretrain_result]
+    df = df / (SemiBin_pretrain_result)
+    print(df)
+
+    fig, ax = plt.subplots(figsize = (10,8))
+    sns.heatmap(df, cmap='YlOrBr', annot=False, fmt='.20g',)
+    ax.set_xticklabels(['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
+                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
+                   'Wastewater'], rotation=50)
+    ax.set_xlabel('testing', fontsize=15, color='black')
+    ax.set_ylabel('training', fontsize=15, color='black')
+    fig.tight_layout()
+    plt.savefig('crossvalidation.pdf', dpi=300,  bbox_inches='tight')
+    plt.close()
+
+def plot_training_whole():
+    def get_hq_num(result):
+        binning_result = pd.read_csv(result, index_col=0)
+        high_quality = binning_result[(binning_result['Completeness'].astype(float) > float(90)) & (
+                    binning_result['Contamination'].astype(float) < float(
+                contamination * 100)) & (binning_result['pass.GUNC'] == True)]
+        return len(high_quality)
+
+    environment = ['human_gut', 'dog_gut', 'ocean', 'soil', 'cat_gut', 'human_oral', 'mouse_gut', 'pig_gut', 'built_environment', 'wastewater']
+    Metabat2_result = []
+    SemiBin_pretrain_result = []
+    SemiBin_whole_rsult = []
+
+    for test_env in environment:
+        if test_env == 'human_gut':
+            testing_set = transfer_multi_human
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/Metabat2/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('Results/Real/CheckM_GUNC/human/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/human_gut/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'dog_gut':
+            testing_set = transfer_multi_dog
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/Metabat2/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('Results/Real/CheckM_GUNC/dog/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/dog_gut/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'ocean':
+            testing_set = transfer_multi_tara
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/Metabat2/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('Results/Real/CheckM_GUNC/tara/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/ocean/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'soil':
+            testing_set = transfer_multi_soil
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{}/Metabat2/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/Soil_benchmark/CheckM_GUNC/single_sample/{}/SemiBin_pretrain/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/soil/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'cat_gut':
+            testing_set = cat_gut_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/cat_gut/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/cat_gut/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/cat_gut/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'human_oral':
+            testing_set = human_oral_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/human_oral/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/human_oral/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/human_oral/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'mouse_gut':
+            testing_set = mouse_gut_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/mouse_gut/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/mouse_gut/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/mouse_gut/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'pig_gut':
+            testing_set = pig_gut_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/pig_gut/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/pig_gut/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/pig_gut/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'built_environment':
+            testing_set = built_environment_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/built_environment/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/built_environment/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/built_environment/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+        if test_env == 'wastewater':
+            testing_set = wastewater_test
+            num_result_metabat2 = 0
+            num_result_pertrain = 0
+            num_result_whole = 0
+            for sample in testing_set:
+                num_result_metabat2 += get_hq_num('updated_results/extra_env/wastewater/Metabat2/{}/result.csv'.format(sample))
+                num_result_pertrain += get_hq_num('updated_results/extra_env/wastewater/SemiBin/{}/result.csv'.format(sample))
+                num_result_whole += get_hq_num('updated_results/training_whole/wastewater/{}/result.csv'.format(sample))
+            Metabat2_result.append(num_result_metabat2)
+            SemiBin_pretrain_result.append(num_result_pertrain)
+            SemiBin_whole_rsult.append(num_result_whole)
+
+    result = []
+    result.append(Metabat2_result)
+    result.append(SemiBin_pretrain_result)
+    result.append(SemiBin_whole_rsult)
+    result = np.array(result).T
+    subset = pd.DataFrame(result,columns = ['Metabat2','SemiBin(pertrain)','SemiBin(whole)'], index=['Human gut', 'Dog gut', 'ocean', 'Soil', 'Cat gut', 'Human oral', 'Mouse gut', 'Pig gut', 'Built environment', 'Wastewater'])
+    print(subset)
+
+    ax = subset.plot(kind='bar',width = 0.6,color = ['#7570b3', '#41AB5D', '#005A32'])
+    # ax.set_yticks(ticks=[0,800,1600,2400,3200])
+    # ax.set_yticklabels(labels=[0,800,1600,2400,3200],fontsize=12,color = 'black')
+    ax.set_xticklabels(labels=['Human gut', 'Dog gut', 'ocean', 'Soil', 'Cat gut', 'Human oral', 'Mouse gut', 'Pig gut', 'Built environment', 'Wastewater'], fontsize=15,color = 'black',rotation = 50)
+    ax.set_ylabel('High-quality bins', fontsize=15,color = 'black')
+    plt.savefig('Whole_training.pdf', dpi=300, bbox_inches='tight')
+    plt.close()
 
 if __name__ == '__main__':
     # print('human')
-    # plot_bar_per_sample_com('human',[-20,-10,0,10],[0,300,600,900,1200,1500])
+    # plot_bar_per_sample_com('human',[-10,0,10,20,30],[0,500,1000,1500])
     # print('dog')
-    # plot_bar_per_sample_com('dog',[-30,-20,-10,0,10],[0,500,1000,1500,2000,2500,3000,3500])
+    # plot_bar_per_sample_com('dog',[-10,0,10,20,30],[0,1000,2000,3000])
     # print('tara')
-    # plot_bar_per_sample_com('tara',[-20,-15,-10,-5,0,5], [0,100,200,300,400,500])
+    # plot_bar_per_sample_com('tara',[-10,0,10,20,30], [0,200,400,600])
+    # print('soil')
+    # plot_bar_per_sample_com('soil', [-10, 0, 10, 20, 30], [0, 60, 120, 180])
 
     # tranfer_multi()
 
@@ -1570,28 +2155,33 @@ if __name__ == '__main__':
     # plot_checkm_high_quality_comparison()
 
     ### venn plot multi annotation comparison
-    #plot_multi_venn_comparison()
+    # plot_multi_venn_comparison()
 
     #alternative_real_compare_test()
     # plot_sankey_overlap(dataset='human',output='human_sankey.pdf')
     # plot_sankey_overlap(output='dog_sankey.pdf')
     # plot_sankey_overlap(dataset='tara',output='tara_sankey.pdf')
+    # plot_sankey_overlap(dataset='soil', output='soil_sankey.pdf')
 
     ### recall, precision, F1-score box plot
     #
     # plot_overlap_F1('human')
     # plot_overlap_F1()
     # plot_overlap_F1('tara')
+    # plot_overlap_F1('soil')
 
     # ### bar plot the overlap of annotation in all taxi
     # plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
     # plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
     # plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
+    # plot_all_taxi_overlap(dataset='soil', output='soil_taxi_overlap.pdf',
+    #                       y_label=[0, 10,20,30,40,50])
 
     # ## comparison of known and unknown species
     # plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
     # plot_comparison_known_unknown(dataset='human', y_label=[0,300,600,900,1200,1500], output='human_taxi_known_unknown.pdf')
     # plot_comparison_known_unknown(dataset='tara', y_label=[0,100,200,300,400], output='tara_taxi_known_unknown.pdf')
+    # plot_comparison_known_unknown(dataset='soil',y_label=[0, 20, 40, 60, 80, 100],output='soil_taxi_known_unknown.pdf')
 
     # plot_transfer()
 
@@ -1608,3 +2198,5 @@ if __name__ == '__main__':
     # extra_env_benchmark()
 
     plot_cross_validation()
+
+    # plot_training_whole()

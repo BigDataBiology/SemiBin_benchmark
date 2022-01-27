@@ -505,13 +505,13 @@ if __name__ == '__main__':
     # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_cluster_alternative.pdf')
     # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_cluster_alternative.pdf')
 
-    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster_alternative.pdf')
-    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster_alternative.pdf')
-    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster_alternative.pdf')
+    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster_alternative.pdf')
+    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster_alternative.pdf')
+    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster_alternative.pdf')
 
-    plot_embeddings('updated_results/effect_embeddings/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_embeddings.pdf')
-    plot_embeddings('updated_results/effect_embeddings/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_embeddings.pdf')
-    plot_embeddings('updated_results/effect_embeddings/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_embeddings.pdf')
+    # plot_embeddings('updated_results/effect_embeddings/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_embeddings.pdf')
+    # plot_embeddings('updated_results/effect_embeddings/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_embeddings.pdf')
+    # plot_embeddings('updated_results/effect_embeddings/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_embeddings.pdf')
 
     # plot_remove_genomes('updated_results/effect_remove_genomes/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_remove_genomes.pdf')
     # plot_remove_genomes('updated_results/effect_remove_genomes/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_remove_genomes.pdf')
