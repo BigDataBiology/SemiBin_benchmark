@@ -98,17 +98,12 @@ def process_result(environment, mode):
         generate_data['Mem'].append(result['Memory(Mb)'])
 
     print('{0} {1} Time(minutes) and mem(MB)'.format(environment, mode))
-    print('Generating data:', np.mean(generate_data['time'])/60, np.mean(generate_data['Mem']))
-    print(generate_data)
+    print('Generating data:', np.mean(generate_data['time'])/60, np.max(generate_data['Mem']))
     if mode == 'single':
-        print('Generating cannot:', np.mean(generate_cannot['time'])/60, np.mean(generate_cannot['Mem']))
-        print(generate_cannot)
-    print('train cpu:', np.mean(train_cpu['time'])/60, np.mean(train_cpu['Mem']))
-    print(train_cpu)
-    print('train gpu:', np.mean(train_gpu['time'])/60, np.mean(train_gpu['Mem']))
-    print(train_gpu)
-    print('bin:', np.mean(bin['time'])/60, np.mean(bin['Mem']))
-    print(bin)
+        print('Generating cannot:', np.mean(generate_cannot['time'])/60, np.max(generate_cannot['Mem']))
+    print('train cpu:', np.mean(train_cpu['time'])/60, np.max(train_cpu['Mem']))
+    print('train gpu:', np.mean(train_gpu['time'])/60, np.max(train_gpu['Mem']))
+    print('bin:', np.mean(bin['time'])/60, np.max(bin['Mem']))
 
     return generate_data, generate_cannot, train_cpu, train_gpu, bin
 
@@ -193,7 +188,6 @@ def sum_Maxbin2(environment):
 
     for temp in sample_list:
         result = process_results('updated_results/running_log/{0}/single/{1}/maxbin2_log.txt'.format(environment, temp))
-        print(result)
         bin['time'] += result['Time(s)'] / 60
         bin['Mem'].append(result['Memory(Mb)'])
 
@@ -212,7 +206,6 @@ def sum_Metabat2(environment):
 
     for temp in sample_list:
         result = process_results('updated_results/running_log/{0}/single/{1}/metabat2_log.txt'.format(environment, temp))
-        print(result)
         bin['time'] += result['Time(s)'] / 60
         bin['Mem'].append(result['Memory(Mb)'])
 
@@ -231,7 +224,6 @@ def sum_Vamb(environment):
 
     for temp in sample_list:
         result = process_results('updated_results/running_log/{0}/single/{1}/vamb_cpu_single.txt'.format(environment, temp))
-        print(result)
         bin['time'] += result['Time(s)'] / 60
         bin['Mem'].append(result['Memory(Mb)'])
 
@@ -243,7 +235,6 @@ def sum_Vamb(environment):
 
     for temp in sample_list:
         result = process_results('updated_results/running_log/{0}/single/{1}/vamb_gpu_single.txt'.format(environment, temp))
-        print(result)
         bin['time'] += result['Time(s)'] / 60
         bin['Mem'].append(result['Memory(Mb)'])
 
@@ -254,7 +245,6 @@ def sum_Vamb(environment):
     bin = {'time':0, 'Mem':[]}
 
     result = process_results('updated_results/running_log/{0}/multi/vamb_cpu_multi.txt'.format(environment))
-    print(result)
     bin['time'] += result['Time(s)'] / 60
     bin['Mem'] = result['Memory(Mb)']
     print('multi-sample(CPU)', bin)
@@ -263,17 +253,16 @@ def sum_Vamb(environment):
     bin = {'time':0, 'Mem':[]}
 
     result = process_results('updated_results/running_log/{0}/multi/vamb_gpu_multi.txt'.format(environment))
-    print(result)
     bin['time'] += result['Time(s)'] / 60
     bin['Mem'] = result['Memory(Mb)']
     print('multi-sample(GPU)', bin)
 
 if __name__ == '__main__':
-    # sum_SemiBin('dog', 'single')
-    # sum_SemiBin('dog', 'multi')
-    # sum_SemiBin('ocean', 'single')
-    # sum_SemiBin('ocean', 'multi')
-    # sum_SemiBin('human', 'single')
+    sum_SemiBin('dog', 'single')
+    sum_SemiBin('dog', 'multi')
+    sum_SemiBin('ocean', 'single')
+    sum_SemiBin('ocean', 'multi')
+    sum_SemiBin('human', 'single')
     sum_SemiBin('human', 'multi')
 
     # sum_Vamb('human')
@@ -287,6 +276,10 @@ if __name__ == '__main__':
     # process_result('ocean', 'single')
     # process_result('ocean', 'multi')
 
+    # sum_Maxbin2('human')
+    # sum_Maxbin2('dog')
     # sum_Maxbin2('ocean')
 
+    # sum_Metabat2('human')
+    # sum_Metabat2('dog')
     # sum_Metabat2('ocean')
