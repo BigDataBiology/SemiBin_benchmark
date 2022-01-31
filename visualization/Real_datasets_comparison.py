@@ -7,11 +7,13 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import cm
 from matplotlib_venn import venn3_unweighted
 from scipy.stats import wilcoxon
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+plt.rcParams['svg.fonttype'] = 'none'
 
 contamination = 0.05
 dog_list = ['SAMN06172456', 'SAMN06172425', 'SAMN06172487', 'SAMN06172450', 'SAMN06172459', 'SAMN06172479', 'SAMN06172435', 'SAMN06172414', 'SAMN06172409', 'SAMEA103957796', 'SAMN06172442', 'SAMN06172500', 'SAMN06172437', 'SAMN06172413', 'SAMN06172514', 'SAMN06172403', 'SAMN06172471', 'SAMN06172490', 'SAMN06172448', 'SAMN06172504', 'SAMN06172457', 'SAMN06172441', 'SAMN06172422', 'SAMN06172408', 'SAMN06172429', 'SAMN06172420', 'SAMN06172503', 'SAMN06172410', 'SAMN06172458', 'SAMN06172493', 'SAMEA103957794', 'SAMN06172402', 'SAMN06172515', 'SAMN06172462', 'SAMN06172421', 'SAMN06172411', 'SAMN06172511', 'SAMN06172516', 'SAMN06172465', 'SAMN06172419', 'SAMN06172517', 'SAMN06172510', 'SAMN06172418', 'SAMN06172424', 'SAMN06172427', 'SAMN06172453', 'SAMN06172491', 'SAMN06172496', 'SAMN06172513', 'SAMN06172461', 'SAMN06172449', 'SAMN06172426', 'SAMN06172452', 'SAMN06172522', 'SAMN06172400', 'SAMN06172405', 'SAMN06172521', 'SAMN06172407', 'SAMN06172455', 'SAMN06172446', 'SAMN06172467', 'SAMN06172499', 'SAMN06172474', 'SAMN06172412', 'SAMN06172468', 'SAMN06172478', 'SAMN06172423', 'SAMN06172447', 'SAMN06172415', 'SAMN06172523', 'SAMN06172417', 'SAMN06172497', 'SAMN06172498', 'SAMN06172489', 'SAMN06172436', 'SAMN06172432', 'SAMN06172406', 'SAMN06172488', 'SAMN06172502', 'SAMN06172401', 'SAMN06172434', 'SAMN06172416', 'SAMN06172445', 'SAMN06172431', 'SAMN06172438', 'SAMN06172473', 'SAMN06172486', 'SAMN06172472', 'SAMN06172428', 'SAMEA103957793', 'SAMEA103957795', 'SAMN06172443', 'SAMN06172475', 'SAMN06172520', 'SAMN06172495', 'SAMN06172440', 'SAMN06172430', 'SAMN06172481', 'SAMN06172524', 'SAMN06172519', 'SAMN06172454', 'SAMN06172404', 'SAMN06172460', 'SAMN06172433', 'SAMN06172469', 'SAMN06172451', 'SAMN06172476', 'SAMN06172492', 'SAMN06172484', 'SAMN06172509', 'SAMN06172506', 'SAMN06172518', 'SAMN06172477', 'SAMN06172470', 'SAMN06172482', 'SAMN06172512', 'SAMN06172494', 'SAMN06172485', 'SAMN06172508', 'SAMN06172466', 'SAMN06172507', 'SAMN06172444', 'SAMN06172505', 'SAMN06172464', 'SAMN06172439', 'SAMN06172501', 'SAMN06172483', 'SAMN06172463', 'SAMN06172480']
@@ -74,6 +76,8 @@ def get_result(dataset='dog', method='Maxbin2', binning_mode = 'single_sample', 
     """
     if dataset == 'dog':
         sample_list = dog_list
+    elif dataset == 'soil':
+        sample_list = soil_list
     elif dataset == 'human':
         sample_list = human_list
     elif dataset == 'tara':
@@ -1953,31 +1957,70 @@ def plot_cross_validation():
     result.insert(0, train_whole_result)
     result.insert(0, Metabat2_result)
     result = np.array(result)
-    print(result)
-    print(SemiBin_pretrain_result)
 
-    df = pd.DataFrame((result), index=['Metabat2','SemiBin(whole)','Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
-                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
-                   'Wastewater'], columns=['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
-                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
-                   'Wastewater'])
-    df = df.astype(int)
-    print(df)
+    human_names = {
+            'human_gut': 'Human gut',
+            'dog_gut': 'Dog gut',
+            'ocean': 'Ocean',
+            'soil': 'Soil',
+            'cat_gut': 'Cat gut',
+            'human_oral': 'Human oral',
+            'mouse_gut': 'Mouse gut',
+            'pig_gut': 'Pig gut',
+            'built_environment': 'Built environment',
+            'wastewater': 'Wastewater',
+            }
 
-    SemiBin_pretrain_result = [temp + 10 for temp in SemiBin_pretrain_result]
-    df = df / (SemiBin_pretrain_result)
-    print(df)
+    df = pd.DataFrame(result, index=['Metabat2', 'SemiBin(whole)'] + environment, columns=environment)
+    df.rename(index=human_names, columns=human_names, inplace=True)
+    order1 = [
+           'Human gut',
+           'Dog gut',
+           'Cat gut',
+           'Pig gut',
+           'Human oral',
+           'Mouse gut',
+           'Ocean',
+           'Built environment',
+           'Soil',
+           'Wastewater',
+           ]
+    order0 = ['Metabat2', 'SemiBin(whole)']+order1
+    same_env = pd.Series({e:df.loc[e,e] for e in order1})
+    df = df.loc[order0, order1]
 
-    fig, ax = plt.subplots(figsize = (10,8))
-    sns.heatmap(df, cmap='YlOrBr', annot=False, fmt='.20g',)
-    ax.set_xticklabels(['Human gut', 'Dog gut', 'Ocean', 'Soil', 'Cat gut',
-                   'Human oral', 'Mouse gut', 'Pig gut', 'Built environment',
-                   'Wastewater'], rotation=50)
-    ax.set_xlabel('testing', fontsize=15, color='black')
-    ax.set_ylabel('training', fontsize=15, color='black')
+    df_norm = (df+10).divide(same_env+10)
+
+    fig,(ax_top,ax_main) = plt.subplots(2,1,sharex=True, gridspec_kw={'height_ratios':[2,10]})
+    im0 = ax_top.imshow(
+            df_norm.iloc[:2]*100.,
+            vmin=100*df_norm.min().min(),
+            vmax=100*df_norm.max().max(),
+            aspect='auto', cmap=cm.YlOrBr)
+    im1 = ax_main.imshow(
+            df_norm.iloc[2:]*100.,
+            vmin=100*df_norm.min().min(),
+            vmax=100*df_norm.max().max(),
+            aspect='auto', cmap=cm.YlOrBr)
+    for i in range(df.shape[0]):
+        for j in range(df.shape[1]):
+            color = ('#333333' if df_norm.iloc[i,j] < .90 else '#eeeeee')
+            (ax_main if i > 1 else ax_top).text(s='{}'.format(df.iloc[i,j]),
+                    y=(i if i < 2 else i - 2),
+                    x=j,
+                    color=color,
+                    horizontalalignment='center',
+                    verticalalignment='center')
+    ax_main.set_xticks(np.arange(len(order1)))
+    ax_main.set_xticklabels(order1, rotation=90)
+    ax_main.set_yticks(np.arange(len(order0[2:])))
+    ax_main.set_yticklabels(order0[2:])
+    ax_top.set_yticks(np.arange(len(order0[:2])))
+    ax_top.set_yticklabels(order0[:2])
+    fig.colorbar(im0, orientation='horizontal', )
     fig.tight_layout()
-    plt.savefig('crossvalidation.pdf', dpi=300,  bbox_inches='tight')
-    plt.close()
+    fig.savefig('model-transfer.svg')
+
 
 def plot_training_whole():
     def get_hq_num(result):
