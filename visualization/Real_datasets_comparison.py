@@ -987,7 +987,7 @@ def plot_overlap_F1(dataset = 'dog'):
     plt.close()
 
 
-def get_taxa_list(bac_path, arr_path = None):
+def get_taxa_sets(bac_path, arr_path = None):
     bac = pd.read_csv(bac_path,
         '\t').values
     if arr_path is not None:
@@ -1034,101 +1034,51 @@ def get_taxa_list(bac_path, arr_path = None):
     return set(domain_list),set(phylum_list),set(Class_list),set(order_list), set(family_list), set(genus_list), set(species_list)
 
 
-def plot_all_taxi_overlap(dataset = 'dog', output = None,y_label = None):
-    if dataset == 'dog' or dataset == 'tara':
-        SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset))
+def plot_taxa_overlap():
+    COLORS = {
+            'both': '#7570b3',
+            'semibin': '#1b9e77',
+            'metabat2': '#ec7014',
+            }
+    fig,axes = plt.subplots(2,2, sharex=True, figsize=[6,8])
+    for dataset,ax in zip(['dog', 'tara', 'human', 'soil'], axes.flat):
+        if dataset == 'dog' or dataset == 'tara':
+            SemiBin_taxa = get_taxa_sets('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset))
 
-        Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset))
-    if dataset == 'human':
-        SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.ar122.summary.tsv'.format(dataset))
+            Metabat2_taxa = get_taxa_sets('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset))
+        elif dataset == 'human':
+            SemiBin_taxa = get_taxa_sets('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.ar122.summary.tsv'.format(dataset))
 
-        Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.ar122.summary.tsv'.format(dataset))
+            Metabat2_taxa = get_taxa_sets('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset), 'Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.ar122.summary.tsv'.format(dataset))
 
-    if dataset == 'soil':
-        SemiBin_domain_list, SemiBin_phylum_list, SemiBin_Class_list, SemiBin_order_list, SemiBin_family_list, SemiBin_genus_list, SemiBin_species_list = get_taxa_list('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.bac120.summary.tsv', 'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.ar122.summary.tsv')
+        elif dataset == 'soil':
+            SemiBin_taxa = get_taxa_sets('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.bac120.summary.tsv', 'updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/SemiBin_pretrain/gtdbtk.ar122.summary.tsv')
+            Metabat2_taxa =  get_taxa_sets('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.bac120.summary.tsv','updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.ar122.summary.tsv')
 
-        Metabat2_domain_list, Metabat2_phylum_list, Metabat2_Class_list, Metabat2_order_list, Metabat2_family_list, Metabat2_genus_list, Metabat2_species_list = get_taxa_list('updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.bac120.summary.tsv','updated_results/Soil_benchmark/gtdbtk_annotations/single_sample/Metabat2/gtdbtk.ar122.summary.tsv')
-    # print(len(SemiBin_domain_list), len(SemiBin_phylum_list), len(SemiBin_Class_list), len(SemiBin_order_list), len(SemiBin_family_list), len(SemiBin_genus_list), len(SemiBin_species_list))
-    # print(len(Metabat2_domain_list), len(Metabat2_phylum_list), len(Metabat2_Class_list), len(Metabat2_order_list), len(Metabat2_family_list), len(Metabat2_genus_list), len(Metabat2_species_list))
+        assert len(SemiBin_taxa) == len(Metabat2_taxa)
+        subset = pd.DataFrame([(len(sb & mb2), len(sb - mb2), len(mb2 - sb)) for sb,mb2 in zip(SemiBin_taxa, Metabat2_taxa)],
+                    index=['Domain', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'],
+                      columns=['Both', 'SemiBin(pretrain) only', 'Metabat2 only'])
+        subset = subset.iloc[::-1]
+        ax.bar(np.arange(len(subset))-.15, subset.Both + subset['Metabat2 only'], width=.3, color=COLORS['metabat2'], label='Metabat2 only')
+        ax.bar(np.arange(len(subset))+.15, subset.Both + subset['SemiBin(pretrain) only'], width=.3, color=COLORS['semibin'], label='SemiBin(pretrain) only')
+        ax.bar(np.arange(len(subset)), subset.Both, width=.6, color=COLORS['both'], label='Both')
+        title = {
+                'dog': 'Dog gut',
+                'human': 'Human gut',
+                'tara': 'Ocean',
+                'soil': 'Soil',
+                }[dataset]
+        ax.set_title(title, fontsize=10, alpha=1.0, color='black')
+        ax.set_ylabel('Number of taxa', fontsize=10, color='black')
+    axes[0,0].legend(loc='upper right', fontsize=10)
 
-    # Both; S3N2Bin_distinct; Metabat2_distinct
-    domain = []
-    domain.append(len(list(SemiBin_domain_list.intersection(Metabat2_domain_list))))
-    domain.append(len(list(SemiBin_domain_list.difference(Metabat2_domain_list))))
-    domain.append(len(list(Metabat2_domain_list.difference(SemiBin_domain_list))))
-    # print(len(SemiBin_domain_list))
-    # print(len(Metabat2_domain_list))
-    phylum = []
-    phylum.append(len(list(SemiBin_phylum_list.intersection(Metabat2_phylum_list))))
-    phylum.append(len(list(SemiBin_phylum_list.difference(Metabat2_phylum_list))))
-    phylum.append(len(list(Metabat2_phylum_list.difference(SemiBin_phylum_list))))
-    # print(len(SemiBin_phylum_list))
-    # print(len(Metabat2_phylum_list))
-    Class = []
-    Class.append(len(list(SemiBin_Class_list.intersection(Metabat2_Class_list))))
-    Class.append(len(list(SemiBin_Class_list.difference(Metabat2_Class_list))))
-    Class.append(len(list(Metabat2_Class_list.difference(SemiBin_Class_list))))
-    # print(len(SemiBin_Class_list))
-    # print(len(Metabat2_Class_list))
-    order = []
-    order.append(len(list(SemiBin_order_list.intersection(Metabat2_order_list))))
-    order.append(len(list(SemiBin_order_list.difference(Metabat2_order_list))))
-    order.append(len(list(Metabat2_order_list.difference(SemiBin_order_list))))
-    # print(len(SemiBin_order_list))
-    # print(len(Metabat2_order_list))
-    family = []
-    family.append(len(list(SemiBin_family_list.intersection(Metabat2_family_list))))
-    family.append(len(list(SemiBin_family_list.difference(Metabat2_family_list))))
-    family.append(len(list(Metabat2_family_list.difference(SemiBin_family_list))))
-    # print(len(SemiBin_family_list))
-    # print(len(Metabat2_family_list))
-    genus = []
-    genus.append(len(list(SemiBin_genus_list.intersection(Metabat2_genus_list))))
-    genus.append(len(list(SemiBin_genus_list.difference(Metabat2_genus_list))))
-    genus.append(len(list(Metabat2_genus_list.difference(SemiBin_genus_list))))
-    # print(len(SemiBin_genus_list))
-    # print(len(Metabat2_genus_list))
-    species = []
-    species.append(len(list(SemiBin_species_list.intersection(Metabat2_species_list))))
-    species.append(len(list(SemiBin_species_list.difference(Metabat2_species_list))))
-    species.append(len(list(Metabat2_species_list.difference(SemiBin_species_list))))
-    # print(len(SemiBin_species_list))
-    # print(len(Metabat2_species_list))
-    subset = np.zeros((7, 3))
-    for temp in range(3):
-        subset[0][temp] = species[temp]
-        subset[1][temp] = genus[temp]
-        subset[2][temp] = family[temp]
-        subset[3][temp] = order[temp]
-        subset[4][temp] = Class[temp]
-        subset[5][temp] = phylum[temp]
-        subset[6][temp] = domain[temp]
-
-    subset = pd.DataFrame(subset, index=['Species', 'Genus', 'Family', 'Order', 'Class', 'phylum', 'domain'],
-                          columns=['Both', 'SemiBin(pretrain) only', 'Metabat2 only'])
-    print(subset)
-    ax = subset.plot(kind="bar", stacked=True,
-                     legend=False, color = ['#7570b3','#1b9e77', '#ec7014', ])
-
-    ax.legend(['Both', 'SemiBin(pretrain) only', 'Metabat2 only'],
-              loc='upper right', fontsize=10)
-    ax.set_yticks(ticks=y_label)
-    ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-
-    ax.set_xticklabels(labels=['Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum', 'Domain'], rotation=50,
-                       minor=False, fontsize=15, color='black')
-    ax.set_ylabel('Taxas', fontsize=15, color='black')
-    if dataset == 'dog':
-        ax.set_title('{}'.format('Dog gut'), fontsize=15, alpha=1.0, color='black')
-    if dataset == 'human':
-        ax.set_title('{}'.format('Human gut'), fontsize=15, alpha=1.0, color='black')
-    if dataset == 'tara':
-        ax.set_title('{}'.format('Tara'), fontsize=15, alpha=1.0, color='black')
-    if dataset == 'soil':
-        ax.set_title('{}'.format('Soil'), fontsize=15, alpha=1.0, color='black')
-    # plt.show()
-    plt.savefig(output, dpi=300, bbox_inches='tight')
-    plt.close()
+    for ax in axes[1]:
+        ax.set_xticks(np.arange(len(subset)))
+        ax.set_xticklabels(labels=subset.index, rotation=90, minor=False, fontsize=10, color='black')
+    sns.despine(fig)
+    fig.tight_layout()
+    fig.savefig('overlaps.svg')
 
 
 def get_known_unknown(bac_path,  arr_path = None):
@@ -2213,12 +2163,8 @@ if __name__ == '__main__':
     # plot_overlap_F1('tara')
     # plot_overlap_F1('soil')
 
-    # ### bar plot the overlap of annotation in all taxi
-    # plot_all_taxi_overlap(output='dog_taxi_overlap.pdf',y_label=[0,20,40,60,80,100])
-    # plot_all_taxi_overlap(dataset='human',output='human_taxi_overlap.pdf',y_label=[0,100,200,300,400])
-    # plot_all_taxi_overlap(dataset='tara',output='tara_taxi_overlap.pdf',y_label=[0,50,100,150,200,250])
-    # plot_all_taxi_overlap(dataset='soil', output='soil_taxi_overlap.pdf',
-    #                       y_label=[0, 10,20,30,40,50])
+    # ### bar plot the overlap of annotation in all taxa
+    # plot_taxa_overlap()
 
     # ## comparison of known and unknown species
     # plot_comparison_known_unknown(y_label=[0,500,1000,1500,2000,2500], output='dog_taxi_known_unknown.pdf')
