@@ -143,7 +143,7 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
                   loc='upper left', fontsize=10)
     ax.set_yticks(ticks=y_label)
     ax.set_yticklabels(labels=y_label, fontsize=12, color='black')
-    ax.set_xticklabels(labels=['Metabat2_200','Metabat2_500', 'Metabat2_500', 'SemiBin_200','SemiBin_500', 'SemiBin_1000'], rotation=50,
+    ax.set_xticklabels(labels=['Metabat2_200','Metabat2_500', 'Metabat2_1000', 'SemiBin_200','SemiBin_500', 'SemiBin_1000'], rotation=50,
                        minor=False, fontsize=15, color='black')
     ax.set_ylabel('Bins', fontsize=15, color='black')
 
@@ -198,8 +198,8 @@ def plot_CAT_mmseqs(amber_path,add_legend=True,y_label=None,output = None):
     subset = data.loc[['SemiBin_CAT_1000','SemiBin_1000']]
     print(subset)
     subset.rename(index={
-        'SemiBin_500': 'MMseqs2',
-        'SemiBin_CAT_500': 'CAT',
+        'SemiBin_1000': 'MMseqs2',
+        'SemiBin_CAT_1000': 'CAT',
     }, inplace=True)
     subset = subset[[90,80,70,60]]
 
