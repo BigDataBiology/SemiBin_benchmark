@@ -1118,7 +1118,7 @@ def get_known_unknown(bac_path,  arr_path = None):
 
 
 def plot_comparison_known_unknown(dataset = 'dog', y_label = None,output = None):
-    if dataset == 'dog' or dataset == 'ocean':
+    if dataset == 'dog' or dataset == 'tara':
         SemiBin_known, SemiBin_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/SemiBin_pretrain/gtdbtk.bac120.summary.tsv'.format(dataset))
 
         Metabat2_known, Metabat2_unknown = get_known_unknown('Results/Real/gtdbtk_annotations/single_sample/{0}/Metabat2/gtdbtk.bac120.summary.tsv'.format(dataset))
