@@ -141,10 +141,6 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
     print((subset.loc['SemiBin_200'][90] - subset.loc['Metabat2_200'][90]) / subset.loc['Metabat2_200'][90])
     print((subset.loc['SemiBin_500'][90] - subset.loc['Metabat2_500'][90]) / subset.loc['Metabat2_500'][90])
     print((subset.loc['SemiBin_1000'][90] - subset.loc['Metabat2_1000'][90]) / subset.loc['Metabat2_1000'][90])
-    print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((subset.loc['SemiBin_200'][90] - subset.loc['Metabat2_200'][90]
-                                                                       + subset.loc['SemiBin_500'][90] - subset.loc['Metabat2_500'][90]
-                                                                       + subset.loc['SemiBin_1000'][90] - subset.loc['Metabat2_1000'][90]) / (subset.loc['Metabat2_200'][90] + subset.loc['Metabat2_500'][90] +
-                                                                                                                                      subset.loc['Metabat2_1000'][90])))
 
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
@@ -279,10 +275,7 @@ def plot_bar_generalization(amber_path, title,add_legend=True,y_label = None, ou
         print(improve_to_m)
         print(improve_to_c)
         print(improve_to_mc)
-        print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((subset.loc['SemiBin'][90] - subset.loc['SemiBin_m'][90]
-                                                                           + subset.loc['SemiBin'][90] - subset.loc['SemiBin_c'][90]
-                                                                           + subset.loc['SemiBin'][90] - subset.loc['SemiBin_mc'][90]) / (subset.loc['SemiBin_m'][90] + subset.loc['SemiBin_c'][90] +
-                                                                                                                                          subset.loc['SemiBin_mc'][90])))
+        print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((improve_to_m + improve_to_c + improve_to_mc) / 3))
 
     subset = subset.T
     ax = subset.plot(kind="bar",legend=False, color = ['#e6ab02','#e7298a', '#7570b3', '#d95f02', '#1b9e77'])
