@@ -442,10 +442,9 @@ def plot_generalization():
     print('Semibin compared to SemiBin_m {:.2%} improvement'.format( (skin_SemiBin_strain - skin_SemiBin_m_strain)/ skin_SemiBin_m_strain))
     print('Semibin compared to SemiBin_c {:.2%} improvement'.format( (skin_SemiBin_strain - skin_SemiBin_c_strain)/ skin_SemiBin_c_strain))
     print('Semibin compared to SemiBin_mc {:.2%} improvement'.format((skin_SemiBin_strain - skin_SemiBin_mc_strain) / skin_SemiBin_mc_strain))
-    print('average {:.2%} improvement'.format(
-        (((skin_SemiBin_strain - skin_SemiBin_m_strain)/ skin_SemiBin_m_strain) +
-        ((skin_SemiBin_strain - skin_SemiBin_c_strain)/ skin_SemiBin_c_strain) +
-        ((skin_SemiBin_strain - skin_SemiBin_mc_strain) / skin_SemiBin_mc_strain))/3))
+    print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((skin_SemiBin_strain - skin_SemiBin_m_strain
+                                                                       + skin_SemiBin_strain - skin_SemiBin_c_strain
+                                                                       + skin_SemiBin_strain - skin_SemiBin_mc_strain) / (skin_SemiBin_m_strain +skin_SemiBin_c_strain +skin_SemiBin_mc_strain)))
 
     result = get_hq_taxi('oral')
     oral_SemiBin_strain = len(result['SemiBin']['strain'])
@@ -473,10 +472,9 @@ def plot_generalization():
     print('Semibin compared to SemiBin_m {:.2%} improvement'.format( (oral_SemiBin_strain - oral_SemiBin_m_strain)/ oral_SemiBin_m_strain))
     print('Semibin compared to SemiBin_c {:.2%} improvement'.format( (oral_SemiBin_strain - oral_SemiBin_c_strain)/ oral_SemiBin_c_strain))
     print('Semibin compared to SemiBin_mc {:.2%} improvement'.format((oral_SemiBin_strain - oral_SemiBin_mc_strain) / oral_SemiBin_mc_strain))
-    print('average {:.2%} improvement'.format(
-        (((oral_SemiBin_strain - oral_SemiBin_m_strain)/ oral_SemiBin_m_strain) +
-        ((oral_SemiBin_strain - oral_SemiBin_c_strain)/ oral_SemiBin_c_strain) +
-        ((oral_SemiBin_strain - oral_SemiBin_mc_strain) / oral_SemiBin_mc_strain))/3))
+    print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((oral_SemiBin_strain - oral_SemiBin_m_strain
+                                                                       + oral_SemiBin_strain - oral_SemiBin_c_strain
+                                                                       + oral_SemiBin_strain - oral_SemiBin_mc_strain) / (oral_SemiBin_m_strain +oral_SemiBin_c_strain +oral_SemiBin_mc_strain)))
 
     subset = pd.DataFrame(np.array([[skin_NoSemi_strain,skin_SemiBin_m_strain,skin_SemiBin_c_strain,skin_SemiBin_mc_strain,skin_SemiBin_strain ],[oral_NoSemi_strain,oral_SemiBin_m_strain,oral_SemiBin_c_strain,oral_SemiBin_mc_strain,oral_SemiBin_strain]]),columns = ['No_semi','SemiBin_m','SemiBin_c','SemiBin_mc','SemiBin'], index=['Skin','Oral'])
     print(subset)
@@ -1087,9 +1085,9 @@ if __name__ == '__main__':
     ### bar plot with different similarities
     #plot_bar_strain_simiarity()
 
-    # plot_generalization()
+    plot_generalization()
     # plot_recluster()
     # plot_cluster_alternative()
     # plot_max_edge()
-    plot_recluster_alternative()
+    # plot_recluster_alternative()
     # plot_embeddings()

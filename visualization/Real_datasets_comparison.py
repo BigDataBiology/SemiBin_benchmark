@@ -2133,19 +2133,19 @@ def plot_training_whole():
     plt.close()
 
 if __name__ == '__main__':
-    # print('human')
-    # plot_bar_per_sample_com('human',[-10,0,10,20,30],[0,500,1000,1500])
-    # print('dog')
-    # plot_bar_per_sample_com('dog',[-10,0,10,20,30],[0,1000,2000,3000])
-    # print('tara')
-    # plot_bar_per_sample_com('tara',[-10,0,10,20,30], [0,200,400,600])
-    # print('soil')
-    # plot_bar_per_sample_com('soil', [-10, 0, 10, 20, 30], [0, 60, 120, 180])
+    print('human')
+    plot_bar_per_sample_com('human',[-10,0,10,20,30],[0,500,1000,1500])
+    print('dog')
+    plot_bar_per_sample_com('dog',[-10,0,10,20,30],[0,1000,2000,3000])
+    print('tara')
+    plot_bar_per_sample_com('tara',[-10,0,10,20,30], [0,200,400,600])
+    print('soil')
+    plot_bar_per_sample_com('soil', [-10, 0, 10, 20, 30], [0, 60, 120, 180])
 
     # tranfer_multi()
 
     ### bar plot high quality genomes comparison
-    # plot_checkm_high_quality_comparison()
+    plot_checkm_high_quality_comparison()
 
     ### venn plot multi annotation comparison
     # plot_multi_venn_comparison()
@@ -2186,6 +2186,6 @@ if __name__ == '__main__':
 
     # extra_env_benchmark()
 
-    plot_cross_validation()
+    # plot_cross_validation()
 
     # plot_training_whole()

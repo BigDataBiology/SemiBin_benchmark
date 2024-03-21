@@ -138,6 +138,14 @@ def plot_SemiBin_Metabat(amber_path,add_legend=True,y_label=None, output = None)
     subset = subset[[90,80,70,60]]
     ax = subset.plot(kind="bar", stacked=True, legend=False, color = color_map)
 
+    print((subset.loc['SemiBin_200'][90] - subset.loc['Metabat2_200'][90]) / subset.loc['Metabat2_200'][90])
+    print((subset.loc['SemiBin_500'][90] - subset.loc['Metabat2_500'][90]) / subset.loc['Metabat2_500'][90])
+    print((subset.loc['SemiBin_1000'][90] - subset.loc['Metabat2_1000'][90]) / subset.loc['Metabat2_1000'][90])
+    print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((subset.loc['SemiBin_200'][90] - subset.loc['Metabat2_200'][90]
+                                                                       + subset.loc['SemiBin_500'][90] - subset.loc['Metabat2_500'][90]
+                                                                       + subset.loc['SemiBin_1000'][90] - subset.loc['Metabat2_1000'][90]) / (subset.loc['Metabat2_200'][90] + subset.loc['Metabat2_500'][90] +
+                                                                                                                                      subset.loc['Metabat2_1000'][90])))
+
     if add_legend:
         ax.legend(['>90', '>80', '>70', '>60'],
                   loc='upper left', fontsize=10)
@@ -271,7 +279,10 @@ def plot_bar_generalization(amber_path, title,add_legend=True,y_label = None, ou
         print(improve_to_m)
         print(improve_to_c)
         print(improve_to_mc)
-        print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((improve_to_m + improve_to_c + improve_to_mc)/3))
+        print('Average Improvement of SemiBin over m,mc,c: {:.2%}'.format((subset.loc['SemiBin'][90] - subset.loc['SemiBin_m'][90]
+                                                                           + subset.loc['SemiBin'][90] - subset.loc['SemiBin_c'][90]
+                                                                           + subset.loc['SemiBin'][90] - subset.loc['SemiBin_mc'][90]) / (subset.loc['SemiBin_m'][90] + subset.loc['SemiBin_c'][90] +
+                                                                                                                                          subset.loc['SemiBin_mc'][90])))
 
     subset = subset.T
     ax = subset.plot(kind="bar",legend=False, color = ['#e6ab02','#e7298a', '#7570b3', '#d95f02', '#1b9e77'])
@@ -505,9 +516,9 @@ if __name__ == '__main__':
     # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_cluster_alternative.pdf')
     # plot_cluster_alternative('updated_results/effect_clustering/cluster/amber_clustering_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_cluster_alternative.pdf')
 
-    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster_alternative.pdf')
-    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster_alternative.pdf')
-    plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster_alternative.pdf')
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_recluster_alternative.pdf')
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_recluster_alternative.pdf')
+    # plot_recluster_alternative('updated_results/effect_clustering/recluster/amber_high', y_label=[0, 100, 200, 300, 400], title='High-complexity', add_legend=False, output='CAMI_I_high_recluster_alternative.pdf')
 
     # plot_embeddings('updated_results/effect_embeddings/amber_low', y_label=[0, 5, 10, 15, 20, 25, 30], title='Low-complexity', output='CAMI_I_low_embeddings.pdf')
     # plot_embeddings('updated_results/effect_embeddings/amber_medium', y_label=[0, 20, 40, 60, 80, 100], title='Medium-complexity', add_legend=False, output='CAMI_I_medium_embeddings.pdf')
@@ -541,9 +552,9 @@ if __name__ == '__main__':
 
     ### compare to Metabat2 with different parameters
 
-    # plot_SemiBin_Metabat(amber_path_low,add_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
-    # plot_SemiBin_Metabat(amber_path_medium,y_label=[0,20,40,60,80,100], output='CAMI_I_medium_SemiBin_Metabat2.pdf')
-    # plot_SemiBin_Metabat(amber_path_high,y_label=[0,100,200,300,400,500], output='CAMI_I_high_SemiBin_Metabat2.pdf')
+    plot_SemiBin_Metabat(amber_path_low,add_legend=True,y_label=[0,5,10,15,20,25,30], output='CAMI_I_low_SemiBin_Metabat2.pdf')
+    plot_SemiBin_Metabat(amber_path_medium,y_label=[0,20,40,60,80,100], output='CAMI_I_medium_SemiBin_Metabat2.pdf')
+    plot_SemiBin_Metabat(amber_path_high,y_label=[0,100,200,300,400,500], output='CAMI_I_high_SemiBin_Metabat2.pdf')
 
 
     # ### compare results with CAT or mmseqs
